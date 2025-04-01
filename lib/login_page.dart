@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
         centerTitle: true,
         toolbarHeight: 200,
         title: Text("PongChamp", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.yellow,
+        backgroundColor: Colors.blue,
       ),
       body: Center(
         child: Padding(
