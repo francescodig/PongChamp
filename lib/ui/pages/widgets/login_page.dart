@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_application_2/ui/pages/view_model/login_view_model.dart';
-import 'package:flutter_application_2/ui/pages/services/auth_service.dart';
+import '/ui/pages/viewmodel/login_view_model.dart';
+import '/data/services/auth_service.dart';
 import 'register_page.dart';
 import 'home_page.dart';
 

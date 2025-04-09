@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_application_2/ui/pages/view_model/register_view_model.dart';
+import '/ui/pages/viewmodel/register_view_model.dart';
 import 'login_page.dart';
 
 class RegisterPage extends StatelessWidget {

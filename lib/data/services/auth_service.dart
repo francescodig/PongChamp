@@ -13,4 +13,15 @@ class AuthService {
       return "unknown-error";
     }
   }
+
+  Future<String?> signInWithEmailAndPassword(String email, String password) async {
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      return null; // success
+    } on FirebaseAuthException catch (e) {
+      return e.code;
+    } catch (e) {
+      return "unknown-error";
+    }
+  }
 }
