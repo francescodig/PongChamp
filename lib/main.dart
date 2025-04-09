@@ -1,15 +1,20 @@
-import 'package:flutter_application_2/firebase_options.dart';
+import 'package:flutter_application_2/config/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'login_page.dart';
+import 'package:provider/provider.dart';
+import 'ui/pages/widgets/login_page.dart';
 
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-);
-  runApp(MyApp());
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => RegisterViewModel()),
+        // altri ViewModel
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 
@@ -20,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Login',
-      home: LoginPage(), //he first screen is the login page
+      home: LoginPage(),
     );
   }
 }
