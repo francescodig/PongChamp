@@ -3,7 +3,7 @@ import '/data/services/auth_service.dart';
 
 class RegisterViewModel extends ChangeNotifier {
   final AuthService _authService = AuthService();
-
+  
   String? errorMessage;
 
   Future<bool> register(String email, String password) async {

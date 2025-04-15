@@ -1,3 +1,5 @@
+
+
 import '../config/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,7 +21,7 @@ void main () async {
       providers: [
         Provider<AuthService>(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => RegisterViewModel()),
-        ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<AuthService>())), // 
+        ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<AuthService>())),
         // altri ViewModel
       ],
       child: MyApp(),

@@ -24,4 +24,21 @@ class AuthService {
       return "unknown-error";
     }
   }
+
+  Future<String?> sendPasswordResetEmail(String email) async {
+  try {
+    await _auth.sendPasswordResetEmail(email: email);
+    return null;
+  } on FirebaseAuthException catch (e) {
+    return e.code;
+  } catch (e) {
+    return "unknown-error";
+  }
+}
+
+
+Future<void> signOut() async {
+  await _auth.signOut();
+}
+
 }
