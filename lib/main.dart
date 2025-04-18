@@ -1,5 +1,7 @@
 
 
+import 'package:PongChamp/ui/pages/view/map_page.dart';
+
 import '../config/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -9,7 +11,7 @@ import 'ui/pages/viewmodel/login_view_model.dart';
 import 'ui/pages/widgets/login_page.dart';
 import 'data/services/auth_service.dart';
 
-
+import 'ui/pages/viewmodel/map_view_model.dart';
 
 void main () async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +25,7 @@ void main () async {
         ChangeNotifierProvider(create: (_) => RegisterViewModel()),
         ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<AuthService>())),
         // altri ViewModel
+        ChangeNotifierProvider(create: (_) => MapViewModel()),
       ],
       child: MyApp(),
     ),
@@ -37,7 +40,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Login',
-      home: LoginPage(),
+      home: MapPage(),
     );
   }
 }
