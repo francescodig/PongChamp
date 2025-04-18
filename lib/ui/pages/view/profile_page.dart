@@ -1,13 +1,12 @@
+import 'package:PongChamp/ui/pages/widgets/app_bar.dart';
+import 'package:PongChamp/ui/pages/widgets/bottom_navbar.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile Page'),
-        backgroundColor: Colors.blue,
-      ),
+      appBar:CustomAppBar(),
       body: Center(
         child: Text(
           'Ciao',
@@ -18,6 +17,8 @@ class ProfilePage extends StatelessWidget {
           ),
         ),
       ),
+      bottomNavigationBar: CustomNavBar(
+      ),      
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:PongChamp/ui/pages/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/ui/pages/viewmodel/register_view_model.dart';
@@ -12,16 +13,7 @@ class RegisterPage extends StatelessWidget {
     final viewModel = Provider.of<RegisterViewModel>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("PongChamp", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.yellow,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        toolbarHeight: 130,
-        centerTitle: true,
-      ),
+      appBar: CustomAppBar(),
       body: Center(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 32.0),

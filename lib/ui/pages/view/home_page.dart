@@ -1,3 +1,4 @@
+import 'package:PongChamp/ui/pages/widgets/bottom_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'login_page.dart';
@@ -27,6 +28,8 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: CustomNavBar(
       ),
     );
   }
