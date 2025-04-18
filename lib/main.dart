@@ -6,6 +6,7 @@ import 'ui/pages/viewmodel/register_view_model.dart';
 import 'ui/pages/viewmodel/login_view_model.dart';
 import 'ui/pages/widgets/login_page.dart';
 import 'data/services/auth_service.dart';
+import 'ui/pages/view/settings_page.dart';
 
 import 'ui/pages/viewmodel/map_view_model.dart';
 
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Login',
-      home: LoginPage(),
+      home: SettingsPage(),
     );
   }
 }
