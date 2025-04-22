@@ -1,8 +1,4 @@
-import 'package:PongChamp/ui/pages/view/organises_page.dart';
-import 'package:PongChamp/ui/pages/view/profile_page.dart';
-import 'package:PongChamp/ui/pages/view/settings_page.dart';
 import 'package:PongChamp/ui/pages/widgets/bottom_navbar.dart';
-import 'package:PongChamp/ui/pages/widgets/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';

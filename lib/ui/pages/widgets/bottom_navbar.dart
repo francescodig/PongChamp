@@ -10,7 +10,7 @@ class CustomNavBar extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-            color: Colors.yellow,
+            color: Colors.yellowAccent,
             padding: EdgeInsets.symmetric(vertical: 10),
             child:
               Row(
