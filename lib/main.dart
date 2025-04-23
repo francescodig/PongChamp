@@ -7,7 +7,8 @@ import 'ui/pages/viewmodel/login_view_model.dart';
 import 'ui/pages/widgets/login_page.dart';
 import 'data/services/auth_service.dart';
 import 'ui/pages/viewmodel/map_view_model.dart';
-import "ui/pages/view/settings_page.dart";
+import "ui/pages/view/home_page.dart";
+import '/ui/pages/viewmodel/events_view_model.dart';
 
 void main () async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +22,7 @@ void main () async {
         ChangeNotifierProvider(create: (_) => RegisterViewModel()),
         ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<AuthService>())),
         ChangeNotifierProvider(create: (_) => MapViewModel()),
+        ChangeNotifierProvider(create: (_) => EventViewModel()..fetchEvents()),
         // altri ViewModel
         
       ],
@@ -29,15 +31,13 @@ void main () async {
   );
 }
 
-
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Login',
-      home: SettingsPage(),
+      home: HomePage(),
     );
   }
 }

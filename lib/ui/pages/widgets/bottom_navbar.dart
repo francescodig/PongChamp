@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:PongChamp/ui/pages/view/organises_page.dart';
-import 'package:PongChamp/ui/pages/view/profile_page.dart';
-import 'package:PongChamp/ui/pages/view/map_page.dart';
-import 'package:PongChamp/ui/pages/widgets/home_page.dart';
-import 'package:PongChamp/ui/pages/view/settings_page.dart';
+import '/ui/pages/view/events_page.dart';
+import '/ui/pages/view/profile_page.dart';
+import '/ui/pages/view/map_page.dart';
+import '/ui/pages/widgets/home_page.dart';
+import '/ui/pages/view/settings_page.dart';
 
 
 class CustomNavBar extends StatelessWidget{
@@ -32,7 +32,7 @@ class CustomNavBar extends StatelessWidget{
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => OrganisesPage()),
+                      MaterialPageRoute(builder: (context) => EventsPage()),
                     );
                   },
                 ),
