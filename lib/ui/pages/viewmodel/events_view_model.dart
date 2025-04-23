@@ -1,4 +1,4 @@
-import '/domain/models/event_model.dart';
+import 'package:PongChamp/domain/models/event_model.dart';
 import 'package:flutter/material.dart';
 
 class EventViewModel extends ChangeNotifier {

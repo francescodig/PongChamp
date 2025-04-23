@@ -6,17 +6,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget{
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: false,
       actionsPadding: EdgeInsets.all(10),
       toolbarHeight: 80,
       centerTitle: true,
       backgroundColor: Colors.yellowAccent,
       title: Text("PongChamp", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
       ),
-      leading: 
-        IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
       actions: [
         Row(
           spacing: 10,
