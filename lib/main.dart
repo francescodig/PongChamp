@@ -1,7 +1,6 @@
-import 'package:PongChamp/data/services/post_service.dart';
-import 'package:PongChamp/data/services/repositories/post_repository.dart';
-import 'package:PongChamp/ui/pages/viewmodel/post_view_model.dart';
-
+import '/data/services/post_service.dart';
+import '/data/services/repositories/post_repository.dart';
+import '/ui/pages/viewmodel/post_view_model.dart';
 import '../config/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '/ui/pages/view/events_page.dart';
 import '/ui/pages/view/profile_page.dart';
 import '/ui/pages/view/map_page.dart';
-import '/ui/pages/widgets/home_page.dart';
+import '/ui/pages/view/home_page.dart';
 import '/ui/pages/view/settings_page.dart';
 
 

@@ -1,4 +1,4 @@
-import 'package:PongChamp/ui/pages/viewmodel/events_view_model.dart';
+import '/ui/pages/viewmodel/events_view_model.dart';
 import 'package:provider/provider.dart';
 import '/ui/pages/widgets/app_bar.dart';
 import '/ui/pages/widgets/bottom_navbar.dart';

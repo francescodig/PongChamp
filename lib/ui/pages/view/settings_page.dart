@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:PongChamp/ui/pages/view/profile_page.dart';
-import 'package:PongChamp/ui/pages/widgets/bottom_navbar.dart';
-import 'package:PongChamp/ui/pages/widgets/app_bar.dart';
+import '/ui/pages/view/profile_page.dart';
+import '/ui/pages/widgets/bottom_navbar.dart';
+import '/ui/pages/widgets/app_bar.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
