@@ -1,3 +1,5 @@
+import '/ui/pages/widgets/app_bar.dart';
+import '/ui/pages/widgets/bottom_navbar.dart';
 import '/ui/pages/viewmodel/post_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,11 +15,7 @@ class HomePage extends StatelessWidget {
     final postViewModel = Provider.of<PostViewModel>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Home", style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        backgroundColor: Colors.yellow,
-      ),
+      appBar: CustomAppBar(),
       body: StreamBuilder<List<Post>>(
         // Ascoltiamo lo stream dei post dal ViewModel
         stream: postViewModel.getPostsStream(),
@@ -53,6 +51,8 @@ class HomePage extends StatelessWidget {
             },
           );
         },
+      ),
+      bottomNavigationBar: CustomNavBar(
       ),
     );
   }

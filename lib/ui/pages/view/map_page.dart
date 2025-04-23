@@ -50,65 +50,8 @@ class _MapPageState extends State<MapPage> {
             },
             myLocationEnabled: true,
           ),
-          bottomNavigationBar: Container(
-            color: Colors.yellow,
-            padding: EdgeInsets.symmetric(vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.group),
-                  color: Colors.grey[700],
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.list),
-                  color: Colors.grey[700],
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => OrganisesPage()),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.map),
-                  color: Colors.grey[700],
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MapPage()),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.person),
-                  color: Colors.grey[700],
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.settings),
-                  color: Colors.grey[700],
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SettingsPage()),
-                    );
-                  },
-                ),
-              ],
-            ),
-      ),
+          bottomNavigationBar: CustomNavBar(
+          ),
     );
   }
 }

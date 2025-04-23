@@ -13,15 +13,11 @@ class RegisterPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("PongChamp", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.yellow,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        toolbarHeight: 130,
-        centerTitle: true,
-      ),
+              centerTitle: true,
+              toolbarHeight: 130,
+              title: Text("PongChamp", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+              backgroundColor: Colors.yellow,
+            ),
       body: Center(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 32.0),

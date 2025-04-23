@@ -1,23 +1,144 @@
 import 'package:flutter/material.dart';
+import '/ui/pages/view/profile_page.dart';
+import '/ui/pages/widgets/bottom_navbar.dart';
+import '/ui/pages/widgets/app_bar.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Settings Page'),
-        backgroundColor: Colors.blue,
-      ),
-      body: Center(
-        child: Text(
-          'Ciao',
-          style: TextStyle(
-            fontSize: 40,
-            fontWeight: FontWeight.bold,
-            color: Colors.blue,
+     appBar: CustomAppBar(),
+      body: 
+        Container(
+          margin: EdgeInsets.all(12),
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.black),
+          ),
+          child: Column(
+            spacing: 20,
+            children: [
+              Text("Impostazioni",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold
+                ),            
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                spacing: 7,
+                children: [
+                  Container( 
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    margin: EdgeInsets.symmetric(vertical: 6),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black), // colore del contorno
+                      borderRadius: BorderRadius.circular(8),  // bordi arrotondati
+                      color: Colors.white, // colore sfondo (opzionale)
+                    ),
+                    child:
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Informazioni App"),
+                          IconButton(onPressed: (){},
+                            icon: Icon(Icons.arrow_right,size: 35,))
+                        ],
+                      ),
+                      ),
+                  Container( 
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    margin: EdgeInsets.symmetric(vertical: 6),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black), // colore del contorno
+                      borderRadius: BorderRadius.circular(8),  // bordi arrotondati
+                      color: Colors.white, // colore sfondo (opzionale)
+                    ),
+                    child:
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Modifica Profilo"),
+                          IconButton(onPressed: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => ProfilePage()),
+                            );                            
+                          }, icon: Icon(Icons.arrow_right,size: 35,))
+                        ],
+                      ),
+                      ),
+                  Container( 
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    margin: EdgeInsets.symmetric(vertical: 6),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black), // colore del contorno
+                      borderRadius: BorderRadius.circular(8),  // bordi arrotondati
+                      color: Colors.white, // colore sfondo (opzionale)
+                    ),
+                    child:
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Lingua"),
+                          IconButton(onPressed: (){}, icon: Icon(Icons.arrow_right,size: 35,))
+                        ],
+                      ),
+                      ),
+                  Container( 
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    margin: EdgeInsets.symmetric(vertical: 6),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black), // colore del contorno
+                      borderRadius: BorderRadius.circular(8),  // bordi arrotondati
+                      color: Colors.white, // colore sfondo (opzionale)
+                    ),
+                    child:
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Note Legali"),
+                          IconButton(onPressed: (){}, icon: Icon(Icons.arrow_right,size: 35,))
+                        ],
+                      ),
+                      ),
+                  Container( 
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    margin: EdgeInsets.symmetric(vertical: 6),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black), // colore del contorno
+                      borderRadius: BorderRadius.circular(8),  // bordi arrotondati
+                      color: Colors.white, // colore sfondo (opzionale)
+                    ),
+                    child:
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Privacy"),
+                          IconButton(onPressed: (){}, icon: Icon(Icons.arrow_right,size: 35,))
+                        ],
+                      ),
+                      ),
+                ],
+              ),
+              SizedBox(
+                width: 100,
+                height: 50,
+                child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text('Log out'),
+              ),)
+            ],
           ),
         ),
-      ),
-    );
+      bottomNavigationBar: CustomNavBar()
+);
   }
 }

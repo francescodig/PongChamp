@@ -1,4 +1,4 @@
-import 'package:PongChamp/ui/pages/viewmodel/post_view_model.dart';
+import '/ui/pages/viewmodel/post_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '/domain/models/post_model.dart';
