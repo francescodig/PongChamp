@@ -1,32 +1,62 @@
+import '/ui/pages/viewmodel/post_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'login_page.dart';
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '/domain/models/post_model.dart';
+import '../widgets/PostCard.dart'; // dove hai il widget PostCard
+import '../viewmodel/post_view_model.dart'; // il tuo ViewModel
+
 class HomePage extends StatelessWidget {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  Future<void> _logout(BuildContext context) async {
-    await _auth.signOut();
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
-  }
-
   @override
   Widget build(BuildContext context) {
+    // Otteniamo l’istanza del PostViewModel tramite Provider
+    final postViewModel = Provider.of<PostViewModel>(context);
+
     return Scaffold(
-      appBar: AppBar(title: Text("Home")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Welcome! You are logged in."),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => _logout(context),
-              child: Text("Logout"),
-            ),
-          ],
-        ),
+      appBar: AppBar(
+        title: Text("Home", style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: Colors.yellow,
+      ),
+      body: StreamBuilder<List<Post>>(
+        // Ascoltiamo lo stream dei post dal ViewModel
+        stream: postViewModel.getPostsStream(),
+        builder: (context, snapshot) {
+
+
+          // Mostriamo un indicatore di caricamento finché lo stream non ha dati
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          // Se c’è un errore nello stream, mostriamo un messaggio di errore
+          if (snapshot.hasError) {
+            return Center(child: Text('Errore nel caricamento dei post.'));
+          }
+
+          // Se i dati sono vuoti, mostriamo un messaggio appropriato
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('Nessun post disponibile.'));
+          }
+
+          // Prendiamo i post dal risultato dello stream
+          final posts = snapshot.data!;
+
+          // Visualizziamo i post usando una ListView
+          return ListView.builder(
+            itemCount: posts.length,
+            itemBuilder: (context, index) {
+              final post = posts[index];
+
+              // Usiamo il widget PostCard per mostrare il singolo post
+              return PostCard(post: post);
+            },
+          );
+        },
       ),
     );
   }
