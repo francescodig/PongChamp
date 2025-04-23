@@ -12,5 +12,8 @@ class PostRepository {
   Future<void> addLikeToPost(String postId, int likes) async {
     await service.addLikeToPost(postId, likes);
   }
+  Future<void> removeLikeFromPost(String postId, int likes) async {
+    await service.removeLikeFromPost(postId, likes);
+  }
 
 }

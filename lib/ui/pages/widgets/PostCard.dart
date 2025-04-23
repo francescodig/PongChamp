@@ -1,3 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 import '/ui/pages/viewmodel/post_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +16,8 @@ class PostCard extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final postViewModel = Provider.of<PostViewModel>(context, listen: false);
-
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final hasLiked = post.likedBy.contains(userId); // Controlla se l'utente ha già messo "mi piace"
 
 
    return Card(
@@ -69,8 +73,16 @@ class PostCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.thumb_up, color: Colors.blue),
-                  onPressed: () => postViewModel.addLikeToPost(post), // Aggiungi qui la logica per mettere "mi piace"{
+                  icon:  Icon(Icons.thumb_up, color: hasLiked ? Colors.blue : Colors.grey),
+                  onPressed: () {
+                    if (hasLiked) {
+                      postViewModel.removeLikeFromPost(post);
+                      // Rimuovi il like se l'utente ha già messo "mi piace"
+                    } else {
+                      postViewModel.addLikeToPost(post);
+                      // Aggiungi il like se l'utente non ha ancora messo "mi piace"
+                    }
+                  },
                 ),
                 Text(
                   '${post.likes} likes',
