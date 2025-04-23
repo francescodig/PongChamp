@@ -11,7 +11,7 @@ class AppUser {
   String phoneNumber;
   String email;
   String password;
-  Image? profileImage;
+  String profileImage;
   DateTime birthDay;
   String sex;
   String nickname;
@@ -39,9 +39,7 @@ class AppUser {
       phoneNumber: data['phoneNumber'],
       email: data['email'],
       password: data['password'],
-      profileImage: data['profileImageUrl'] != null
-          ? Image.network(data['profileImageUrl'])
-          : null,
+      profileImage: data['profileImage'],
       birthDay: (data['birthDay'] as Timestamp).toDate(),
       sex: data['sex'],
       nickname: data['nickname'],
@@ -56,9 +54,7 @@ class AppUser {
       phoneNumber: map['phoneNumber'],
       email: map['email'],
       password: map['password'],
-      profileImage: map['profileImageUrl'] != null
-          ? Image.network(map['profileImageUrl'])
-          : null,
+      profileImage: map['profileImage'],
       birthDay: (map['birthDay'] as Timestamp).toDate(),
       sex: map['sex'] ?? '',
       nickname: map['nickname'] ?? '',
@@ -72,17 +68,17 @@ class AppUser {
       'phoneNumber': phoneNumber,
       'email': email,
       'password': password,
-      'profileImageUrl':  profileImage?.image.toString(), // lo gestirai separatamente quando salvi l'immagine
+      'profileImage':  profileImage, // lo gestirai separatamente quando salvi l'immagine
       'birthDay': birthDay,
       'sex': sex,
       'nickname': nickname,
     };
   }
 
-  // Metodo per aggiungere l'URL immagine se necessario
-  void setProfileImageUrl(String url) {
-    profileImage = Image.network(url);
-  }
+  ImageProvider get proPic => profileImage != null
+      ? NetworkImage(profileImage)
+      : const AssetImage('');
+  
 }
 
 

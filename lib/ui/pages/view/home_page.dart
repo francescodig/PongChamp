@@ -1,14 +1,10 @@
 import '/ui/pages/viewmodel/post_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
-import 'login_page.dart';
 
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '/domain/models/post_model.dart';
 import '../widgets/PostCard.dart'; // dove hai il widget PostCard
-import '../viewmodel/post_view_model.dart'; // il tuo ViewModel
+// il tuo ViewModel
 
 class HomePage extends StatelessWidget {
   @override

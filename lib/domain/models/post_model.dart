@@ -8,16 +8,15 @@ class Post {
   AppUser user;
   PongMatch match;
   int likes;
-  Image? image;
-  String? imageUrl; // URL dell'immagine
+  String? image; // URL dell'immagine
 
 
 
   Post({
     required this.user,
     required this.match,
-    required this.image,
     required this.likes,
+    required this.image,
     required this.id,
   });
 
@@ -37,9 +36,7 @@ class Post {
     likes: (data['likes'] as int?) ?? 0,
 
     // Se è presente l'immagine, la carica da URL, altrimenti null
-    image: data['image'] != null
-        ? Image.network(data['image'])
-        : null,
+    image: data['image'],
   );
 }
 
@@ -50,9 +47,7 @@ class Post {
     user: AppUser.fromMap(map['user'] as Map<String, dynamic>, docId),
     match: PongMatch.fromMap(map['match'] as Map<String, dynamic>, docId),
     likes: (map['likes'] as int?) ?? 0,
-    image: map['image'] != null
-        ? Image.network(map['image'])
-        : null,
+    image: map['image'],
   );
   }
 
@@ -62,10 +57,15 @@ class Post {
       'user': user.toMap(),
       'match': match.toMap(),
       'likes': likes,
-      'image': imageUrl, // se non c'è immagine, metti null, altrimenti converti in un URL
+      'image': image, // se non c'è immagine, metti null, altrimenti converti in un URL
     };
   
 
 
   }
+
+   /// Getter utile per usare facilmente l'immagine profilo
+  ImageProvider get postImage => image != null
+      ? NetworkImage(image!)
+      : const AssetImage('');
 }

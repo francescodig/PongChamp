@@ -31,8 +31,7 @@ class PostCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 24,
-                  backgroundImage: post.user.profileImage?.image ??
-                      const AssetImage('assets/default_profile.png') as ImageProvider,
+                  backgroundImage: post.user.proPic,
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -48,14 +47,14 @@ class PostCard extends StatelessWidget {
             if (post.image != null)
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: post.image!,
+                child: Image(image: post.postImage),
               ),
 
             const SizedBox(height: 12),
 
             // 🏓 Dettagli della partita
             Text(
-              '${post.match.user1.profileImage}  ${post.match.user1.nickname} ${post.match.score1} - ${post.match.score2} ${post.match.user2.nickname}',
+              '${post.match.user1.nickname} ${post.match.score1} - ${post.match.score2} ${post.match.user2.nickname}',
               style: const TextStyle(fontSize: 14),
             ),
             Text(

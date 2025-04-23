@@ -1,9 +1,11 @@
+import 'package:PongChamp/ui/pages/view/map_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/ui/pages/viewmodel/login_view_model.dart';
 import '/data/services/auth_service.dart';
 import 'register_page.dart';
 import 'home_page.dart';
+import 'map_page.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
@@ -94,7 +96,7 @@ class LoginPage extends StatelessWidget {
                           if (success) {
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => HomePage()),
+                              MaterialPageRoute(builder: (context) => MapPage()),
                             );
                           }
                         },
