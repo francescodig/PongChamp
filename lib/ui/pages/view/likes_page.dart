@@ -1,0 +1,46 @@
+import 'package:PongChamp/domain/models/user_models.dart';
+import 'package:PongChamp/ui/pages/viewmodel/post_view_model.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '/domain/models/user_models.dart';
+
+class LikesPage extends StatelessWidget {
+  final String postId;
+
+  const LikesPage({super.key, required this.postId});
+
+  @override
+  Widget build(BuildContext context) {
+    final postViewModel = Provider.of<PostViewModel>(context, listen: false);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Mi piace')),
+      body: FutureBuilder<List<AppUser>>(
+        future: postViewModel.getUsersWhoLikedPost(postId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Errore nel caricamento. ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('Nessun like per questo post. '));
+          }
+
+          final users = snapshot.data!;
+          return ListView.builder(
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              final user = users[index];
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: user.proPic,
+                ),
+                title: Text(user.nickname),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}

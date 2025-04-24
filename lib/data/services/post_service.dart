@@ -1,4 +1,5 @@
 import 'package:PongChamp/domain/models/post_model.dart';
+import 'package:PongChamp/domain/models/user_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -55,5 +56,26 @@ class PostService {
       });
  
   }
+
+ Future<List<AppUser>> getUsersWhoLikedPost(String postId) async {
+  final postDoc = await FirebaseFirestore.instance.collection('Post').doc(postId).get();
+
+  if (!postDoc.exists) return [];
+
+  final data = postDoc.data();
+  final likedByIds = List<String>.from(data?['likedBy'] ?? []);
+
+  List<AppUser> likedUsersList = [];
+
+  for (final userId in likedByIds) {
+    final userDoc = await FirebaseFirestore.instance.collection('User').doc(userId).get();
+    if (userDoc.exists) {
+      likedUsersList.add(AppUser.fromFirestore(userDoc));
+    }
+  }
+
+  return likedUsersList;
+}
+
 }
 

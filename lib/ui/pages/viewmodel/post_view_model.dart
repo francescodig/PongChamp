@@ -1,3 +1,4 @@
+import 'package:PongChamp/domain/models/user_models.dart';
 import 'package:flutter/foundation.dart';
 
 import '/data/services/repositories/post_repository.dart';
@@ -21,5 +22,8 @@ class PostViewModel extends ChangeNotifier {
     // Puoi usare il repository per interagire con il servizio
     await repository.removeLikeFromPost(post.id, post.likes);
     notifyListeners(); // Notifica i listener dopo aver aggiornato il post
+  }
+  Future<List<AppUser>> getUsersWhoLikedPost(String postId) async {
+    return await repository.getUsersWhoLikedPost(postId);
   }
 }

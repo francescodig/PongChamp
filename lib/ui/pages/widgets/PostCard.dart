@@ -1,3 +1,4 @@
+import 'package:PongChamp/ui/pages/view/likes_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -115,7 +116,7 @@ class PostCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
-                  icon:  Icon(Icons.thumb_up, color: hasLiked ? Colors.blue : Colors.grey),
+                  icon:  Icon(Icons.favorite, color: hasLiked ? Colors.red : Colors.grey),
                   onPressed: () {
                     if (hasLiked) {
                       postViewModel.removeLikeFromPost(post);
@@ -126,10 +127,22 @@ class PostCard extends StatelessWidget {
                     }
                   },
                 ),
-                Text(
+                GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => LikesPage(postId: post.id),
+                    ),
+                  );
+                },
+                child: Text(
                   '${post.likes} likes',
-                  style: const TextStyle(fontSize: 12),
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
                 ),
+              ),
               ],
             ),
           ],

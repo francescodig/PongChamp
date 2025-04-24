@@ -1,3 +1,5 @@
+import 'package:PongChamp/domain/models/user_models.dart';
+
 import '/data/services/post_service.dart';
 import '/domain/models/post_model.dart';
 
@@ -15,5 +17,9 @@ class PostRepository {
   Future<void> removeLikeFromPost(String postId, int likes) async {
     await service.removeLikeFromPost(postId, likes);
   }
+  Future<List<AppUser>> getUsersWhoLikedPost(String postId) async {
+    return await service.getUsersWhoLikedPost(postId);
+  }
+
 
 }
