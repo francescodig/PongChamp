@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import '/domain/models/match_model.dart';
 import '/domain/models/user_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +11,7 @@ class Post {
   PongMatch match;
   int likes;
   String? image; // URL dell'immagine
+  List<String> likedBy; // Lista di utenti che hanno messo like
 
 
 
@@ -18,6 +21,7 @@ class Post {
     required this.likes,
     required this.image,
     required this.id,
+    required this.likedBy,
   });
 
   factory Post.fromFirestore(DocumentSnapshot doc) {
@@ -33,10 +37,12 @@ class Post {
     match: PongMatch.fromMap(data['match'] as Map<String, dynamic>, doc.id),
 
     // Protezione nel caso 'likes' non esista o sia null
-    likes: (data['likes'] as int?) ?? 0,
+    likes: (data['likes'] ) ?? 0,
 
     // Se è presente l'immagine, la carica da URL, altrimenti null
     image: data['image'],
+
+    likedBy: (data['likedBy'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [], // Converte la lista di likedBy in una lista di stringhe
   );
 }
 
@@ -48,6 +54,8 @@ class Post {
     match: PongMatch.fromMap(map['match'] as Map<String, dynamic>, docId),
     likes: (map['likes'] as int?) ?? 0,
     image: map['image'],
+    likedBy: (map['likedBy'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [], // Converte la lista di likedBy in una lista di stringhe
+
   );
   }
 
@@ -58,6 +66,7 @@ class Post {
       'match': match.toMap(),
       'likes': likes,
       'image': image, // se non c'è immagine, metti null, altrimenti converti in un URL
+      'likedBy': likedBy, // Lista di utenti che hanno messo like
     };
   
 

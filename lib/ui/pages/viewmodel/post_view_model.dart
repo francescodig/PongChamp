@@ -16,4 +16,10 @@ class PostViewModel extends ChangeNotifier {
     await repository.addLikeToPost(post.id, post.likes);
     notifyListeners(); // Notifica i listener dopo aver aggiornato il post
   }
+  Future<void> removeLikeFromPost(Post post) async {
+    // Implementa la logica per rimuovere un like dal post
+    // Puoi usare il repository per interagire con il servizio
+    await repository.removeLikeFromPost(post.id, post.likes);
+    notifyListeners(); // Notifica i listener dopo aver aggiornato il post
+  }
 }
