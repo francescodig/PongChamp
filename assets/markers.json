@@ -18,6 +18,26 @@
       "id": "marker4",
       "latitude": 42.352685,
       "longitude": 13.393779
+    },
+    {
+      "id": "marker5",
+      "latitude": 42.470792, 
+      "longitude": 14.208945
+    },
+    {
+      "id": "marker6",
+      "latitude": 41.933935, 
+      "longitude": 12.454080
+    },
+    {
+      "id": "marker7",
+      "latitude": 42.370236, 
+      "longitude": 13.357760
+    },
+    {
+      "id": "marker8",
+      "latitude": 42.503402, 
+      "longitude": 14.165759
     }
 ]
   
