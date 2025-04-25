@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class AppUser {
   
   
-  final String id;
+  final String? id;
   String name;
   String surname;
   String phoneNumber;
@@ -18,7 +18,7 @@ class AppUser {
 
 
   AppUser({
-  required this.id,
+  this.id,
   required this.name, 
   required this.surname, 
   required this.phoneNumber, 
