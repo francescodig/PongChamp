@@ -6,8 +6,30 @@ class RegisterViewModel extends ChangeNotifier {
   
   String? errorMessage;
 
-  Future<bool> register(String email, String password) async {
-    final result = await _authService.registerWithEmailAndPassword(email, password);
+  Future<bool> register( 
+    String email, 
+    String password, 
+    String name,
+    String surname,
+    String nickname,
+    String phoneNumber,
+    String sex,
+    String birthday,
+    String profileImage,
+  ) async {
+
+
+    final result = await _authService.registerWithEmailAndPassword(
+      email,
+      password,
+      name,
+      surname,
+      nickname,
+      phoneNumber,
+      sex,
+      birthday,
+      profileImage,
+    );
 
     if (result != null) {
       switch (result) {
@@ -24,7 +46,7 @@ class RegisterViewModel extends ChangeNotifier {
           errorMessage = "The password is too weak.";
           break;
         default:
-          errorMessage = "Registration failed. Try again.";
+          errorMessage = "Registration failed. Try again. ${result}";
       }
       notifyListeners();
       return false;
