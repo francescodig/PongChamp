@@ -1,3 +1,5 @@
+import '/ui/pages/view/events_page.dart';
+
 import '/data/services/post_service.dart';
 import '/data/services/repositories/post_repository.dart';
 import '/ui/pages/viewmodel/post_view_model.dart';
@@ -7,10 +9,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'ui/pages/viewmodel/register_view_model.dart';
 import 'ui/pages/viewmodel/login_view_model.dart';
-import 'ui/pages/view/login_page.dart';
+//import 'ui/pages/view/login_page.dart';
 import 'data/services/auth_service.dart';
 import 'ui/pages/viewmodel/map_view_model.dart';
-import "ui/pages/view/home_page.dart";
+//import "ui/pages/view/home_page.dart";
 import '/ui/pages/viewmodel/events_view_model.dart';
 
 void main () async {
@@ -50,7 +52,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Login',
-      home: LoginPage(),
+      home: EventsPage(),
     );
   }
 }

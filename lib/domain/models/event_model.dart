@@ -1,3 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+
+//**DA RIVEDERE**
+// Gli attributi username e location dovrebbero prendere oggetti particolari e non stringhe 
+
 class Event {
   final String id;
   final String title;
@@ -6,6 +12,8 @@ class Event {
   final int participants;
   final int maxParticipants;
   final String matchType;
+  final DateTime? createdAt;
+  final DateTime orario; 
 
   Event({
     required this.id,
@@ -15,6 +23,8 @@ class Event {
     required this.participants,
     required this.maxParticipants,
     required this.matchType,
+    required this.createdAt,
+    required this.orario,
   });
 
   /// Factory per costruire un Event da JSON (es. da un'API)
@@ -27,6 +37,8 @@ class Event {
       participants: json['participants'] as int,
       maxParticipants: json['maxParticipants'] as int,
       matchType: json['matchType'] as String,
+      createdAt: json['createdAt'] as DateTime,
+      orario : json['orario'] as DateTime,
     );
   }
 
@@ -40,7 +52,61 @@ class Event {
       'participants': participants,
       'maxParticipants': maxParticipants,
       'matchType': matchType,
+      'orario' : orario,
     };
   }
 
+  /// Converte una mappa di Firestore in un oggetto Event
+  factory Event.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return Event(
+      id: doc.id,
+      username: data['username'] ?? '',
+      title: data['title'] ?? '',
+      location: data['location'] ?? '',
+      participants: data['participants'] ?? 0,
+      maxParticipants: data['maxParticipants'] ?? 0,
+      matchType: data['matchType'] ?? '',
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      orario: (data['orario'] as Timestamp).toDate(),
+    );
+  }
+
+  /// Converte un oggetto Event in una mappa per Firestore
+  Map<String, dynamic> toFirestore() {
+    return {
+      'username': username,
+      'title': title,
+      'location': location,
+      'participants': participants,
+      'maxParticipants': maxParticipants,
+      'matchType': matchType,
+      'createdAt': Timestamp.fromDate(createdAt ?? DateTime.now()),
+      'orario': Timestamp.fromDate(orario),
+    };
+  }
+
+  ///Crea una copia modificabile
+  Event copyWith({
+    String? id,
+    String? title,
+    String? location,
+    String? username,
+    int? participants,
+    int? maxParticipants,
+    String? matchType,
+    DateTime? createdAt,
+  }) {
+    return Event(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      location: location ?? this.location,
+      username: username ?? this.username,
+      participants: participants ?? this.participants,
+      maxParticipants: maxParticipants ?? this.maxParticipants,
+      matchType: matchType ?? this.matchType,
+      createdAt: createdAt ?? this.createdAt,
+      orario : orario ?? this.orario,
+    );
+  }
 }

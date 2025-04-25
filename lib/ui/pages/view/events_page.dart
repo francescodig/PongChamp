@@ -1,3 +1,4 @@
+import '/ui/pages/view/create_event_page.dart';
 import '/ui/pages/viewmodel/events_view_model.dart';
 import 'package:provider/provider.dart';
 import '/ui/pages/widgets/app_bar.dart';
@@ -10,10 +11,6 @@ class EventsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) { 
     final viewModel = context.watch<EventViewModel>();
-
-    if (viewModel.isLoading){
-      return Center(child: CircularProgressIndicator());
-    }
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -48,37 +45,38 @@ class EventsPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => CreateEventPage()),
+                      );
+                  },
                   child: Text("Organizza")
                   ),
               ],
             ),
-            Column(
-              children: [
-                CustomCard(
-                  username: 'lavan_dino60',
-                  eventTitle: 'More Tacci',
-                  location: 'Pin Palace',
-                  participants: 1,
-                  maxParticipants: 2,
-                  matchType: '1 VS 1',
-                  onTapPartecipate: () {
-                    print('Partecipazione inviata!');
-                  },
-                ),
-                CustomCard(
-                  username: 'lavan_dino60',
-                  eventTitle: 'TORNEONE',
-                  location: 'Pin Palace',
-                  participants: 1,
-                  maxParticipants: 4,
-                  matchType: 'Torneo',
-                  onTapPartecipate: () {
-                    print('Partecipazione inviata!');
-                  },
-                ),
-              ],
-            ),
+            
+            viewModel.isLoading ? Center(child: CircularProgressIndicator())
+            : viewModel.events.isEmpty ? Center(child: Text('Nessun evento disponibile'))
+            : ListView.builder(
+                shrinkWrap: true,
+                itemCount: viewModel.events.length,
+                itemBuilder: (context, index) {
+                  final event = viewModel.events[index];
+                  return CustomCard(
+                    username: event.username,
+                    eventTitle: event.title,
+                    location: event.location,
+                    participants: event.participants,
+                    maxParticipants: event.maxParticipants,
+                    matchType: event.matchType,
+                    onTapPartecipate: () {
+                        // Per ora lasciamo il pulsante come non operativo
+                    },
+                  );
+                },
+              ),
+
           ],),
       ),
       bottomNavigationBar: CustomNavBar(
