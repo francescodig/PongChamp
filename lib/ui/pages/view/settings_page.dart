@@ -1,3 +1,6 @@
+import 'package:PongChamp/ui/pages/view/informazioni_page.dart';
+import 'package:PongChamp/ui/pages/view/legal_notes_page.dart';
+import 'package:PongChamp/ui/pages/view/privacy_page.dart';
 import 'package:flutter/material.dart';
 import '/ui/pages/view/profile_page.dart';
 import '/ui/pages/widgets/bottom_navbar.dart';
@@ -41,7 +44,12 @@ class SettingsPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("Informazioni App"),
-                          IconButton(onPressed: (){},
+                          IconButton(onPressed: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => PrivacyPage()),
+                            );                            
+                          },
                             icon: Icon(Icons.arrow_right,size: 35,))
                         ],
                       ),
@@ -98,7 +106,12 @@ class SettingsPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("Note Legali"),
-                          IconButton(onPressed: (){}, icon: Icon(Icons.arrow_right,size: 35,))
+                          IconButton(onPressed: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => LegalNotesPage()),
+                            );                            
+                          }, icon: Icon(Icons.arrow_right,size: 35,))
                         ],
                       ),
                       ),
@@ -115,7 +128,12 @@ class SettingsPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("Privacy"),
-                          IconButton(onPressed: (){}, icon: Icon(Icons.arrow_right,size: 35,))
+                          IconButton(onPressed: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => InformazioniPage()),
+                            );
+                          }, icon: Icon(Icons.arrow_right,size: 35,))
                         ],
                       ),
                       ),
