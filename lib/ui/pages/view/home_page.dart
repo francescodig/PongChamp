@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
 
           // Se c’è un errore nello stream, mostriamo un messaggio di errore
           if (snapshot.hasError) {
-            return Center(child: Text('Errore nel caricamento dei post.'));
+            return Center(child: Text('Errore nel caricamento dei post. ${snapshot.error} ${snapshot.data}'));
           }
 
           // Se i dati sono vuoti, mostriamo un messaggio appropriato

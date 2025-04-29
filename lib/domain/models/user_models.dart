@@ -34,13 +34,13 @@ class AppUser {
     final data = doc.data() as Map<String, dynamic>;
     return AppUser(
       id: doc.id,
-      name: data['name'],
-      surname: data['surname'],
+      name: data['Name'],
+      surname: data['Surname'],
       phoneNumber: data['phoneNumber'],
       email: data['email'],
       password: data['password'],
       profileImage: data['profileImage'],
-      birthDay: (data['birthDay'] as Timestamp).toDate(),
+      birthDay: (data['birthday'] as Timestamp).toDate(),
       sex: data['sex'],
       nickname: data['nickname'],
     );
@@ -49,13 +49,13 @@ class AppUser {
   factory AppUser.fromMap(Map<String, dynamic> map, String docId) {
     return AppUser(
       id: docId,
-      name: map['name'],
-      surname: map['surname'],
+      name: map['Name'],
+      surname: map['Surname'],
       phoneNumber: map['phoneNumber'],
       email: map['email'],
       password: map['password'],
       profileImage: map['profileImage'],
-      birthDay: (map['birthDay'] as Timestamp).toDate(),
+      birthDay: (map['birthday'] as Timestamp).toDate(),
       sex: map['sex'] ?? '',
       nickname: map['nickname'] ?? '',
     );
@@ -63,13 +63,14 @@ class AppUser {
 
   Map<String, dynamic> toMap() {
     return {
-      'name': name,
-      'surname': surname,
+      'id': id,
+      'Name': name,
+      'Surname': surname,
       'phoneNumber': phoneNumber,
       'email': email,
       'password': password,
       'profileImage':  profileImage, // lo gestirai separatamente quando salvi l'immagine
-      'birthDay': birthDay,
+      'birthday': birthDay,
       'sex': sex,
       'nickname': nickname,
     };
