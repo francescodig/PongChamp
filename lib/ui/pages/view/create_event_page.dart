@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 class CreateEventPage extends StatelessWidget {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _maxParticipantsController = TextEditingController();
 
 
@@ -50,12 +49,6 @@ class CreateEventPage extends StatelessWidget {
             TextFormField(
               controller: _locationController,
               decoration: InputDecoration(labelText: 'Luogo'
-              ),
-              validator: (value) => value!.isEmpty ? 'Campo obbligatorio' : null,
-            ),
-            TextFormField(
-              controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'
               ),
               validator: (value) => value!.isEmpty ? 'Campo obbligatorio' : null,
             ),
@@ -137,7 +130,6 @@ class CreateEventPage extends StatelessWidget {
                 viewModel.creaEvento(
                   title: _titleController.text,
                   location: _locationController.text,
-                  username: _usernameController.text,
                   orario : selectedDateTime.value!,
                   maxParticipants: int.tryParse(_maxParticipantsController.text) ?? 2,
                   matchType: selectedMatchType.value!,

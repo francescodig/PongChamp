@@ -56,27 +56,29 @@ class EventsPage extends StatelessWidget {
               ],
             ),
             
-            viewModel.isLoading ? Center(child: CircularProgressIndicator())
+            viewModel.isLoading ? Center(child: CircularProgressIndicator(color: Colors.black,))
             : viewModel.events.isEmpty ? Center(child: Text('Nessun evento disponibile'))
-            : ListView.builder(
-                shrinkWrap: true,
-                itemCount: viewModel.events.length,
-                itemBuilder: (context, index) {
-                  final event = viewModel.events[index];
-                  return CustomCard(
-                    username: event.username,
-                    eventTitle: event.title,
-                    location: event.location,
-                    participants: event.participants,
-                    maxParticipants: event.maxParticipants,
-                    matchType: event.matchType,
-                    onTapPartecipate: () {
+            : Expanded( //serve ad evitare problemi nello scroll della ListView
+                child: 
+                ListView.builder(
+                  itemCount: viewModel.events.length,
+                  itemBuilder: (context, index) {
+                    final event = viewModel.events[index];
+                    return CustomCard(
+                      creatorNickname: event.creatorNickname,
+                      creatorProfileImage: event.creatorProfileImage,
+                      eventTitle: event.title,
+                      location: event.location,
+                      participants: event.participants,
+                      maxParticipants: event.maxParticipants,
+                      matchType: event.matchType,
+                      onTapPartecipate: () {
                         // Per ora lasciamo il pulsante come non operativo
-                    },
-                  );
-                },
+                      },
+                    );
+                  },
+                ),
               ),
-
           ],),
       ),
       bottomNavigationBar: CustomNavBar(

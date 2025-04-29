@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CustomCard extends StatelessWidget {
-  final String username;
+  final String creatorNickname;
+  final String creatorProfileImage;
   final String eventTitle;
   final String location;
   final int participants;
@@ -11,7 +12,8 @@ class CustomCard extends StatelessWidget {
 
   const CustomCard({
     Key? key,
-    required this.username,
+    required this.creatorNickname,
+    required this.creatorProfileImage,
     required this.eventTitle,
     required this.location,
     required this.participants,
@@ -38,11 +40,11 @@ class CustomCard extends StatelessWidget {
             children: [
               Column(
                 children: [
-                  CircleAvatar(
+                  CircleAvatar(foregroundImage: NetworkImage(creatorProfileImage),
                     radius: 20,
                     child: Icon(Icons.person),
                   ),
-                  Text(username, style: TextStyle(fontSize: 14)),
+                  Text(creatorNickname, style: TextStyle(fontSize: 14)),
                 ],
               ),
               Text(

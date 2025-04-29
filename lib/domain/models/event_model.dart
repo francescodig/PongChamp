@@ -2,13 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 //**DA RIVEDERE**
-// Gli attributi username e location dovrebbero prendere oggetti particolari e non stringhe 
+// Gli attributi username (parzialmente risolto con creatorId) e location dovrebbero prendere oggetti particolari e non stringhe 
 
 class Event {
   final String id;
   final String title;
   final String location;
-  final String username;
+  final String creatorId;
+  final String creatorNickname;
+  final String creatorProfileImage;
   final int participants;
   final int maxParticipants;
   final String matchType;
@@ -19,7 +21,9 @@ class Event {
     required this.id,
     required this.title,
     required this.location,
-    required this.username,
+    required this.creatorId,
+    required this.creatorNickname,
+    required this.creatorProfileImage,    
     required this.participants,
     required this.maxParticipants,
     required this.matchType,
@@ -31,7 +35,9 @@ class Event {
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
       id: json['id'] as String,
-      username: json['username'] as String,
+      creatorId: json['creatorId'] as String,
+      creatorNickname: json['creatorNickname'] as String,
+      creatorProfileImage: json['creatorProfileImage'] as String,
       title: json['title'] as String,
       location: json['location'] as String,
       participants: json['participants'] as int,
@@ -46,7 +52,9 @@ class Event {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'username': username,
+      'creatorId': creatorId,
+      'creatorNickname': creatorNickname,
+      'creatorProfileImage': creatorProfileImage,
       'title': title,
       'location': location,
       'participants': participants,
@@ -61,7 +69,9 @@ class Event {
     final data = doc.data() as Map<String, dynamic>;
     return Event(
       id: doc.id,
-      username: data['username'] ?? '',
+      creatorId: data['creatorId'] ?? "",
+      creatorNickname: data['creatorNickname'] ?? "",
+      creatorProfileImage: data['creatorProfileImage'] ?? "",
       title: data['title'] ?? '',
       location: data['location'] ?? '',
       participants: data['participants'] ?? 0,
@@ -75,7 +85,9 @@ class Event {
   /// Converte un oggetto Event in una mappa per Firestore
   Map<String, dynamic> toFirestore() {
     return {
-      'username': username,
+      'creatorId': creatorId,
+      'creatorNickname': creatorNickname,
+      'creatorProfileImage': creatorProfileImage,
       'title': title,
       'location': location,
       'participants': participants,
@@ -91,7 +103,9 @@ class Event {
     String? id,
     String? title,
     String? location,
-    String? username,
+    String? creatorId,
+    String? creatorNickname,
+    String? creatorProfileImage,
     int? participants,
     int? maxParticipants,
     String? matchType,
@@ -101,12 +115,14 @@ class Event {
       id: id ?? this.id,
       title: title ?? this.title,
       location: location ?? this.location,
-      username: username ?? this.username,
+      creatorId: creatorId ?? this.creatorId,
+      creatorNickname: creatorNickname ?? this.creatorNickname,
+      creatorProfileImage: creatorProfileImage ?? this.creatorProfileImage,
       participants: participants ?? this.participants,
       maxParticipants: maxParticipants ?? this.maxParticipants,
       matchType: matchType ?? this.matchType,
       createdAt: createdAt ?? this.createdAt,
-      orario : orario ?? this.orario,
+      orario : orario /*?? this.orario*/,
     );
   }
 }

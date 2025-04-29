@@ -17,19 +17,35 @@ class EventService {
   ///Recupero degli eventi non ancora scaduti
 
   Future<List<Event>> fetchUpcomingEvents() async {
-  try {
-    final now = Timestamp.fromDate(DateTime.now());
-    final snapshot = await _eventsCollection
-        .where('orario', isGreaterThan: now)
-        .orderBy('orario') // opzionale ma utile
-        .get();
-    return snapshot.docs.map((doc) {
-      return Event.fromFirestore(doc);
-    }).toList();
-  } catch (e) {
-    print('Errore durante il fetch degli eventi futuri: $e');
-    return [];
+    try {
+      final now = Timestamp.fromDate(DateTime.now());
+      final snapshot = await _eventsCollection
+          .where('orario', isGreaterThan: now)
+          .orderBy('orario') // opzionale ma utile
+          .get();
+      return snapshot.docs.map((doc) {
+        return Event.fromFirestore(doc);
+      }).toList();
+    } catch (e) {
+      print('Errore durante il fetch degli eventi futuri: $e');
+      return [];
+    }
   }
-}
+
+  /// Ottiene tutti gli eventi creati da un certo utente
+  Future<List<Event>> fetchUserEvents(String creatorId) async {
+    try {
+      final snapshot = await _eventsCollection
+        .where('creatorId', isEqualTo: creatorId)
+        .orderBy('createdAt', descending: true)
+        .get();
+      return snapshot.docs.map((doc) {
+       return Event.fromFirestore(doc);
+      }).toList();
+    } catch (e) {
+      print('Errore durante il fetch degli eventi futuri: $e');
+      return [];
+    }
+  }
 
 }
