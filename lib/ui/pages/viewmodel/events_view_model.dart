@@ -46,6 +46,7 @@ class EventViewModel extends ChangeNotifier {
       location: location,
       participants: 1,
       maxParticipants: maxParticipants,
+      participantIds: [userId], //il creatore è il primo partecipante
       matchType: matchType,
       createdAt: null, //verrà assegnato dal Service (al momento del salvataggio su Firestore)
       orario : orario,
@@ -54,16 +55,15 @@ class EventViewModel extends ChangeNotifier {
     //4. Salva il nuovo Event
     final eventoSalvato = await _eventService.addEvent(nuovoEvento);
     _events.add(eventoSalvato);
-
     } catch (e) {
       print(e);
     } finally {
       _isLoading = false;
       notifyListeners();
-
     }
   }
    
+
   Future<void> fetchEvents() async {
     _isLoading = true;
     notifyListeners();
@@ -71,6 +71,7 @@ class EventViewModel extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
 
   Future<void> fetchUserEvents() async {
     _isLoading = true;
@@ -81,8 +82,35 @@ class EventViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void participate(Event event) {
-    // logica partecipazione
-    print("Partecipi a: ${event.title}");
+
+
+
+
+  Future<void> partecipateToEvent(Event evento) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final userId = user.uid;
+    // Controlla se l'utente è già nella lista
+    if (evento.participantIds.contains(userId)) {
+      debugPrint("L'utente è già iscritto all'evento."); //da modificare
+      return;
+    }
+    // Controlla se c'è ancora spazio
+    if (evento.participantIds.length >= evento.maxParticipants) {
+      debugPrint("L'evento ha raggiunto il numero massimo di partecipanti."); //da modificare
+      return;
+    }
+    try {
+      // Chiede al Service di aggiornare l'evento su Firestore
+      final updatedEvent = await _eventService.addParticipant(evento, userId);
+      // Aggiorna l'evento localmente
+      final index = _events.indexWhere((e) => e.id == evento.id);
+      if (index != -1) {
+        _events[index] = updatedEvent;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint("Errore durante la partecipazione: $e");
+    }
   }
 }

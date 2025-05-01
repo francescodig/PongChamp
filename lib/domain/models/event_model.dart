@@ -13,6 +13,7 @@ class Event {
   final String creatorProfileImage;
   final int participants;
   final int maxParticipants;
+  final List<String> participantIds;
   final String matchType;
   final DateTime? createdAt;
   final DateTime orario; 
@@ -26,6 +27,7 @@ class Event {
     required this.creatorProfileImage,    
     required this.participants,
     required this.maxParticipants,
+    required this.participantIds,
     required this.matchType,
     required this.createdAt,
     required this.orario,
@@ -42,6 +44,7 @@ class Event {
       location: json['location'] as String,
       participants: json['participants'] as int,
       maxParticipants: json['maxParticipants'] as int,
+      participantIds: json['participantIds'] as List<String>,
       matchType: json['matchType'] as String,
       createdAt: json['createdAt'] as DateTime,
       orario : json['orario'] as DateTime,
@@ -59,6 +62,7 @@ class Event {
       'location': location,
       'participants': participants,
       'maxParticipants': maxParticipants,
+      'participantIds': participantIds,
       'matchType': matchType,
       'orario' : orario,
     };
@@ -76,6 +80,7 @@ class Event {
       location: data['location'] ?? '',
       participants: data['participants'] ?? 0,
       maxParticipants: data['maxParticipants'] ?? 0,
+      participantIds: List<String>.from(data['participantIds'] ?? []),
       matchType: data['matchType'] ?? '',
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       orario: (data['orario'] as Timestamp).toDate(),
@@ -92,6 +97,7 @@ class Event {
       'location': location,
       'participants': participants,
       'maxParticipants': maxParticipants,
+      'participantIds': participantIds,
       'matchType': matchType,
       'createdAt': Timestamp.fromDate(createdAt ?? DateTime.now()),
       'orario': Timestamp.fromDate(orario),
@@ -108,6 +114,7 @@ class Event {
     String? creatorProfileImage,
     int? participants,
     int? maxParticipants,
+    List<String>? participantIds,
     String? matchType,
     DateTime? createdAt,
   }) {
@@ -120,6 +127,7 @@ class Event {
       creatorProfileImage: creatorProfileImage ?? this.creatorProfileImage,
       participants: participants ?? this.participants,
       maxParticipants: maxParticipants ?? this.maxParticipants,
+      participantIds: participantIds ?? this.participantIds,
       matchType: matchType ?? this.matchType,
       createdAt: createdAt ?? this.createdAt,
       orario : orario /*?? this.orario*/,

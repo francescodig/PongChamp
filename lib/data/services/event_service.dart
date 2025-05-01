@@ -48,4 +48,23 @@ class EventService {
     }
   }
 
+  Future<Event> addParticipant(Event event, String userId) async {
+    //eseguiamo anche qui un controllo per evitare errori (es: race conditions)
+    if (event.participantIds.contains(userId)) {
+      throw Exception('Utente già iscritto a questo evento.');
+    }
+    if (event.participantIds.length >= event.maxParticipants) {
+      throw Exception('Numero massimo di partecipanti raggiunto.');
+    }
+    // Aggiunta dell'utente
+    final updatedParticipantIds = [...event.participantIds, userId];
+    final updatedParticipantsCount = updatedParticipantIds.length;
+    final updatedEvent = event.copyWith(
+      participantIds: updatedParticipantIds,
+      participants: updatedParticipantsCount,
+    );
+    await _eventsCollection.doc(event.id).update(updatedEvent.toFirestore());
+    return updatedEvent;
+  }
+
 }

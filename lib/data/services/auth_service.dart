@@ -1,3 +1,5 @@
+import '/domain/models/user_models.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
@@ -36,6 +38,10 @@ class AuthService {
   }
 }
 
+Future<AppUser> fetchUserById(String userId) async {
+  final doc = await FirebaseFirestore.instance.collection('User').doc(userId).get();
+  return AppUser.fromFirestore(doc);
+}
 
 Future<void> signOut() async {
   await _auth.signOut();

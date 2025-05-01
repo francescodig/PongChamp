@@ -72,8 +72,8 @@ class EventsPage extends StatelessWidget {
                       participants: event.participants,
                       maxParticipants: event.maxParticipants,
                       matchType: event.matchType,
-                      onTapPartecipate: () {
-                        // Per ora lasciamo il pulsante come non operativo
+                      onTapPartecipate: () async {
+                        await viewModel.partecipateToEvent(event);
                       },
                     );
                   },
