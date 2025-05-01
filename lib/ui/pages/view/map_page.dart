@@ -1,3 +1,4 @@
+import 'package:PongChamp/ui/pages/widgets/app_bar.dart';
 import 'package:PongChamp/ui/pages/widgets/bottom_navbar.dart';
 
 import 'package:flutter/material.dart';
@@ -34,10 +35,7 @@ class _MapPageState extends State<MapPage> {
     final viewModel = Provider.of<MapViewModel>(context);  //uso il provider per accedere al viewmodel
 
     return Scaffold( 
-      appBar: AppBar(
-        title: const Text("Mappa"),
-        backgroundColor: Colors.yellow,
-      ),
+      appBar: CustomAppBar(),
       body: viewModel.isLoading
         ? Center(child: CircularProgressIndicator())  // mostro un caricamento finché i marker non sono pronti
         : GoogleMap(

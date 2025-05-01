@@ -4,6 +4,7 @@ import '/ui/pages/view/profile_page.dart';
 import '/ui/pages/view/map_page.dart';
 import '/ui/pages/view/home_page.dart';
 import '/ui/pages/view/settings_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 class CustomNavBar extends StatelessWidget{
@@ -62,8 +63,10 @@ class CustomNavBar extends StatelessWidget{
                 IconButton(
                   icon: Icon(Icons.person),
                   color: Colors.black,
-                  onPressed: () {
-                    navigateTo(ProfilePage(), '/profile'); // Naviga alla ProfilePage
+                  onPressed: () async {
+                    String userId = FirebaseAuth.instance.currentUser!.uid;
+                    // naviga passando l'userId alla ProfilePage
+                    navigateTo(ProfilePage(userId: userId), '/profile');
                   },
                 ),
                 IconButton(

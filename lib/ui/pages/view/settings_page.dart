@@ -1,7 +1,12 @@
+import 'package:PongChamp/ui/pages/view/informazioni_page.dart';
+import 'package:PongChamp/ui/pages/view/legal_notes_page.dart';
+import 'package:PongChamp/ui/pages/view/login_page.dart';
+import 'package:PongChamp/ui/pages/view/privacy_page.dart';
 import 'package:flutter/material.dart';
 import '/ui/pages/view/profile_page.dart';
 import '/ui/pages/widgets/bottom_navbar.dart';
 import '/ui/pages/widgets/app_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -41,7 +46,12 @@ class SettingsPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("Informazioni App"),
-                          IconButton(onPressed: (){},
+                          IconButton(onPressed: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => PrivacyPage()),
+                            );                            
+                          },
                             icon: Icon(Icons.arrow_right,size: 35,))
                         ],
                       ),
@@ -59,12 +69,17 @@ class SettingsPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("Modifica Profilo"),
-                          IconButton(onPressed: (){
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => ProfilePage()),
-                            );                            
-                          }, icon: Icon(Icons.arrow_right,size: 35,))
+                          IconButton(
+                            onPressed: () async {
+                              final String? userId = FirebaseAuth.instance.currentUser?.uid;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfilePage(userId: userId!),
+                                ),
+                              );
+                            },icon: Icon(Icons.arrow_right,size: 35,)
+                          ),
                         ],
                       ),
                       ),
@@ -98,7 +113,12 @@ class SettingsPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("Note Legali"),
-                          IconButton(onPressed: (){}, icon: Icon(Icons.arrow_right,size: 35,))
+                          IconButton(onPressed: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => LegalNotesPage()),
+                            );                            
+                          }, icon: Icon(Icons.arrow_right,size: 35,))
                         ],
                       ),
                       ),
@@ -115,7 +135,12 @@ class SettingsPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("Privacy"),
-                          IconButton(onPressed: (){}, icon: Icon(Icons.arrow_right,size: 35,))
+                          IconButton(onPressed: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => InformazioniPage()),
+                            );
+                          }, icon: Icon(Icons.arrow_right,size: 35,))
                         ],
                       ),
                       ),
@@ -125,7 +150,16 @@ class SettingsPage extends StatelessWidget {
                 width: 100,
                 height: 50,
                 child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  FirebaseAuth.instance.signOut().then((value) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                    );
+                  }).catchError((e) {
+                    print(e);
+                  });
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
