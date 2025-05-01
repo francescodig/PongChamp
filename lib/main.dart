@@ -1,3 +1,7 @@
+import 'package:PongChamp/data/services/repositories/user_post_repository.dart';
+import 'package:PongChamp/data/services/user_post_service.dart';
+import 'package:PongChamp/ui/pages/viewmodel/profile_view_model.dart';
+
 import '/data/services/post_service.dart';
 import '/data/services/repositories/post_repository.dart';
 import '/ui/pages/viewmodel/post_view_model.dart';
@@ -12,6 +16,7 @@ import 'data/services/auth_service.dart';
 import 'ui/pages/viewmodel/map_view_model.dart';
 import "ui/pages/view/home_page.dart";
 import '/ui/pages/viewmodel/events_view_model.dart';
+import 'domain/models/post_model.dart';
 
 void main () async {
 
@@ -29,17 +34,19 @@ void main () async {
   );
   runApp(
     MultiProvider(
-      providers: [
-        Provider<AuthService>(create: (_) => AuthService()),
-        ChangeNotifierProvider(create: (_) => RegisterViewModel()),
-        ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<AuthService>())),
-        Provider<PostViewModel>.value(value: postViewModel),
-        ChangeNotifierProvider(create: (_) => MapViewModel()),
-        ChangeNotifierProvider(create: (_) => EventViewModel()..fetchEvents()),
-        // altri ViewModel
-        
-      ],
-      child: MyApp(),
+    providers: [
+      Provider<AuthService>(create: (_) => AuthService()),
+      ChangeNotifierProvider(create: (_) => RegisterViewModel()),
+      ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<AuthService>())),
+      Provider<PostViewModel>.value(value: postViewModel),
+      ChangeNotifierProvider(create: (_) => MapViewModel()),
+      ChangeNotifierProvider(create: (_) => EventViewModel()..fetchEvents()),
+      Provider<PostRepository>(create: (_) => PostRepository(postService)),
+      Provider<UserPostService>(create: (_) => UserPostService()),
+      ProxyProvider<UserPostService, UserPostRepository>(update: (_, userPostService, __) => UserPostRepository(userPostService),),
+      ChangeNotifierProvider(create: (context) => ProfileViewModel(context.read<UserPostRepository>(),),),
+    ],
+    child: MyApp(),
     ),
   );
 }
