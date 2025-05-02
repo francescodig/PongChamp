@@ -1,3 +1,5 @@
+import '/ui/pages/view/user_events_page.dart';
+import '/domain/models/event_model.dart';
 import '/ui/pages/view/create_event_page.dart';
 import '/ui/pages/viewmodel/events_view_model.dart';
 import 'package:provider/provider.dart';
@@ -8,9 +10,82 @@ import 'package:flutter/material.dart';
 
 class EventsPage extends StatelessWidget {
   
+  void onTapPartecipate(BuildContext context, Event event, EventViewModel viewModel) async {
+    final userId = viewModel.userId;
+    if (event.participantIds.contains(userId)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Row(
+          children: [
+          Icon(Icons.check_circle, color: Colors.white),
+          SizedBox(width: 8),
+          Text("Stai già partecipando all'evento!", style: TextStyle(color: Colors.white),),
+          ],
+        ),
+        backgroundColor: Colors.black,
+        duration: Duration(seconds: 1)),
+      );
+      return;
+    }
+    if (event.participantIds.length >= event.maxParticipants) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Row(
+          children: [
+          Icon(Icons.close_rounded, color: Colors.white),
+          SizedBox(width: 8),
+          Text("L'evento è al completo!", style: TextStyle(color: Colors.white),),
+          ],
+        ),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 1)),
+      );
+      return;
+    }
+    try {
+      await viewModel.partecipateToEvent(event);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Row(
+          children: [
+          Icon(Icons.check_circle, color: Colors.white),
+          SizedBox(width: 8),
+          Text("Iscrizione completata con successo!", style: TextStyle(color: Colors.white),),
+          ],
+        ),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 1)),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Row(
+          children: [
+          Icon(Icons.mood_bad_sharp, color: Colors.white),
+          SizedBox(width: 8),
+          Text("Errore durante la partecipazione!", style: TextStyle(color: Colors.white),),
+          ],
+        ),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 1)),
+      );
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) { 
     final viewModel = context.watch<EventViewModel>();
+
+    String currentRoute = ModalRoute.of(context)?.settings.name ?? '';
+    void navigateTo(Widget page, String routeName) {
+      if (currentRoute != routeName) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => page,
+            settings: RouteSettings(name: routeName),
+          ),
+          (route) => route.isFirst, //Prende la route e ne conserva solo la prima (presumibilmente Home)
+        );
+      }
+    }
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -24,17 +99,19 @@ class EventsPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextButton.icon(
+                TextButton(
                   style: ButtonStyle(
                     foregroundColor: WidgetStateProperty.all(Colors.black),
+                    backgroundColor: WidgetStateProperty.all(Colors.yellowAccent),                    
                     shape: WidgetStateProperty.all(
                       RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)
                       ),
                     ),
                   ),
-                  onPressed: () {},
-                  icon: Icon(Icons.filter_list,color: Colors.black,),
-                  label: Text("Filtri"),
+                  onPressed: () {
+                    navigateTo(UserEventsPage(), '/userEvents');;
+                  },
+                  child: Text("Miei Eventi")
                   ),
                 TextButton(
                   style: ButtonStyle(
@@ -72,9 +149,10 @@ class EventsPage extends StatelessWidget {
                       participants: event.participants,
                       maxParticipants: event.maxParticipants,
                       matchType: event.matchType,
-                      onTapPartecipate: () async {
-                        await viewModel.partecipateToEvent(event);
-                      },
+                      orario: event.orario,
+                      onTapPartecipate: (){
+                        onTapPartecipate(context,event,viewModel);
+                        }
                     );
                   },
                 ),

@@ -37,7 +37,6 @@ class EventService {
     try {
       final snapshot = await _eventsCollection
         .where('creatorId', isEqualTo: creatorId)
-        .orderBy('createdAt', descending: true)
         .get();
       return snapshot.docs.map((doc) {
        return Event.fromFirestore(doc);

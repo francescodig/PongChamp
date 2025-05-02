@@ -14,7 +14,9 @@ class EventViewModel extends ChangeNotifier {
   bool _isLoading = false;
   
   List<Event> get events => _events;
+  List<Event> get userEvents => _userEvents;
   bool get isLoading => _isLoading;
+  String? get userId => _authService.currentUserId;
 
   Future<void> creaEvento({
     required String title,
@@ -81,10 +83,6 @@ class EventViewModel extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
-
-
-
-
 
   Future<void> partecipateToEvent(Event evento) async {
     final user = FirebaseAuth.instance.currentUser;

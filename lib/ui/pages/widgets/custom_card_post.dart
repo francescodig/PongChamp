@@ -1,5 +1,15 @@
 import 'package:flutter/material.dart';
 
+String formatDateTimeManually(DateTime dateTime) {
+  String day = dateTime.day.toString().padLeft(2, '0');
+  String month = dateTime.month.toString().padLeft(2, '0');
+  String year = dateTime.year.toString();
+  String hour = dateTime.hour.toString().padLeft(2, '0');
+  String minute = dateTime.minute.toString().padLeft(2, '0');
+
+  return '$day/$month/$year\n$hour:$minute';
+}
+
 class CustomCard extends StatelessWidget {
   final String creatorNickname;
   final String creatorProfileImage;
@@ -9,6 +19,7 @@ class CustomCard extends StatelessWidget {
   final int maxParticipants;
   final String matchType;
   final VoidCallback onTapPartecipate;
+  final DateTime orario;
 
   const CustomCard({
     Key? key,
@@ -20,80 +31,97 @@ class CustomCard extends StatelessWidget {
     required this.maxParticipants,
     required this.matchType,
     required this.onTapPartecipate,
+    required this.orario,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(12),
+    final formattedTime = formatDateTimeManually(orario);
+
+    return Card(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// RIGA 1: Avatar + nome + titolo + partecipanti
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                children: [
-                  CircleAvatar(foregroundImage: NetworkImage(creatorProfileImage),
-                    radius: 20,
-                    child: Icon(Icons.person),
-                  ),
-                  Text(creatorNickname, style: TextStyle(fontSize: 14)),
-                ],
-              ),
-              Text(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// Riga profilo + nickname
+            Row(
+              children: [
+                CircleAvatar(
+                  backgroundImage: NetworkImage(creatorProfileImage),
+                  radius: 24,
+                ),
+                SizedBox(width: 12),
+                Text(
+                  creatorNickname,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+            SizedBox(height: 12),
+
+            /// Titolo evento
+            Center(
+              child: Text(
                 eventTitle,
                 style: TextStyle(
-                  color: Colors.red,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  color: Colors.red[700],
                 ),
               ),
-              Column(
-                children: [
-                  Icon(Icons.group),
-                  Text('$participants/$maxParticipants'),
-                ],
-              ),
-            ],
-          ),
+            ),
+            SizedBox(height: 12),
 
-          /// RIGA 2: posizione + bottone + tipo match
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextButton.icon(
-                onPressed: (){},
-                label: Text(
-                  location,
-                  style: TextStyle(
-                    color: Colors.black
-                  ),
+            /// Info secondarie
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.location_on_outlined, size: 20),
+                    SizedBox(width: 4),
+                    Text('$location\n$formattedTime'),
+                  ],
                 ),
-                icon: Icon(Icons.location_on_outlined,color: Colors.black,),
-              ),
-              ElevatedButton(
-                onPressed: onTapPartecipate,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                Text(
+                  matchType,
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                child: Text('Partecipa'),
-              ),
-              Text(matchType, style: TextStyle(fontWeight: FontWeight.bold)),
-            ],
-          ),
-        ],
+              ],
+            ),
+            SizedBox(height: 8),
+
+            /// Partecipanti e bottone
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.group),
+                    SizedBox(width: 4),
+                    Text('$participants / $maxParticipants'),
+                  ],
+                ),
+                ElevatedButton(
+                  onPressed: onTapPartecipate,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  ),
+                  child: Text('Partecipa'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
