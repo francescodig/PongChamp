@@ -6,7 +6,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<String?> registerWithEmailAndPassword(String email, String password) async {
+  String? get currentUserId => FirebaseAuth.instance.currentUser?.uid;
+
+  Future<String?> registerWithEmailAndPassword(
+    String email, 
+    String password,
+    String name,
+    String surname,
+    String nickname,
+    String phoneNumber,
+    String sex,
+    String birthDay,
+    String profileImage,
+    ) async {
     try {
       final result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       final user = result.user; // success
@@ -60,6 +72,11 @@ class AuthService {
   } catch (e) {
     return "unknown-error";
   }
+}
+
+Future<AppUser> fetchUserById(String userId) async {
+  final doc = await FirebaseFirestore.instance.collection('User').doc(userId).get();
+  return AppUser.fromFirestore(doc);
 }
 
 
