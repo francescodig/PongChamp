@@ -1,20 +1,12 @@
+import '/domain/models/user_models.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<String?> registerWithEmailAndPassword(
-    String email, 
-    String password,
-    String name,
-    String surname,
-    String nickname,
-    String phoneNumber,
-    String sex,
-    String birthDay,
-    String profileImage,
-    )  async {
+  Future<String?> registerWithEmailAndPassword(String email, String password) async {
     try {
       final result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       final user = result.user; // success
@@ -70,7 +62,7 @@ class AuthService {
   }
 }
 
-// da implementare 
+
 Future<void> signOut() async {
   await _auth.signOut();
 }
