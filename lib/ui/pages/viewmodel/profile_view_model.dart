@@ -10,7 +10,7 @@ class ProfileViewModel extends ChangeNotifier {
   AppUser? _user;
 
   String? get profileImageUrl => _user?.profileImage;
-  String? get userName => _user?.surname;
+  String? get userName => _user?.nickname;
 
   final userId = FirebaseAuth.instance.currentUser!.uid;
   bool isLoading = true;
