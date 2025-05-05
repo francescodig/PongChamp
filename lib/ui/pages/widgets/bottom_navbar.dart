@@ -33,7 +33,7 @@ class CustomNavBar extends StatelessWidget{
 
 
     return Container(
-            color: Colors.yellowAccent,
+            color: Color.fromARGB(255, 245, 192, 41),
             padding: EdgeInsets.symmetric(vertical: 10),
             child:
               Row(

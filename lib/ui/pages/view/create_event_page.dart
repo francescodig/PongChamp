@@ -31,7 +31,7 @@ class CreateEventPage extends StatelessWidget {
         actionsPadding: EdgeInsets.all(10),
         toolbarHeight: 80,
         centerTitle: true,
-        backgroundColor: Colors.yellowAccent,
+        backgroundColor: Color.fromARGB(255, 245, 192, 41),
         title: Text("PongChamp", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
         ),
       ),
