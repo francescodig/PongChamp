@@ -1,4 +1,5 @@
 import 'package:PongChamp/ui/pages/view/likes_page.dart';
+import 'package:PongChamp/ui/pages/view/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -32,63 +33,143 @@ class PostCard extends StatelessWidget {
           children: [
 
             // 🧑‍🎤 Intestazione con avatar e nickname
-            Row(
-              children: [
-                CircleAvatar(
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ProfilePage(userId: post.user.id!),
+                    ),
+                  );
+                },
+                child: CircleAvatar(
                   radius: 24,
                   backgroundImage: post.user.proPic,
                 ),
-                const SizedBox(width: 12),
-                Text(
+              ),
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: () {
+                  print('Navigating to profile of userId: ${post.user.id}');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ProfilePage(userId: post.user.id!),
+                    ),
+                  );
+                },
+                child: Text(
                   post.user.nickname,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
 
             const SizedBox(height: 30),
 
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircleAvatar(
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Avatar user1
+                GestureDetector(
+                  onTap: () {
+                    print('Navigating to profile of userId: ${post.match.user1.id}');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProfilePage(userId: post.match.user1.id!),
+                      ),
+                    );
+                  },
+                  child: CircleAvatar(
                     radius: 12,
                     backgroundImage: post.match.user1.proPic,
                   ),
-                  const SizedBox(width: 12),
-                  Text(
+                ),
+                const SizedBox(width: 8),
+                // Nickname user1
+                GestureDetector(
+                  onTap: () {
+                    print('Navigating to profile of userId: ${post.match.user1.id}');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProfilePage(userId: post.match.user1.id!),
+                      ),
+                    );
+                  },
+                  child: Text(
                     post.match.user1.nickname,
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                  const SizedBox(width: 12),
-                  Text(
-                    post.match.score1.toString(),
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(width: 12),
-                  const Text(
-                    '-',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    post.match.score2.toString(),
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
+                ),
+                const SizedBox(width: 12),
+                // Score user1
+                Text(
+                  post.match.score1.toString(),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(width: 12),
+                // Separatore
+                const Text(
+                  '-',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(width: 12),
+                // Score user2
+                Text(
+                  post.match.score2.toString(),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(width: 12),
+                // Nickname user2
+                GestureDetector(
+                  onTap: () {
+                    print('Navigating to profile of userId: ${post.match.user2.id}');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProfilePage(userId: post.match.user2.id!),
+                      ),
+                    );
+                  },
+                  child: Text(
                     post.match.user2.nickname,
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                  const SizedBox(width: 12),
-                  CircleAvatar(
+                ),
+                const SizedBox(width: 8),
+                // Avatar user2
+                GestureDetector(
+                  onTap: () {
+                    print('Navigating to profile of userId: ${post.match.user2.id}');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProfilePage(userId: post.match.user2.id!),
+                      ),
+                    );
+                  },
+                  child: CircleAvatar(
                     radius: 12,
                     backgroundImage: post.match.user2.proPic,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
+          ),
+
+
+
+          
 
             const SizedBox(height: 30),
 

@@ -43,7 +43,11 @@ class CustomNavBar extends StatelessWidget{
                   icon: Icon(Icons.home),
                   color: Colors.black,
                   onPressed: () {
-                    navigateTo(HomePage(), '/home'); // Naviga alla HomePage
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) =>  HomePage()),
+                      (Route<dynamic> route) => false,
+                    );
                   },
                 ),
                 IconButton(

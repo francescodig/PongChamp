@@ -1,3 +1,4 @@
+import 'package:PongChamp/ui/pages/view/home_page.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget{
@@ -9,18 +10,27 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget{
       automaticallyImplyLeading: false,
       toolbarHeight: 120,
       backgroundColor: Color.fromARGB(255, 245, 192, 41),
-      title: Row(
+       title: Row(
         children: [
-          SizedBox(
+        GestureDetector(
+          onTap: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+              (Route<dynamic> route) => false, // Rimuove tutte le pagine
+            );
+          },
+          child: SizedBox(
             height: 70,
             child: Image.asset(
               'assets/logo.png',
               fit: BoxFit.contain,
             ),
           ),
-          // Se vuoi lasciare un po' di spazio dopo il logo:
-          SizedBox(width: 10),
-        ],
+        ),
+        const SizedBox(width: 10),
+      ],
+
       ),
       actionsPadding: EdgeInsets.all(10),
       actions: [

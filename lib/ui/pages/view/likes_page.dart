@@ -1,4 +1,5 @@
 import 'package:PongChamp/domain/models/user_models.dart';
+import 'package:PongChamp/ui/pages/view/profile_page.dart';
 import 'package:PongChamp/ui/pages/viewmodel/post_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,12 +32,22 @@ class LikesPage extends StatelessWidget {
             itemCount: users.length,
             itemBuilder: (context, index) {
               final user = users[index];
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: user.proPic,
-                ),
-                title: Text(user.nickname),
-              );
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundImage: user.proPic,
+            ),
+            title: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(userId: user.id),
+                  ),
+                );
+              },
+              child: Text(user.nickname),
+            ),
+          );
             },
           );
         },

@@ -1,5 +1,3 @@
-//import 'dart:ffi';
-
 import '/domain/models/match_model.dart';
 import '/domain/models/user_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -31,10 +29,10 @@ class Post {
     id: doc.id,
 
     // Conversione sicura dell'utente: controlla che sia una mappa
-    user: AppUser.fromMap(data['user'] as Map<String, dynamic>, doc.id),
+    user: AppUser.fromMap(data['user'] as Map<String, dynamic>, data['user']['id']),
 
     // Conversione sicura del match
-    match: PongMatch.fromMap(data['match'] as Map<String, dynamic>, doc.id),
+    match: PongMatch.fromMap(data['match'] as Map<String, dynamic>, data['match']['id']),
 
     // Protezione nel caso 'likes' non esista o sia null
     likes: (data['likes'] ) ?? 0,
@@ -50,8 +48,8 @@ class Post {
   factory Post.fromMap(Map<String, dynamic> map, String docId) {
      return Post(
     id: docId,
-    user: AppUser.fromMap(map['user'] as Map<String, dynamic>, docId),
-    match: PongMatch.fromMap(map['match'] as Map<String, dynamic>, docId),
+    user: AppUser.fromMap(map['user'] as Map<String, dynamic>, map['user']['id']),
+    match: PongMatch.fromMap(map['match'] as Map<String, dynamic>, map['match']['id']),
     likes: (map['likes'] as int?) ?? 0,
     image: map['image'],
     likedBy: (map['likedBy'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [], // Converte la lista di likedBy in una lista di stringhe
