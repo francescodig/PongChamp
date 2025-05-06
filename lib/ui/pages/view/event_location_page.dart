@@ -114,14 +114,16 @@ class EventLocationPage extends StatelessWidget {
                       creatorNickname: event.creatorNickname,
                       creatorProfileImage: event.creatorProfileImage,
                       eventTitle: event.title,
-                      location: event.location,
+                      location: event.locationId,
                       participants: event.participants,
                       maxParticipants: event.maxParticipants,
                       matchType: event.matchType,
                       orario: event.orario,
-                      onTapPartecipate: (){
+                      onTap: (){
                         onTapPartecipate(context,event,viewModel);
-                        }
+                        },
+                      buttonColor: Colors.green,
+                      buttonText: "Partecipa",
                     );
                   },
                 ),

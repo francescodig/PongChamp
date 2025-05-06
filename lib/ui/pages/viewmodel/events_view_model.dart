@@ -129,11 +129,9 @@ class EventViewModel extends ChangeNotifier {
     }
   }
 
-List<Event> getEventsByLocation(String location) {
-  return _events.where((event) => event.location.toLowerCase() == location.toLowerCase()).toList();
-}
-
-
+  List<Event> getEventsByLocation(String location) {
+    return _events.where((event) => event.locationId.toLowerCase() == location.toLowerCase()).toList();
+  }
 
   Future<bool> removeParticipant(Event event, String? userId) async{
     //Controllo se l'utente è partecipante
