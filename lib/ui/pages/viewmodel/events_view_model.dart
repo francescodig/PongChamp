@@ -111,4 +111,7 @@ class EventViewModel extends ChangeNotifier {
       debugPrint("Errore durante la partecipazione: $e");
     }
   }
+  List<Event> getEventsByLocation(String location) {
+  return _events.where((event) => event.location.toLowerCase() == location.toLowerCase()).toList();
+}
 }
