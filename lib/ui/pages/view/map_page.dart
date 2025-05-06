@@ -89,7 +89,6 @@ class _MapPageState extends State<MapPage> {
                       ),
               ),
               onChanged: (value) {
-                // Aggiungi un piccolo delay per evitare ricerche ad ogni carattere
                 Future.delayed(const Duration(milliseconds: 300), () {
                   if (value == _searchController.text) {
                     viewModel.searchMarkers(value);

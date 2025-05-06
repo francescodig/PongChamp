@@ -47,10 +47,10 @@ void main () async {
       Provider<PostRepository>(create: (_) => PostRepository(postService)),
       Provider<UserPostService>(create: (_) => UserPostService()),
       ProxyProvider<UserPostService, UserPostRepository>(update: (_, userPostService, __) => UserPostRepository(userPostService),),
-      ChangeNotifierProvider(create: (context) => ProfileViewModel(context.read<UserPostRepository>()),),
+      ChangeNotifierProvider(create: (context) => ProfileViewModel(context.read<UserPostRepository>()),) 
     ],
     child: MyApp(),
-    ),
+    )
   );
 }
 

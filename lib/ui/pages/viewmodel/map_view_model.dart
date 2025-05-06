@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:PongChamp/main.dart';
+import 'package:PongChamp/ui/pages/view/event_location_page.dart';
+import 'package:PongChamp/ui/pages/view/events_page.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -79,6 +81,14 @@ class MapViewModel extends ChangeNotifier {
             Text('Orario di apertura: ${markerData.orario}'),
             if (markerData.descrizione != null)
               Text('Descrizione: ${markerData.descrizione}'),
+            TextButton(
+              onPressed:() { Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EventLocationPage(location: markerData.id),
+                ),
+              );},
+              child: Text('Vai agli eventi')),
           ],
         ),
         actions: [
