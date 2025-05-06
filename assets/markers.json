@@ -2,42 +2,66 @@
     {
       "id": "marker1",
       "latitude": 42.358015, 
-      "longitude": 13.374789
+      "longitude": 13.374789,
+      "nome": "Ping Pong Accademy",
+      "descrizione": "Via dei Guinceri, 1, AQ",
+      "orario": "08:00 - 20:00"
     },
     {
       "id": "marker2",
       "latitude": 42.366884, 
-      "longitude": 13.374533
+      "longitude": 13.374533,
+      "nome": "posto2",
+      "descrizione": "Descrizione del posto 2",
+      "orario": "09:00 - 18:00"
     },
     {
       "id": "marker3",
       "latitude": 42.372934,
-      "longitude": 13.358346
+      "longitude": 13.358346,
+      "nome": "posto3",
+      "descrizione": "Descrizione del posto 3",
+      "orario": "10:00 - 19:00"
     },
     {
       "id": "marker4",
       "latitude": 42.352685,
-      "longitude": 13.393779
+      "longitude": 13.393779,
+      "nome": "posto4",
+      "descrizione": "Descrizione del posto 4",
+      "orario": "08:30 - 17:30"
     },
     {
       "id": "marker5",
       "latitude": 42.470792, 
-      "longitude": 14.208945
+      "longitude": 14.208945,
+      "nome": "posto5",
+      "descrizione": "Descrizione del posto 5",
+      "orario": "07:00 - 15:00"
     },
     {
       "id": "marker6",
       "latitude": 41.933935, 
-      "longitude": 12.454080
+      "longitude": 12.454080,
+      "nome": "posto6",
+      "descrizione": "Descrizione del posto 6",
+      "orario": "11:00 - 20:00"
     },
     {
       "id": "marker7",
       "latitude": 42.370236, 
-      "longitude": 13.357760
+      "longitude": 13.357760,
+      "nome": "posto7",
+      "descrizione": "Descrizione del posto 7",
+      "orario": "09:30 - 18:30"
     },
     {
       "id": "marker8",
       "latitude": 42.503402, 
-      "longitude": 14.165759
+      "longitude": 14.165759,
+      "nome": "posto8",
+      "descrizione": "Descrizione del posto 8",
+      "orario": "08:00 - 16:00"
     }
 ]
   

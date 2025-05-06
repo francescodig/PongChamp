@@ -33,7 +33,7 @@ class CustomNavBar extends StatelessWidget{
 
 
     return Container(
-            color: Colors.yellowAccent,
+            color: Color.fromARGB(255, 245, 192, 41),
             padding: EdgeInsets.symmetric(vertical: 10),
             child:
               Row(
@@ -43,7 +43,11 @@ class CustomNavBar extends StatelessWidget{
                   icon: Icon(Icons.home),
                   color: Colors.black,
                   onPressed: () {
-                    navigateTo(HomePage(), '/home'); // Naviga alla HomePage
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) =>  HomePage()),
+                      (Route<dynamic> route) => false,
+                    );
                   },
                 ),
                 IconButton(

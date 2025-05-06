@@ -102,7 +102,7 @@ class EventsPage extends StatelessWidget {
                 TextButton(
                   style: ButtonStyle(
                     foregroundColor: WidgetStateProperty.all(Colors.black),
-                    backgroundColor: WidgetStateProperty.all(Colors.yellowAccent),                    
+                    backgroundColor: WidgetStateProperty.all(Color.fromARGB(255, 245, 192, 41)),                    
                     shape: WidgetStateProperty.all(
                       RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)
                       ),
@@ -115,7 +115,7 @@ class EventsPage extends StatelessWidget {
                   ),
                 TextButton(
                   style: ButtonStyle(
-                    foregroundColor: WidgetStateProperty.all(Colors.white),
+                    foregroundColor: WidgetStateProperty.all(Colors.black),
                     backgroundColor: WidgetStateProperty.all(Colors.red),
                     shape: WidgetStateProperty.all(
                       RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)

@@ -1,6 +1,5 @@
-import '/data/services/repositories/user_post_repository.dart';
-import 'data/services/user_post_service.dart';
-import '/ui/pages/viewmodel/profile_view_model.dart';
+import 'package:PongChamp/domain/models/user_models.dart';
+
 import '/data/services/post_service.dart';
 import '/data/services/repositories/post_repository.dart';
 import '/ui/pages/viewmodel/post_view_model.dart';
@@ -14,6 +13,13 @@ import 'ui/pages/view/login_page.dart';
 import 'data/services/auth_service.dart';
 import 'ui/pages/viewmodel/map_view_model.dart';
 import '/ui/pages/viewmodel/events_view_model.dart';
+import 'domain/models/post_model.dart';
+import 'data/services/user_post_service.dart';
+import 'data/services/repositories/user_post_repository.dart';
+import 'ui/pages/viewmodel/profile_view_model.dart';
+
+
+
 
 void main () async {
 
@@ -41,7 +47,7 @@ void main () async {
       Provider<PostRepository>(create: (_) => PostRepository(postService)),
       Provider<UserPostService>(create: (_) => UserPostService()),
       ProxyProvider<UserPostService, UserPostRepository>(update: (_, userPostService, __) => UserPostRepository(userPostService),),
-      ChangeNotifierProvider(create: (context) => ProfileViewModel(context.read<UserPostRepository>(),),),
+      ChangeNotifierProvider(create: (context) => ProfileViewModel(context.read<UserPostRepository>()),),
     ],
     child: MyApp(),
     ),

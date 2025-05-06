@@ -21,19 +21,19 @@ class LoginPage extends StatelessWidget {
             final shouldLeave = await showDialog<bool>(
               context: context,
               builder: (context) => AlertDialog(
-                title: Text('Are you sure?', style: TextStyle(fontSize: 20, color: Colors.yellow)),
-                content: Text('Do you want to quit PongChamp?', style: TextStyle(fontSize: 15, color: Colors.yellow)),
+                title: Text('Are you sure?', style: TextStyle(fontSize: 20, color: Color.fromARGB(255, 245, 192, 41))),
+                content: Text('Do you want to quit PongChamp?', style: TextStyle(fontSize: 15, color: Color.fromARGB(255, 245, 192, 41))),
                 backgroundColor: Colors.black,
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(false),
                     style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.white)),
-                    child: Text('No', style: TextStyle(fontSize: 10, color: Colors.black)),
+                    child: Text('No', style: TextStyle(fontSize: 12, color: Colors.black)),
                   ),
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(true),
                     style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.white)),
-                    child: Text('Sì', style: TextStyle(fontSize: 10, color: Colors.black)),
+                    child: Text('Sì', style: TextStyle(fontSize: 12, color: Colors.black)),
                   ),
                 ],
               ),
@@ -42,10 +42,17 @@ class LoginPage extends StatelessWidget {
           },
           child: Scaffold(
             appBar: AppBar(
-              centerTitle: true,
-              toolbarHeight: 130,
-              title: Text("PongChamp", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-              backgroundColor: Colors.yellow,
+                automaticallyImplyLeading: false,
+                toolbarHeight: 150, // altezza personalizzata della AppBar
+                centerTitle: true,
+                backgroundColor: Color.fromARGB(255, 245, 192, 41),
+                title: SizedBox(
+                  height: 100, // altezza del logo
+                  child: Image.asset(
+                    'assets/logo.png',
+                    fit: BoxFit.contain,
+                  ),
+                ),
             ),
             body: Center(
               child: Padding(
@@ -105,7 +112,7 @@ class LoginPage extends StatelessWidget {
                           padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
-                        child: Text("Sign In", style: TextStyle(fontSize: 18, color: Colors.yellow)),
+                        child: Text("Sign In", style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 245, 192, 41))),
                       ),
                       SizedBox(height: 20),
                       ElevatedButton(
@@ -113,7 +120,7 @@ class LoginPage extends StatelessWidget {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterPage()));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.yellow,
+                          backgroundColor: Color.fromARGB(255, 245, 192, 41),
                           padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),

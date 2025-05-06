@@ -29,8 +29,8 @@ class PongMatch {
     final data = doc.data() as Map<String, dynamic>;
     return PongMatch(
       id: doc.id,
-      user1: AppUser.fromMap(data['user1'], doc.id),
-      user2: AppUser.fromMap(data['user2'], doc.id),
+      user1: AppUser.fromMap(data['user1'], data['user1']['id']),
+      user2: AppUser.fromMap(data['user2'], data['user2']['id']),
       score1: data['score1'],
       score2: data['score2'],
       date: (data['date'] as Timestamp).toDate(),
@@ -43,8 +43,8 @@ class PongMatch {
   factory PongMatch.fromMap(Map<String, dynamic> map, String docId) {
     return PongMatch(
       id: docId,
-      user1: AppUser.fromMap(map['user1'], docId),
-      user2: AppUser.fromMap(map['user2'], docId),
+      user1: AppUser.fromMap(map['user1'], map['user1']['id']),
+      user2: AppUser.fromMap(map['user2'], map['user2']['id']),
       score1: map['score1'],
       score2: map['score2'],
       date: (map['date'] as Timestamp).toDate(),

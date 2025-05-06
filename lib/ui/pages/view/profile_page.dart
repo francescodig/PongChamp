@@ -13,10 +13,9 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profileviewmodel = Provider.of<ProfileViewModel>(context, listen: false);
+    final profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
       profileViewModel.loadProfile(userId);
     });
 
@@ -28,37 +27,68 @@ class ProfilePage extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
-          return StreamBuilder<List<Post>>(
-            stream: Provider.of<ProfileViewModel>(context, listen: false).postStream,
-            builder: (context, snapshot) {
-              // Stati di caricamento
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Intestazione profilo con immagine e nome
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundImage: NetworkImage(viewModel.profileImageUrl ?? ''),
+                      backgroundColor: Colors.grey[300],
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        viewModel.userName ?? 'Utente',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
-              // Gestione errori
-              if (snapshot.hasError) {
-                return Center(child: Text('Errore: ${snapshot.error}'));
-              }
+              const Divider(),
 
-              // Se non ci sono dati
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text('Nessun post pubblicato'));
-              }
+              // Elenco post
+              Expanded(
+                child: StreamBuilder<List<Post>>(
+                  stream: viewModel.postStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-              // Lista dei post
-              final posts = snapshot.data!;
-              return ListView.builder(
-                itemCount: posts.length,
-                itemBuilder: (context, index) {
-                  return PostCard(post: posts[index]);
-                },
-              );
-            },
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Errore: ${snapshot.error}'));
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('Nessun post pubblicato'));
+                    }
+
+                    final posts = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: posts.length,
+                      itemBuilder: (context, index) {
+                        return PostCard(post: posts[index]);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),
       bottomNavigationBar: CustomNavBar(),
     );
-    }
+  }
 }
+

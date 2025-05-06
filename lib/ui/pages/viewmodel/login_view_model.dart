@@ -22,18 +22,19 @@ class LoginViewModel extends ChangeNotifier {
 
   String _getErrorMessage(String code) {
     switch (code) {
-      case 'invalid-email':
-        return "L'email inserita non è valida.";
-      case 'user-disabled':
-        return "L'utente è stato disabilitato.";
-      case 'user-not-found':
-        return "Nessun utente trovato con questa email.";
-      case 'wrong-password':
-        return "Password errata.";
-      case 'invalid-credential':
-        return "Credenziali errate o scadute.";
-      default:
-        return "Errore di accesso. Riprova.";
-    }
+    case 'invalid-email':
+      return "The email address is not valid.";
+    case 'user-disabled':
+      return "This user account has been disabled.";
+    case 'user-not-found':
+      return "No user found with this email address.";
+    case 'wrong-password':
+      return "Incorrect password.";
+    case 'invalid-credential':
+      return "Invalid credentials.";
+    default:
+      return "Login error. Please try again.";
+  }
+
   }
 }

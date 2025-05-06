@@ -1,3 +1,4 @@
+import 'package:PongChamp/ui/pages/view/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/ui/pages/viewmodel/register_view_model.dart';
@@ -70,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
               centerTitle: true,
               toolbarHeight: 130,
               title: Text("PongChamp", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-              backgroundColor: Colors.yellow,
+              backgroundColor: Color.fromARGB(255, 245, 192, 41),
             ),
       body: Center(
         child: Padding(
@@ -210,7 +211,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     if (success) {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (_) => LoginPage()),
+                        MaterialPageRoute(builder: (_) => HomePage() ),
                       );
                     }
                   },
@@ -219,7 +220,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
-                  child: Text("Sign Up", style: TextStyle(fontSize: 18, color: Colors.yellow)),
+                  child: Text("Sign Up", style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 245, 192, 41))),
                 ),
                 if (viewModel.errorMessage != null)...[
                   SizedBox(height: 10),
