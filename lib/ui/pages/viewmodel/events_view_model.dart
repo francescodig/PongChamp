@@ -5,16 +5,26 @@ import '/domain/models/event_model.dart';
 import 'package:flutter/material.dart';
 
 class EventViewModel extends ChangeNotifier {
-  
+    
   final EventService _eventService = EventService();
   final AuthService _authService=AuthService();
 
   List<Event> _events = [];
   List<Event> _userEvents = [];
+  List<Event> _userParticipatedEvents=[];
   bool _isLoading = false;
+
+  ///Lista contenente solo gli eventi a cui l'utente partecipa ,che non ha creato
+  List<Event> get userOnlyParticipatedEvents {
+    final createdIds = _userEvents.map((e) => e.id).toSet();
+    return _userParticipatedEvents
+        .where((e) => !createdIds.contains(e.id))
+        .toList();
+  }
   
   List<Event> get events => _events;
   List<Event> get userEvents => _userEvents;
+  List<Event> get userPartecipates => _userParticipatedEvents;
   bool get isLoading => _isLoading;
   String? get userId => _authService.currentUserId;
 
@@ -27,20 +37,17 @@ class EventViewModel extends ChangeNotifier {
   }) async {
     _isLoading = true;
     notifyListeners();
-
     try {
     // 1. Recupera l'id dell'utente attualmente loggato
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) {
       throw Exception("Nessun utente loggato.");
     }
-
     //2. Chiama il Service per ottenere un oggetto User
     final user = await _authService.fetchUserById(userId);
-
     //3. Crea l'oggetto Event
     final nuovoEvento = Event(
-      id : "", //verrà assegnato poi dal Service (una volta generato da Firestore)
+      id : "", //verrà assegnato poi dal Service, una volta generato da Firestore
       creatorId: userId, 
       creatorNickname: user.nickname, 
       creatorProfileImage: user.profileImage, 
@@ -50,21 +57,19 @@ class EventViewModel extends ChangeNotifier {
       maxParticipants: maxParticipants,
       participantIds: [userId], //il creatore è il primo partecipante
       matchType: matchType,
-      createdAt: null, //verrà assegnato dal Service (al momento del salvataggio su Firestore)
+      createdAt: null, //verrà assegnato dal Service, al momento del salvataggio su Firestore
       orario : orario,
     );
-
     //4. Salva il nuovo Event
     final eventoSalvato = await _eventService.addEvent(nuovoEvento);
     _events.add(eventoSalvato);
     } catch (e) {
-      print(e);
+      debugPrint("$e");
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
-   
 
   Future<void> fetchEvents() async {
     _isLoading = true;
@@ -73,7 +78,6 @@ class EventViewModel extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
-
 
   Future<void> fetchUserEvents() async {
     _isLoading = true;
@@ -84,25 +88,34 @@ class EventViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> partecipateToEvent(Event evento) async {
+  Future<void> fetchPartecipateEvents() async {
+    _isLoading = true;
+    notifyListeners();
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    _userParticipatedEvents = await _eventService.fetchEventsUserParticipates(uid!);
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> partecipateToEvent(Event event) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
     final userId = user.uid;
     // Controlla se l'utente è già nella lista
-    if (evento.participantIds.contains(userId)) {
+    if (event.participantIds.contains(userId)) {
       debugPrint("L'utente è già iscritto all'evento."); //da modificare
       return;
     }
     // Controlla se c'è ancora spazio
-    if (evento.participantIds.length >= evento.maxParticipants) {
+    if (event.participantIds.length >= event.maxParticipants) {
       debugPrint("L'evento ha raggiunto il numero massimo di partecipanti."); //da modificare
       return;
     }
     try {
       // Chiede al Service di aggiornare l'evento su Firestore
-      final updatedEvent = await _eventService.addParticipant(evento, userId);
+      final updatedEvent = await _eventService.addParticipant(event, userId);
       // Aggiorna l'evento localmente
-      final index = _events.indexWhere((e) => e.id == evento.id);
+      final index = _events.indexWhere((e) => e.id == event.id);
       if (index != -1) {
         _events[index] = updatedEvent;
         notifyListeners();
@@ -111,4 +124,26 @@ class EventViewModel extends ChangeNotifier {
       debugPrint("Errore durante la partecipazione: $e");
     }
   }
+
+  Future<bool> removeParticipant(Event event, String? userId) async{
+    //Controllo se l'utente è partecipante
+    if (!event.participantIds.contains(userId)) {
+    return false; // Non fare nulla se non è partecipante
+    }
+    try {
+      // Chiamata al Service
+      await _eventService.removeParticipant(event, userId);
+      // Aggiorna la lista localmente
+      event.participantIds.remove(userId);
+      event.participants = event.participantIds.length;
+      notifyListeners();
+      return true;
+    } catch(e){
+      debugPrint("Errore durante la rimozione del partecipante: $e");
+      return false;
+    }
+  }
 }
+
+
+

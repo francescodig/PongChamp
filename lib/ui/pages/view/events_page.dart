@@ -82,7 +82,7 @@ class EventsPage extends StatelessWidget {
             builder: (context) => page,
             settings: RouteSettings(name: routeName),
           ),
-          (route) => route.isFirst, //Prende la route e ne conserva solo la prima (presumibilmente Home)
+          (route) => route.isFirst, ///Prende la route e ne conserva solo la prima, presumibilmente Home
         );
       }
     }
@@ -150,7 +150,7 @@ class EventsPage extends StatelessWidget {
                       maxParticipants: event.maxParticipants,
                       matchType: event.matchType,
                       orario: event.orario,
-                      onTapPartecipate: (){
+                      onTap: (){
                         onTapPartecipate(context,event,viewModel);
                         }
                     );

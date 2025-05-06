@@ -18,7 +18,7 @@ class CustomCard extends StatelessWidget {
   final int participants;
   final int maxParticipants;
   final String matchType;
-  final VoidCallback onTapPartecipate;
+  final VoidCallback onTap;
   final DateTime orario;
 
   const CustomCard({
@@ -30,7 +30,7 @@ class CustomCard extends StatelessWidget {
     required this.participants,
     required this.maxParticipants,
     required this.matchType,
-    required this.onTapPartecipate,
+    required this.onTap,
     required this.orario,
   }) : super(key: key);
 
@@ -107,7 +107,7 @@ class CustomCard extends StatelessWidget {
                   ],
                 ),
                 ElevatedButton(
-                  onPressed: onTapPartecipate,
+                  onPressed: onTap,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     foregroundColor: Colors.white,

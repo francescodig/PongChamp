@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 //**DA RIVEDERE**
-// Gli attributi username (parzialmente risolto con creatorId) e location dovrebbero prendere oggetti particolari e non stringhe 
+// Gli attributi username, parzialmente risolto con creatorId, e location dovrebbero prendere oggetti particolari e non stringhe 
 
 class Event {
   final String id;
@@ -11,7 +11,7 @@ class Event {
   final String creatorId;
   final String creatorNickname;
   final String creatorProfileImage;
-  final int participants;
+  int participants;
   final int maxParticipants;
   final List<String> participantIds;
   final String matchType;
@@ -33,7 +33,7 @@ class Event {
     required this.orario,
   });
 
-  /// Factory per costruire un Event da JSON (es. da un'API)
+  /// Factory per costruire un Event da JSON, es. da un'API
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
       id: json['id'] as String,
@@ -51,7 +51,7 @@ class Event {
     );
   }
 
-  /// Metodo per convertire un Event in JSON (es. per salvarlo nel DB)
+  /// Metodo per convertire un Event in JSON, es. per salvarlo nel DB
   Map<String, dynamic> toJson() {
     return {
       'id': id,
