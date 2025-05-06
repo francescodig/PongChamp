@@ -72,21 +72,7 @@ class EventsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) { 
     final viewModel = context.watch<EventViewModel>();
-
-    String currentRoute = ModalRoute.of(context)?.settings.name ?? '';
-    void navigateTo(Widget page, String routeName) {
-      if (currentRoute != routeName) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => page,
-            settings: RouteSettings(name: routeName),
-          ),
-          (route) => route.isFirst, ///Prende la route e ne conserva solo la prima, presumibilmente Home
-        );
-      }
-    }
-
+    
     return Scaffold(
       appBar: CustomAppBar(
       ),
@@ -95,6 +81,7 @@ class EventsPage extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
         child: 
           Column(
+            spacing: 5,
             children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -109,7 +96,9 @@ class EventsPage extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    navigateTo(UserEventsPage(), '/userEvents');;
+                    Navigator.push(
+                      context, 
+                      MaterialPageRoute(builder: (_) => UserEventsPage()));
                   },
                   child: Text("Miei Eventi")
                   ),
@@ -123,6 +112,7 @@ class EventsPage extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
+                    context.read<EventViewModel>().fetchMarkers();
                     Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => CreateEventPage()),
@@ -145,14 +135,16 @@ class EventsPage extends StatelessWidget {
                       creatorNickname: event.creatorNickname,
                       creatorProfileImage: event.creatorProfileImage,
                       eventTitle: event.title,
-                      location: event.location,
+                      location: event.locationName,
                       participants: event.participants,
                       maxParticipants: event.maxParticipants,
                       matchType: event.matchType,
                       orario: event.orario,
                       onTap: (){
                         onTapPartecipate(context,event,viewModel);
-                        }
+                      },
+                      buttonColor: Colors.green,
+                      buttonText: "Partecipa",
                     );
                   },
                 ),

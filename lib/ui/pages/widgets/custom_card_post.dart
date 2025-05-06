@@ -20,6 +20,8 @@ class CustomCard extends StatelessWidget {
   final String matchType;
   final VoidCallback onTap;
   final DateTime orario;
+  final String buttonText;
+  final Color? buttonColor;
 
   const CustomCard({
     Key? key,
@@ -32,6 +34,8 @@ class CustomCard extends StatelessWidget {
     required this.matchType,
     required this.onTap,
     required this.orario,
+    required this.buttonText,
+    required this.buttonColor,
   }) : super(key: key);
 
   @override
@@ -109,14 +113,14 @@ class CustomCard extends StatelessWidget {
                 ElevatedButton(
                   onPressed: onTap,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: buttonColor,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   ),
-                  child: Text('Partecipa'),
+                  child: Text(buttonText),
                 ),
               ],
             ),

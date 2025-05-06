@@ -100,14 +100,16 @@ class UserEventsPage extends StatelessWidget{
                   creatorNickname: event.creatorNickname,
                   creatorProfileImage: event.creatorProfileImage,
                   eventTitle: event.title,
-                  location: event.location,
+                  location: event.locationName,
                   participants: event.participants,
                   maxParticipants: event.maxParticipants,
                   matchType: event.matchType,
                   orario: event.orario,
                   onTap: (){onTap(context, event, viewModel);
                     viewModel.fetchEvents();
-                    viewModel.fetchUserEvents();}
+                    viewModel.fetchUserEvents();},
+                  buttonColor: Colors.redAccent,
+                  buttonText: "Annulla Partecipazione",
                 );
               }  else if (index == created.length + 1) {
                 return _sectionHeader("Eventi a cui parteciperai");
@@ -117,12 +119,14 @@ class UserEventsPage extends StatelessWidget{
                   creatorNickname: event.creatorNickname,
                   creatorProfileImage: event.creatorProfileImage,
                   eventTitle: event.title,
-                  location: event.location,
+                  location: event.locationName,
                   participants: event.participants,
                   maxParticipants: event.maxParticipants,
                   matchType: event.matchType,
                   orario: event.orario,
-                  onTap: (){onTap(context, event, viewModel);}
+                  onTap: (){onTap(context, event, viewModel);},
+                  buttonColor: Colors.redAccent,
+                  buttonText: "Annulla Partecipazione",
                 );
               }
             },);

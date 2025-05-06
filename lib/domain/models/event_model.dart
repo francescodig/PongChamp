@@ -7,7 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Event {
   final String id;
   final String title;
-  final String location;
+  final String locationId;
+  final String locationName;
   final String creatorId;
   final String creatorNickname;
   final String creatorProfileImage;
@@ -21,7 +22,8 @@ class Event {
   Event({
     required this.id,
     required this.title,
-    required this.location,
+    required this.locationId,
+    required this.locationName,
     required this.creatorId,
     required this.creatorNickname,
     required this.creatorProfileImage,    
@@ -33,41 +35,6 @@ class Event {
     required this.orario,
   });
 
-  /// Factory per costruire un Event da JSON, es. da un'API
-  factory Event.fromJson(Map<String, dynamic> json) {
-    return Event(
-      id: json['id'] as String,
-      creatorId: json['creatorId'] as String,
-      creatorNickname: json['creatorNickname'] as String,
-      creatorProfileImage: json['creatorProfileImage'] as String,
-      title: json['title'] as String,
-      location: json['location'] as String,
-      participants: json['participants'] as int,
-      maxParticipants: json['maxParticipants'] as int,
-      participantIds: json['participantIds'] as List<String>,
-      matchType: json['matchType'] as String,
-      createdAt: json['createdAt'] as DateTime,
-      orario : json['orario'] as DateTime,
-    );
-  }
-
-  /// Metodo per convertire un Event in JSON, es. per salvarlo nel DB
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'creatorId': creatorId,
-      'creatorNickname': creatorNickname,
-      'creatorProfileImage': creatorProfileImage,
-      'title': title,
-      'location': location,
-      'participants': participants,
-      'maxParticipants': maxParticipants,
-      'participantIds': participantIds,
-      'matchType': matchType,
-      'orario' : orario,
-    };
-  }
-
   /// Converte una mappa di Firestore in un oggetto Event
   factory Event.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
@@ -77,7 +44,8 @@ class Event {
       creatorNickname: data['creatorNickname'] ?? "",
       creatorProfileImage: data['creatorProfileImage'] ?? "",
       title: data['title'] ?? '',
-      location: data['location'] ?? '',
+      locationId: data['locationId'] ?? '',
+      locationName: data['locationName'] ?? '',
       participants: data['participants'] ?? 0,
       maxParticipants: data['maxParticipants'] ?? 0,
       participantIds: List<String>.from(data['participantIds'] ?? []),
@@ -94,7 +62,8 @@ class Event {
       'creatorNickname': creatorNickname,
       'creatorProfileImage': creatorProfileImage,
       'title': title,
-      'location': location,
+      'locationId': locationId,
+      'locationName': locationName,
       'participants': participants,
       'maxParticipants': maxParticipants,
       'participantIds': participantIds,
@@ -108,7 +77,8 @@ class Event {
   Event copyWith({
     String? id,
     String? title,
-    String? location,
+    String? locationId,
+    String? locationName,
     String? creatorId,
     String? creatorNickname,
     String? creatorProfileImage,
@@ -121,7 +91,8 @@ class Event {
     return Event(
       id: id ?? this.id,
       title: title ?? this.title,
-      location: location ?? this.location,
+      locationId: locationId ?? this.locationId,
+      locationName: locationName ?? this.locationName,
       creatorId: creatorId ?? this.creatorId,
       creatorNickname: creatorNickname ?? this.creatorNickname,
       creatorProfileImage: creatorProfileImage ?? this.creatorProfileImage,

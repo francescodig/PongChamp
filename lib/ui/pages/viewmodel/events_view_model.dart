@@ -1,3 +1,6 @@
+import 'dart:convert';
+import '/domain/models/marker_model.dart';
+import 'package:flutter/services.dart';
 import '/data/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '/data/services/event_service.dart';
@@ -30,7 +33,7 @@ class EventViewModel extends ChangeNotifier {
 
   Future<void> creaEvento({
     required String title,
-    required String location,
+    required MarkerData location,
     required int maxParticipants,
     required String matchType,
     required DateTime orario,
@@ -52,7 +55,8 @@ class EventViewModel extends ChangeNotifier {
       creatorNickname: user.nickname, 
       creatorProfileImage: user.profileImage, 
       title: title,
-      location: location,
+      locationId: location.id,
+      locationName: location.nome,
       participants: 1,
       maxParticipants: maxParticipants,
       participantIds: [userId], //il creatore è il primo partecipante
@@ -142,6 +146,32 @@ class EventViewModel extends ChangeNotifier {
       debugPrint("Errore durante la rimozione del partecipante: $e");
       return false;
     }
+  }
+
+  Future<List<MarkerData>> loadLocationsFromJson() async {
+    final jsonString = await rootBundle.loadString('assets/markers.json');
+    final List<dynamic> jsonData = json.decode(jsonString);
+    return jsonData.map((item) => MarkerData.fromJson(item)).toList();
+  }
+
+  List<MarkerData> _markers = [];
+  Future<void> fetchMarkers() async {
+    try {
+      final loadedMarkers = await loadLocationsFromJson(); // questo deve già esserci
+      _markers = loadedMarkers;
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Errore nel caricamento dei Marker: $e");
+    }
+  }
+  MarkerData? _selectedLocation;
+
+  List<MarkerData> get markers => _markers;
+  MarkerData? get selectedLocation => _selectedLocation;
+
+  void setSelectedLocation(MarkerData? loc) {
+    _selectedLocation = loc;
+    notifyListeners();
   }
 }
 

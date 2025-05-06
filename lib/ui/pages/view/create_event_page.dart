@@ -1,10 +1,11 @@
+import '/domain/models/marker_model.dart';
+import '/ui/pages/widgets/bottom_navbar.dart';
 import '/ui/pages/viewmodel/events_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CreateEventPage extends StatelessWidget {
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
   final TextEditingController _maxParticipantsController = TextEditingController();
 
 
@@ -24,7 +25,6 @@ class CreateEventPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<EventViewModel>();
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -46,11 +46,29 @@ class CreateEventPage extends StatelessWidget {
               ),
               validator: (value) => value!.isEmpty ? 'Campo obbligatorio' : null,
             ),
-            TextFormField(
-              controller: _locationController,
-              decoration: InputDecoration(labelText: 'Luogo'
-              ),
-              validator: (value) => value!.isEmpty ? 'Campo obbligatorio' : null,
+            Consumer<EventViewModel>(
+              builder: (context, viewModel, _) {
+                final markers = viewModel.markers;
+                final selectedLocation = viewModel.selectedLocation;
+
+                return DropdownButtonFormField<MarkerData>(
+                  value: selectedLocation,
+                  items: markers.map((marker) {
+                    return DropdownMenuItem<MarkerData>(
+                      value: marker,
+                      child: Text(marker.nome), // o altro attributo descrittivo
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    viewModel.setSelectedLocation(value);
+                  },
+                  validator: (value) => value == null ? 'Campo obbligatorio' : null,
+                  decoration: const InputDecoration(
+                    labelText: 'Luogo',
+                    border: OutlineInputBorder(),
+                  ),
+                );
+              },
             ),
             TextFormField(
               controller: _maxParticipantsController,
@@ -123,13 +141,13 @@ class CreateEventPage extends StatelessWidget {
 
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(Colors.yellowAccent),
+                backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 245, 192, 41)),
                 foregroundColor: WidgetStatePropertyAll(Colors.black),
               ),
               onPressed: () {
                 viewModel.creaEvento(
                   title: _titleController.text,
-                  location: _locationController.text,
+                  location: viewModel.selectedLocation!,
                   orario : selectedDateTime.value!,
                   maxParticipants: int.tryParse(_maxParticipantsController.text) ?? 2,
                   matchType: selectedMatchType.value!,
@@ -144,6 +162,7 @@ class CreateEventPage extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: CustomNavBar(),
     );
   }
 }
