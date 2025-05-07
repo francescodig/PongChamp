@@ -1,5 +1,4 @@
-import 'package:PongChamp/ui/pages/widgets/custom_snackBar.dart';
-
+import '/ui/pages/widgets/custom_snackBar.dart';
 import '/domain/models/marker_model.dart';
 import '/ui/pages/widgets/bottom_navbar.dart';
 import '/ui/pages/viewmodel/events_view_model.dart';

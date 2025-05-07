@@ -15,6 +15,15 @@ class EventService {
     return completeEvent.copyWith(id: docRef.id);
   }
 
+  Future<bool> removeEvent(String eventId) async{
+    try {
+      await _eventsCollection.doc(eventId).delete();
+      return true;
+    } catch (e) {
+      throw Exception('Errore durante l\'eliminazione dell\'evento: $e');
+    }
+  }
+
   ///Recupero degli eventi non ancora scaduti
   Future<List<Event>> fetchUpcomingEvents() async {
     try {

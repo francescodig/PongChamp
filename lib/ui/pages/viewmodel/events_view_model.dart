@@ -75,6 +75,19 @@ class EventViewModel extends ChangeNotifier {
     }
   }
 
+  Future<bool> deleteEvent(Event event) async {
+    _isLoading = true;
+    notifyListeners();
+    final eventId = event.id;
+    final success =await _eventService.removeEvent(eventId);
+    if (success){
+      _events.remove((e) => e.id = eventId);
+    }
+    _isLoading = false;
+    notifyListeners();
+    return success;
+  }
+
   Future<void> fetchEvents() async {
     _isLoading = true;
     notifyListeners();

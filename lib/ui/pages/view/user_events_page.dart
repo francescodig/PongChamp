@@ -47,7 +47,7 @@ class _UserEventsPage extends State<UserEventsPage> {
                 return CustomCard(
                   event: event,
                   onTap: (){
-                    onTap(context, event, viewModel);
+                    onTapDelete(context, event, viewModel);
                   },
                   buttonColor: Colors.redAccent,
                   buttonText: "Elimina Evento",
@@ -59,7 +59,7 @@ class _UserEventsPage extends State<UserEventsPage> {
                 return CustomCard(
                   event: event,
                   onTap: (){
-                    onTap(context, event, viewModel);
+                    onTapParticipate(context, event, viewModel);
                   },
                   buttonColor: Colors.redAccent,
                   buttonText: "Annulla Partecipazione",
@@ -86,7 +86,7 @@ class _UserEventsPage extends State<UserEventsPage> {
     );
   }
 
-  void onTap(BuildContext context, Event event, EventViewModel viewModel) async {
+  void onTapParticipate(BuildContext context, Event event, EventViewModel viewModel) async {
     final userId = viewModel.userId;
     if (!event.participantIds.contains(userId)) {
       CustomSnackBar.show(
@@ -122,6 +122,40 @@ class _UserEventsPage extends State<UserEventsPage> {
           backgroundColor: Colors.red,
           icon: Icons.mood_bad_sharp,);
         return;
+    }
+  }
+
+  void onTapDelete(BuildContext context, Event event, EventViewModel viewModel) async {
+    final userId = viewModel.userId;
+    if(event.creatorId != userId){
+      return;
+    }
+    try{
+      final success = await viewModel.deleteEvent(event);
+      setState(() {});
+      if (success) {
+        CustomSnackBar.show(
+          context,
+          message: "Evento eliminato con successo!",
+          backgroundColor: Colors.green,
+          icon: Icons.check_circle,);
+        return;
+      }
+      else {
+        CustomSnackBar.show(
+          context,
+          message: "Errore durante l'operazione",
+          backgroundColor: Colors.red,
+          icon: Icons.mood_bad_sharp,);
+        return;
+      }
+    } catch (e){
+      CustomSnackBar.show(
+        context,
+        message: "Errore durante l'operazione",
+        backgroundColor: Colors.red,
+        icon: Icons.mood_bad_sharp,);
+      return;
     }
   }
 
