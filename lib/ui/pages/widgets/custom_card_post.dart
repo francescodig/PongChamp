@@ -1,3 +1,4 @@
+import '/domain/models/event_model.dart';
 import 'package:flutter/material.dart';
 
 String formatDateTimeManually(DateTime dateTime) {
@@ -11,35 +12,31 @@ String formatDateTimeManually(DateTime dateTime) {
 }
 
 class CustomCard extends StatelessWidget {
-  final String creatorNickname;
-  final String creatorProfileImage;
-  final String eventTitle;
-  final String location;
-  final int participants;
-  final int maxParticipants;
-  final String matchType;
+  final Event event;
   final VoidCallback onTap;
-  final DateTime orario;
   final String buttonText;
   final Color? buttonColor;
 
   const CustomCard({
     Key? key,
-    required this.creatorNickname,
-    required this.creatorProfileImage,
-    required this.eventTitle,
-    required this.location,
-    required this.participants,
-    required this.maxParticipants,
-    required this.matchType,
+    required this.event,
     required this.onTap,
-    required this.orario,
     required this.buttonText,
     required this.buttonColor,
   }) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
+    final String creatorNickname = event.creatorNickname;
+    final String creatorProfileImage = event.creatorProfileImage;
+    final String eventTitle = event.title;
+    final String location = event.locationName;
+    final int participants = event.participants;
+    final int maxParticipants = event.maxParticipants;
+    final String matchType = event.matchType;
+    final DateTime orario = event.orario;
+
     final formattedTime = formatDateTimeManually(orario);
 
     return Card(

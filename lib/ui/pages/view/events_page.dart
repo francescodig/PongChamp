@@ -1,3 +1,4 @@
+import '/ui/pages/widgets/custom_snackBar.dart';
 import '/ui/pages/view/user_events_page.dart';
 import '/domain/models/event_model.dart';
 import '/ui/pages/view/create_event_page.dart';
@@ -8,151 +9,123 @@ import '/ui/pages/widgets/bottom_navbar.dart';
 import '/ui/pages/widgets/custom_card_post.dart';
 import 'package:flutter/material.dart';
 
-class EventsPage extends StatelessWidget {
-  
+class EventsPage extends StatefulWidget {
+  const EventsPage({Key? key}) : super(key: key);
+
+  @override
+  State<EventsPage> createState() => _EventsPageState();
+
+}
+
+class _EventsPageState extends State<EventsPage> {
+  @override
+  Widget build(BuildContext context) {
+    final viewModel = context.watch<EventViewModel>();
+    return Scaffold(
+      appBar: CustomAppBar(),
+      body: 
+        Container(
+          padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
+          child: Column(
+            spacing: 5,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                      foregroundColor: WidgetStateProperty.all(Colors.black),
+                      backgroundColor: WidgetStateProperty.all(Color.fromARGB(255, 245, 192, 41)),                    
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(builder: (_) => UserEventsPage()));
+                    },
+                    child: Text("Miei Eventi")
+                    ),
+                  TextButton(
+                    style: ButtonStyle(
+                      foregroundColor: WidgetStateProperty.all(Colors.black),
+                      backgroundColor: WidgetStateProperty.all(Colors.red),
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      context.read<EventViewModel>().fetchMarkers();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => CreateEventPage()),
+                        );
+                    },
+                    child: Text("Organizza")
+                    ),
+                ],
+              ),
+              
+              viewModel.isLoading ? Center(child: CircularProgressIndicator(color: Colors.black,))
+              : viewModel.events.isEmpty ? Center(child: Text('Nessun evento disponibile'))
+              : Expanded( //serve ad evitare problemi nello scroll della ListView
+                  child: 
+                  ListView.builder(
+                    itemCount: viewModel.events.length,
+                    itemBuilder: (context, index) {
+                      final event = viewModel.events[index];
+                      return CustomCard(
+                        event: event,
+                        onTap: (){
+                          onTapPartecipate(context,event,viewModel);
+                        },
+                        buttonColor: Colors.green,
+                        buttonText: "Partecipa",
+                      );
+                    },
+                  ),
+                ),
+            ],),
+      ),
+      bottomNavigationBar: CustomNavBar(),
+    );
+  }
+
   void onTapPartecipate(BuildContext context, Event event, EventViewModel viewModel) async {
     final userId = viewModel.userId;
     if (event.participantIds.contains(userId)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Row(
-          children: [
-          Icon(Icons.check_circle, color: Colors.white),
-          SizedBox(width: 8),
-          Text("Stai già partecipando all'evento!", style: TextStyle(color: Colors.white),),
-          ],
-        ),
-        backgroundColor: Colors.black,
-        duration: Duration(seconds: 1)),
-      );
-      return;
+      CustomSnackBar.show(
+        context, 
+        message: "Stai già partecipando all'evento!",
+        backgroundColor:  Colors.black, 
+        icon: Icons.check_circle);
+      return; 
     }
     if (event.participantIds.length >= event.maxParticipants) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Row(
-          children: [
-          Icon(Icons.close_rounded, color: Colors.white),
-          SizedBox(width: 8),
-          Text("L'evento è al completo!", style: TextStyle(color: Colors.white),),
-          ],
-        ),
+      CustomSnackBar.show(
+        context,
+        message: "L'evento è al completo!", 
         backgroundColor: Colors.red,
-        duration: Duration(seconds: 1)),
-      );
+        icon: Icons.close_rounded);
       return;
     }
     try {
       await viewModel.partecipateToEvent(event);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Row(
-          children: [
-          Icon(Icons.check_circle, color: Colors.white),
-          SizedBox(width: 8),
-          Text("Iscrizione completata con successo!", style: TextStyle(color: Colors.white),),
-          ],
-        ),
+      setState(() {}); // 🔄 Forza il rebuild della UI
+      CustomSnackBar.show(
+        context,
+        message: "Iscrizione completata con successo!",
         backgroundColor: Colors.green,
-        duration: Duration(seconds: 1)),
-      );
+        icon: Icons.check_circle);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Row(
-          children: [
-          Icon(Icons.mood_bad_sharp, color: Colors.white),
-          SizedBox(width: 8),
-          Text("Errore durante la partecipazione!", style: TextStyle(color: Colors.white),),
-          ],
-        ),
+      CustomSnackBar.show(
+        context,
+        message: "Errore durante la partecipazione!",
         backgroundColor: Colors.red,
-        duration: Duration(seconds: 1)),
-      );
+        icon: Icons.mood_bad_sharp);
     }
-  }
-
-
-  @override
-  Widget build(BuildContext context) { 
-    final viewModel = context.watch<EventViewModel>();
-    
-    return Scaffold(
-      appBar: CustomAppBar(
-      ),
-      body: 
-        Container(
-        padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
-        child: 
-          Column(
-            spacing: 5,
-            children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  style: ButtonStyle(
-                    foregroundColor: WidgetStateProperty.all(Colors.black),
-                    backgroundColor: WidgetStateProperty.all(Color.fromARGB(255, 245, 192, 41)),                    
-                    shape: WidgetStateProperty.all(
-                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)
-                      ),
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context, 
-                      MaterialPageRoute(builder: (_) => UserEventsPage()));
-                  },
-                  child: Text("Miei Eventi")
-                  ),
-                TextButton(
-                  style: ButtonStyle(
-                    foregroundColor: WidgetStateProperty.all(Colors.black),
-                    backgroundColor: WidgetStateProperty.all(Colors.red),
-                    shape: WidgetStateProperty.all(
-                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)
-                      ),
-                    ),
-                  ),
-                  onPressed: () {
-                    context.read<EventViewModel>().fetchMarkers();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => CreateEventPage()),
-                      );
-                  },
-                  child: Text("Organizza")
-                  ),
-              ],
-            ),
-            
-            viewModel.isLoading ? Center(child: CircularProgressIndicator(color: Colors.black,))
-            : viewModel.events.isEmpty ? Center(child: Text('Nessun evento disponibile'))
-            : Expanded( //serve ad evitare problemi nello scroll della ListView
-                child: 
-                ListView.builder(
-                  itemCount: viewModel.events.length,
-                  itemBuilder: (context, index) {
-                    final event = viewModel.events[index];
-                    return CustomCard(
-                      creatorNickname: event.creatorNickname,
-                      creatorProfileImage: event.creatorProfileImage,
-                      eventTitle: event.title,
-                      location: event.locationName,
-                      participants: event.participants,
-                      maxParticipants: event.maxParticipants,
-                      matchType: event.matchType,
-                      orario: event.orario,
-                      onTap: (){
-                        onTapPartecipate(context,event,viewModel);
-                      },
-                      buttonColor: Colors.green,
-                      buttonText: "Partecipa",
-                    );
-                  },
-                ),
-              ),
-          ],),
-      ),
-      bottomNavigationBar: CustomNavBar(
-      ),
-    );
   }
 }

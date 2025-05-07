@@ -111,14 +111,7 @@ class EventLocationPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final event = events[index];
                     return CustomCard(
-                      creatorNickname: event.creatorNickname,
-                      creatorProfileImage: event.creatorProfileImage,
-                      eventTitle: event.title,
-                      location: event.locationId,
-                      participants: event.participants,
-                      maxParticipants: event.maxParticipants,
-                      matchType: event.matchType,
-                      orario: event.orario,
+                      event: event,
                       onTap: (){
                         onTapPartecipate(context,event,viewModel);
                         },

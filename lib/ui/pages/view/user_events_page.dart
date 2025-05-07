@@ -1,3 +1,4 @@
+import '/ui/pages/widgets/custom_snackBar.dart';
 import '/domain/models/event_model.dart';
 import 'package:provider/provider.dart';
 import '/ui/pages/viewmodel/events_view_model.dart';
@@ -6,68 +7,15 @@ import '/ui/pages/widgets/bottom_navbar.dart';
 import '/ui/pages/widgets/custom_card_post.dart';
 import 'package:flutter/material.dart';
 
-class UserEventsPage extends StatelessWidget{  
+class UserEventsPage extends StatefulWidget{
+  const UserEventsPage({Key? key}) : super(key: key);
 
-   void onTap(BuildContext context, Event event, EventViewModel viewModel) async {
-    final userId = viewModel.userId;
-    if (!event.participantIds.contains(userId)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Row(
-          children: [
-          Icon(Icons.check_circle, color: Colors.white),
-          SizedBox(width: 8),
-          Text("Non stai partecipando all'evento!", style: TextStyle(color: Colors.white),),
-          ],
-        ),
-        backgroundColor: Colors.black,
-        duration: Duration(seconds: 1)),
-      );
-      return;
-    }
-    try {
-      final success = await viewModel.removeParticipant(event, userId);
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Row(
-            children: [
-            Icon(Icons.check_circle, color: Colors.white),
-            SizedBox(width: 8),
-            Text("Iscrizione annullata con successo!", style: TextStyle(color: Colors.white),),
-            ],
-          ),
-          backgroundColor: Colors.black,
-          duration: Duration(seconds: 1)),
-        );
-      }
-      else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Row(
-            children: [
-            Icon(Icons.mood_bad, color: Colors.white),
-            SizedBox(width: 8),
-            Text("Errore durante l'operazione", style: TextStyle(color: Colors.white),),
-            ],
-          ),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 1)),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Row(
-          children: [
-          Icon(Icons.mood_bad_sharp, color: Colors.white),
-          SizedBox(width: 8),
-          Text("Errore durante l'operazione!", style: TextStyle(color: Colors.white),),
-          ],
-        ),
-        backgroundColor: Colors.red,
-        duration: Duration(seconds: 1)),
-      );
-    }
-  }
+  @override
+  State<UserEventsPage> createState() => _UserEventsPage();
+}
 
-  
+class _UserEventsPage extends State<UserEventsPage> {
+   
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<EventViewModel>(context, listen: false);    
@@ -97,34 +45,22 @@ class UserEventsPage extends StatelessWidget{
               } else if (index > 0 && index <= created.length) {
                 final event = created[index -1];
                 return CustomCard(
-                  creatorNickname: event.creatorNickname,
-                  creatorProfileImage: event.creatorProfileImage,
-                  eventTitle: event.title,
-                  location: event.locationName,
-                  participants: event.participants,
-                  maxParticipants: event.maxParticipants,
-                  matchType: event.matchType,
-                  orario: event.orario,
-                  onTap: (){onTap(context, event, viewModel);
-                    viewModel.fetchEvents();
-                    viewModel.fetchUserEvents();},
+                  event: event,
+                  onTap: (){
+                    onTap(context, event, viewModel);
+                  },
                   buttonColor: Colors.redAccent,
-                  buttonText: "Annulla Partecipazione",
+                  buttonText: "Elimina Evento",
                 );
               }  else if (index == created.length + 1) {
                 return _sectionHeader("Eventi a cui parteciperai");
               } else {
                 final event = participates[index-created.length-2];
                 return CustomCard(
-                  creatorNickname: event.creatorNickname,
-                  creatorProfileImage: event.creatorProfileImage,
-                  eventTitle: event.title,
-                  location: event.locationName,
-                  participants: event.participants,
-                  maxParticipants: event.maxParticipants,
-                  matchType: event.matchType,
-                  orario: event.orario,
-                  onTap: (){onTap(context, event, viewModel);},
+                  event: event,
+                  onTap: (){
+                    onTap(context, event, viewModel);
+                  },
                   buttonColor: Colors.redAccent,
                   buttonText: "Annulla Partecipazione",
                 );
@@ -136,7 +72,6 @@ class UserEventsPage extends StatelessWidget{
       ),
     );
   }
-
   Widget _sectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -150,4 +85,44 @@ class UserEventsPage extends StatelessWidget{
       ),
     );
   }
+
+  void onTap(BuildContext context, Event event, EventViewModel viewModel) async {
+    final userId = viewModel.userId;
+    if (!event.participantIds.contains(userId)) {
+      CustomSnackBar.show(
+        context,
+        message: "Non stai partecipando all'evento!",
+        backgroundColor: Colors.black,
+        icon: Icons.check_circle,);
+      return;
+    }
+    try {
+      final success = await viewModel.removeParticipant(event, userId);
+      setState(() {}); // 🔄 Forza il rebuild della UI
+      if (success) {
+        CustomSnackBar.show(
+          context,
+          message: "Iscrizione annullata con successo!",
+          backgroundColor: Colors.green,
+          icon: Icons.check_circle,);
+        return;
+      }
+      else {
+        CustomSnackBar.show(
+          context,
+          message: "Errore durante l'operazione",
+          backgroundColor: Colors.red,
+          icon: Icons.mood_bad_sharp,);
+        return;
+      }
+    } catch (e) {
+      CustomSnackBar.show(
+          context,
+          message: "Errore durante l'operazione",
+          backgroundColor: Colors.red,
+          icon: Icons.mood_bad_sharp,);
+        return;
+    }
+  }
+
 }
