@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>MinimumOSVersion</key>
+	<string>13.0</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to show the map</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location to show the map</string>
 </dict>
 </plist>
