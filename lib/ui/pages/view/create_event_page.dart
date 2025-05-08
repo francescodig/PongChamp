@@ -149,23 +149,30 @@ class _CreateEventPageState extends State<CreateEventPage> {
               ),
               onPressed: ()  async{
                 if (_formKey.currentState!.validate() &&
-                      selectedDateTime != null &&
-                      viewModel.selectedLocation != null) {
-                      await viewModel.creaEvento(
-                      title: _titleController.text,
-                      location : viewModel.selectedLocation!,
-                      maxParticipants:
-                          int.parse(_maxParticipantsController.text),
-                      matchType: selectedMatchType!,
-                      orario: selectedDateTime!,
-                    );};
-                CustomSnackBar.show(
-                  context,
-                  message: "Evento creato con successo",
-                  backgroundColor: Colors.green,
-                  icon: Icons.check_circle,);
+                    selectedDateTime != null &&
+                    viewModel.selectedLocation != null) {
+                    await viewModel.creaEvento(
+                    title: _titleController.text,
+                    location : viewModel.selectedLocation!,
+                    maxParticipants:
+                        int.parse(_maxParticipantsController.text),
+                    matchType: selectedMatchType!,
+                    orario: selectedDateTime!,
+                    );
+                  CustomSnackBar.show(
+                    context,
+                    message: "Evento creato con successo",
+                    backgroundColor: Colors.green,
+                    icon: Icons.check_circle,);
                   Navigator.pop(context);
                   return;
+                } else {
+                  CustomSnackBar.show(
+                    context,
+                    message: "Riempi tutti i campi richiesti",
+                    backgroundColor: Colors.red,
+                    icon: Icons.error_outline_sharp,);
+                }
               },
               child: Text('Crea Evento'),
             ),

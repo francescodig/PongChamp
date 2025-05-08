@@ -1,5 +1,4 @@
-import 'package:PongChamp/domain/models/user_models.dart';
-
+import '/domain/models/user_models.dart';
 import '/data/services/post_service.dart';
 import '/data/services/repositories/post_repository.dart';
 import '/ui/pages/viewmodel/post_view_model.dart';
@@ -43,7 +42,7 @@ void main () async {
       ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<AuthService>())),
       Provider<PostViewModel>.value(value: postViewModel),
       ChangeNotifierProvider(create: (_) => MapViewModel()),
-      ChangeNotifierProvider(create: (_) => EventViewModel()..fetchEvents()),
+      ChangeNotifierProvider(create: (_) => EventViewModel()),
       Provider<PostRepository>(create: (_) => PostRepository(postService)),
       Provider<UserPostService>(create: (_) => UserPostService()),
       ProxyProvider<UserPostService, UserPostRepository>(update: (_, userPostService, __) => UserPostRepository(userPostService),),

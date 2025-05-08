@@ -15,7 +15,11 @@ class EventService {
     return completeEvent.copyWith(id: docRef.id);
   }
 
-  Future<bool> removeEvent(String eventId) async{
+  Future<bool> removeEvent(Event event, String userId) async{
+    final eventId = event.id;
+    if (event.creatorId!=userId){
+      throw Exception("Non sei il creatore dell'evento, operazione non autorizzata");
+    }
     try {
       await _eventsCollection.doc(eventId).delete();
       return true;

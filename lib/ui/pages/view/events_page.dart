@@ -19,6 +19,14 @@ class EventsPage extends StatefulWidget {
 
 class _EventsPageState extends State<EventsPage> {
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<EventViewModel>().fetchEvents();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<EventViewModel>();
     return Scaffold(

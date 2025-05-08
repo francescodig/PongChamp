@@ -126,12 +126,12 @@ class _UserEventsPage extends State<UserEventsPage> {
   }
 
   void onTapDelete(BuildContext context, Event event, EventViewModel viewModel) async {
-    final userId = viewModel.userId;
+    final userId = viewModel.userId!;
     if(event.creatorId != userId){
       return;
     }
     try{
-      final success = await viewModel.deleteEvent(event);
+      final success = await viewModel.deleteEvent(event,userId);
       setState(() {});
       if (success) {
         CustomSnackBar.show(
