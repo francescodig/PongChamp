@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 class PostService {
 
   Stream<List<Post>> getPostsStream() {
-    // Implementa la logica per ottenere i post da Firestore
     // Restituisci uno Stream di una lista di Post
     return FirebaseFirestore.instance
         .collection('Post')
