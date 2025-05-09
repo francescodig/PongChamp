@@ -70,7 +70,7 @@ class CustomNavBar extends StatelessWidget{
                   onPressed: () async {
                     String userId = FirebaseAuth.instance.currentUser!.uid;
                     // naviga passando l'userId alla ProfilePage
-                    navigateTo(ProfilePage(userId: userId), '/profile');
+                    navigateTo(ProfilePage(userId: userId), '/profile_${userId}'); // Naviga alla ProfilePage
                   },
                 ),
                 IconButton(

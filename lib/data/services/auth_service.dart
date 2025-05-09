@@ -23,6 +23,16 @@ class AuthService {
       final result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       final user = result.user; // success
 
+    /* final existingUser = await FirebaseFirestore.instance
+        .collection('User')
+        .where('email', isEqualTo: email)
+        .get();
+
+    if (existingUser.docs.isNotEmpty) {
+      return 'Email already in use'; // L'email è già registrata
+    }
+    */
+
 
       if (user != null) {
       // Salva anche su Firestore
@@ -62,7 +72,7 @@ class AuthService {
 
 
 
-// da implementare 
+
   Future<String?> sendPasswordResetEmail(String email) async {
   try {
     await _auth.sendPasswordResetEmail(email: email);

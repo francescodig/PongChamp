@@ -9,12 +9,43 @@ import '../widgets/PostCard.dart'; // dove hai il widget PostCard
 // il tuo ViewModel
 
 class HomePage extends StatelessWidget {
+
+  Future <bool> _onWillPop(BuildContext context) async {
+    final shouldLeave = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Sei sicuro di voler uscire?'),
+        content: const Text('Tutte le modifiche non salvate'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text(
+              'No',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text(
+              'Sì',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+        ],
+      ),
+    );
+    return shouldLeave ?? false;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     // Otteniamo l’istanza del PostViewModel tramite Provider
     final postViewModel = Provider.of<PostViewModel>(context);
 
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () => _onWillPop(context),
+      child: Scaffold(
       appBar: CustomAppBar(),
       body: StreamBuilder<List<Post>>(
         // Ascoltiamo lo stream dei post dal ViewModel
@@ -53,6 +84,7 @@ class HomePage extends StatelessWidget {
         },
       ),
       bottomNavigationBar: CustomNavBar(
+      ),
       ),
     );
   }
