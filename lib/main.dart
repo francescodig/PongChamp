@@ -1,3 +1,5 @@
+import 'package:PongChamp/ui/pages/viewmodel/forgot_password_view_model.dart';
+
 import '/ui/pages/viewmodel/participants_view_model.dart';
 import '/data/services/post_service.dart';
 import '/data/services/repositories/post_repository.dart';
@@ -26,10 +28,12 @@ void main () async {
   Provider.debugCheckInvalidValueType = null;
 
 
+
+
   final postService = PostService();
   final postRepository = PostRepository(postService);
   final postViewModel = PostViewModel(postRepository);
-
+  
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform, // se usi firebase_options.dart
@@ -40,6 +44,7 @@ void main () async {
       Provider<AuthService>(create: (_) => AuthService()),
       ChangeNotifierProvider(create: (_) => RegisterViewModel()),
       ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<AuthService>())),
+      ChangeNotifierProvider(create: (context)=> ForgotPasswordViewModel(context.read<AuthService>())),
       Provider<PostViewModel>.value(value: postViewModel),
       ChangeNotifierProvider(create: (_) => MapViewModel()),
       ChangeNotifierProvider(create: (_) => EventViewModel()),
