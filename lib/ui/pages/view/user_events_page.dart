@@ -1,3 +1,4 @@
+import '../widgets/custom_section_header.dart';
 import '/ui/pages/widgets/custom_snackBar.dart';
 import '/domain/models/event_model.dart';
 import 'package:provider/provider.dart';
@@ -41,7 +42,8 @@ class _UserEventsPage extends State<UserEventsPage> {
             itemCount: count,
             itemBuilder: (context, index) {
               if (index==0){
-                return _sectionHeader("Eventi creati");
+                final createdLength = created.length;
+                return CustomSectionheader(title: "Eventi creati: $createdLength");
               } else if (index > 0 && index <= created.length) {
                 final event = created[index -1];
                 return CustomCard(
@@ -53,7 +55,8 @@ class _UserEventsPage extends State<UserEventsPage> {
                   buttonText: "Elimina Evento",
                 );
               }  else if (index == created.length + 1) {
-                return _sectionHeader("Eventi a cui parteciperai");
+                final participatesLength = participates.length;
+                return CustomSectionheader(title: "Eventi a cui parteciperai: $participatesLength");
               } else {
                 final event = participates[index-created.length-2];
                 return CustomCard(
@@ -69,19 +72,6 @@ class _UserEventsPage extends State<UserEventsPage> {
         }
       ),
       bottomNavigationBar: CustomNavBar(
-      ),
-    );
-  }
-  Widget _sectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const Divider(thickness: 1.2, color: Colors.grey),
-        ],
       ),
     );
   }

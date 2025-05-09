@@ -1,3 +1,4 @@
+import '../widgets/custom_section_header.dart';
 import '/ui/pages/widgets/custom_snackBar.dart';
 import '/ui/pages/view/user_events_page.dart';
 import '/domain/models/event_model.dart';
@@ -29,6 +30,7 @@ class _EventsPageState extends State<EventsPage> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<EventViewModel>();
+    final eventsLength = viewModel.events.length;
     return Scaffold(
       appBar: CustomAppBar(),
       body: 
@@ -76,6 +78,12 @@ class _EventsPageState extends State<EventsPage> {
                     ),
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                CustomSectionheader(title: "Eventi in programma: $eventsLength"
+                ),
+              ]),
               
               viewModel.isLoading ? Center(child: CircularProgressIndicator(color: Colors.black,))
               : viewModel.events.isEmpty ? Center(child: Text('Nessun evento disponibile'))
