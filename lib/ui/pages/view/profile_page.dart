@@ -1,3 +1,4 @@
+import 'package:PongChamp/ui/pages/view/expired_event_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:PongChamp/domain/models/post_model.dart';
@@ -50,7 +51,19 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
+                    //bottone per modificare creare un post
+                    IconButton(
+                      icon: const Icon(Icons.post_add, size: 30),
+                      onPressed: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(
+                            builder: (context) => ExpiredEventPage(),
+                        ));
+                      },
+                    ),
                   ],
+                  
                 ),
               ),
 
