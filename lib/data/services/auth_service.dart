@@ -1,7 +1,6 @@
 import '/domain/models/user_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -74,11 +73,22 @@ class AuthService {
   }
 }
 
+///Singolo utente
 Future<AppUser> fetchUserById(String userId) async {
   final doc = await FirebaseFirestore.instance.collection('User').doc(userId).get();
   return AppUser.fromFirestore(doc);
 }
+///Lista di utenti
+Future<List<AppUser>> fetchUsersByIds(List<String> ids) async {
+  final List<AppUser> users = [];
 
+  for (final id in ids) {
+    final user = await fetchUserById(id); 
+    users.add(user);
+  }
+
+  return users;
+}
 
 Future<void> signOut() async {
   await _auth.signOut();

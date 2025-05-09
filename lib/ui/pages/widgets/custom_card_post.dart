@@ -1,3 +1,6 @@
+import 'package:PongChamp/ui/pages/view/profile_page.dart';
+
+import '/ui/pages/view/participants_page.dart';
 import '/domain/models/event_model.dart';
 import 'package:flutter/material.dart';
 
@@ -56,9 +59,17 @@ class CustomCard extends StatelessWidget {
                   radius: 24,
                 ),
                 SizedBox(width: 12),
-                Text(
-                  creatorNickname,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfilePage(userId: event.creatorId),
+                      ),
+                    );
+                  },
+                  child: Text(creatorNickname,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),)
                 ),
               ],
             ),
@@ -104,8 +115,18 @@ class CustomCard extends StatelessWidget {
                   children: [
                     Icon(Icons.group),
                     SizedBox(width: 4),
-                    Text('$participants / $maxParticipants'),
-                  ],
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ParticipantsPage(participants: event.participantIds),
+                          ),
+                        );
+                      },
+                      child:Text('$participants / $maxParticipants'),
+                    ),
+                  ],                
                 ),
                 ElevatedButton(
                   onPressed: onTap,

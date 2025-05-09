@@ -15,7 +15,15 @@ class EventViewModel extends ChangeNotifier {
   List<Event> _events = [];
   List<Event> _userEvents = [];
   List<Event> _userParticipatedEvents=[];
+
   bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
+  String? get userId => _authService.currentUserId;
+
+  List<Event> get events => _events;
+  List<Event> get userEvents => _userEvents;
+  List<Event> get userPartecipates => _userParticipatedEvents;
 
   ///Lista contenente solo gli eventi a cui l'utente partecipa ,che non ha creato
   List<Event> get userOnlyParticipatedEvents {
@@ -25,11 +33,26 @@ class EventViewModel extends ChangeNotifier {
         .toList();
   }
   
-  List<Event> get events => _events;
-  List<Event> get userEvents => _userEvents;
-  List<Event> get userPartecipates => _userParticipatedEvents;
-  bool get isLoading => _isLoading;
-  String? get userId => _authService.currentUserId;
+  ///Lista contente solo gli eventi creati dall'utente non ancora scaduti
+  List<Event> get userFutureEvents {
+    return _userEvents
+    .where((e) => e.orario.isAfter(DateTime.now()))
+    .toList();
+  }
+
+  ///Lista contente solo gli eventi a cui l'utente partecipa non ancora scaduti
+  List<Event> get onlyParticipatedFutureEvents {
+    return userOnlyParticipatedEvents
+    .where((e) => e.orario.isAfter(DateTime.now()))
+    .toList();
+  }
+
+  ///Lista contenente gli eventi creati o a cui l'utente partecipa ma scaduti
+  List<Event> get userExpiredEvents {
+    final createdExpired = userEvents.where((e) => e.orario.isBefore(DateTime.now())).toList();
+    final onlyParticipatedExpired = userOnlyParticipatedEvents.where((e) => e.orario.isBefore(DateTime.now())).toList();
+    return (createdExpired+onlyParticipatedExpired);
+  }  
 
   Future<void> creaEvento({
     required String title,
@@ -193,6 +216,15 @@ class EventViewModel extends ChangeNotifier {
     _selectedLocation = loc;
     notifyListeners();
   }
+
+
+
+  Future<void> createPost({
+    required Event event,
+    required int player1score,
+    required int player2score,
+    required String description,
+  }) async {}
 }
 
 

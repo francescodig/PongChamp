@@ -1,3 +1,5 @@
+import 'package:PongChamp/ui/pages/view/create_post_page.dart';
+
 import '../widgets/custom_section_header.dart';
 import '/ui/pages/widgets/custom_snackBar.dart';
 import '/domain/models/event_model.dart';
@@ -32,19 +34,23 @@ class _UserEventsPage extends State<UserEventsPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
-          final created = viewModel.userEvents;
-          final participates = viewModel.userOnlyParticipatedEvents;
-          if (created.isEmpty && participates.isEmpty){
+          final created = viewModel.userFutureEvents;
+          final participates = viewModel.onlyParticipatedFutureEvents;
+          final expired = viewModel.userExpiredEvents;
+          if (created.isEmpty && participates.isEmpty && expired.isEmpty){
             return Center(child: Text('Nessun evento'));
           }
-          final count = created.length+participates.length+2 /*le due intestazioni*/;
+          final createdHeaderIndex = 0;
+          final participatesHeaderIndex = created.length + 1;
+          final expiredHeaderIndex = participatesHeaderIndex + participates.length + 1;
+          final totalCount = created.length + participates.length + expired.length + 3;
           return ListView.builder(
-            itemCount: count,
+            itemCount: totalCount,
             itemBuilder: (context, index) {
-              if (index==0){
+              if (index==createdHeaderIndex){
                 final createdLength = created.length;
                 return CustomSectionheader(title: "Eventi creati: $createdLength");
-              } else if (index > 0 && index <= created.length) {
+              } else if (index > createdHeaderIndex && index <= created.length) {
                 final event = created[index -1];
                 return CustomCard(
                   event: event,
@@ -54,11 +60,11 @@ class _UserEventsPage extends State<UserEventsPage> {
                   buttonColor: Colors.redAccent,
                   buttonText: "Elimina Evento",
                 );
-              }  else if (index == created.length + 1) {
+              }  else if (index == participatesHeaderIndex) {
                 final participatesLength = participates.length;
                 return CustomSectionheader(title: "Eventi a cui parteciperai: $participatesLength");
-              } else {
-                final event = participates[index-created.length-2];
+              } else if (index > participatesHeaderIndex && index <= participatesHeaderIndex + participates.length){
+                final event = participates[index-participatesHeaderIndex-1];
                 return CustomCard(
                   event: event,
                   onTap: (){
@@ -67,6 +73,21 @@ class _UserEventsPage extends State<UserEventsPage> {
                   buttonColor: Colors.redAccent,
                   buttonText: "Annulla Partecipazione",
                 );
+              } else if (index == expiredHeaderIndex){
+                final expiredLength = expired.length;
+                return CustomSectionheader(title: "Eventi scaduti: $expiredLength");
+              } else {
+                final event = expired[index - expiredHeaderIndex - 1];
+                return CustomCard(
+                  event: event,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => CreatePostPage(event: event)),
+                    );
+                  },
+                  buttonText: "Crea Post", 
+                  buttonColor: Color.fromARGB(255, 245, 192, 41),);
               }
             },);
         }
@@ -148,5 +169,6 @@ class _UserEventsPage extends State<UserEventsPage> {
       return;
     }
   }
+
 
 }

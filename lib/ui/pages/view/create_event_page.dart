@@ -44,7 +44,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         title: Text("PongChamp", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
         ),
       ),
-      ///Problema di overflow nel momento di apertura della tastiera, ridimensionare la distanza dal basso
+      
       body: Padding(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
         child: Form(
@@ -152,12 +152,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     selectedDateTime != null &&
                     viewModel.selectedLocation != null) {
                     await viewModel.creaEvento(
-                    title: _titleController.text,
-                    location : viewModel.selectedLocation!,
-                    maxParticipants:
-                        int.parse(_maxParticipantsController.text),
-                    matchType: selectedMatchType!,
-                    orario: selectedDateTime!,
+                      title: _titleController.text,
+                      location : viewModel.selectedLocation!,
+                      maxParticipants:
+                          int.parse(_maxParticipantsController.text),
+                      matchType: selectedMatchType!,
+                      orario: selectedDateTime!,
                     );
                   CustomSnackBar.show(
                     context,
