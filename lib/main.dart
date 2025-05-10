@@ -1,3 +1,5 @@
+import 'package:PongChamp/ui/pages/viewmodel/forgot_password_view_model.dart';
+
 import '/ui/pages/viewmodel/participants_view_model.dart';
 import '/data/services/post_service.dart';
 import '/data/services/repositories/post_repository.dart';
@@ -15,6 +17,7 @@ import '/ui/pages/viewmodel/events_view_model.dart';
 import 'data/services/user_post_service.dart';
 import 'data/services/repositories/user_post_repository.dart';
 import 'ui/pages/viewmodel/profile_view_model.dart';
+import 'ui/pages/viewmodel/expired_view_model.dart';
 
 
 
@@ -25,10 +28,12 @@ void main () async {
   Provider.debugCheckInvalidValueType = null;
 
 
+
+
   final postService = PostService();
   final postRepository = PostRepository(postService);
   final postViewModel = PostViewModel(postRepository);
-
+  
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform, // se usi firebase_options.dart
@@ -39,6 +44,7 @@ void main () async {
       Provider<AuthService>(create: (_) => AuthService()),
       ChangeNotifierProvider(create: (_) => RegisterViewModel()),
       ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<AuthService>())),
+      ChangeNotifierProvider(create: (context)=> ForgotPasswordViewModel(context.read<AuthService>())),
       Provider<PostViewModel>.value(value: postViewModel),
       ChangeNotifierProvider(create: (_) => MapViewModel()),
       ChangeNotifierProvider(create: (_) => EventViewModel()),
@@ -46,7 +52,8 @@ void main () async {
       Provider<PostRepository>(create: (_) => PostRepository(postService)),
       Provider<UserPostService>(create: (_) => UserPostService()),
       ProxyProvider<UserPostService, UserPostRepository>(update: (_, userPostService, __) => UserPostRepository(userPostService),),
-      ChangeNotifierProvider(create: (context) => ProfileViewModel(context.read<UserPostRepository>()),) 
+      ChangeNotifierProvider(create: (context) => ProfileViewModel(context.read<UserPostRepository>()),), 
+      ChangeNotifierProvider(create: (_) => ExpiredViewModel()),
     ],
     child: MyApp(),
     )

@@ -6,6 +6,7 @@ import '/ui/pages/viewmodel/post_view_model.dart';
 import 'package:provider/provider.dart';
 import '/domain/models/post_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'; // per debugPrintStack()
 
 class PostCard extends StatelessWidget {
   final Post post;
@@ -32,12 +33,15 @@ class PostCard extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ProfilePage(userId: post.user.id!),
-                      ),
-                    );
+                    if (ModalRoute.of(context)?.settings.name != '/profile_${post.user.id}') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          settings: RouteSettings(name: '/profile_${post.user.id}'),
+                          builder: (_) => ProfilePage(userId: post.user.id!),
+                       ),
+                      );
+                    }
                   },
                   child: CircleAvatar(
                     radius: 24,
@@ -47,12 +51,15 @@ class PostCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ProfilePage(userId: post.user.id!),
-                      ),
-                    );
+                    if (ModalRoute.of(context)?.settings.name != '/profile_${post.user.id}') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          settings: RouteSettings(name: '/profile_${post.user.id}'),
+                          builder: (_) => ProfilePage(userId: post.user.id!),
+                       ),
+                      );
+                    }
                   },
                   child: Text(
                     post.user.nickname,
@@ -82,12 +89,15 @@ class PostCard extends StatelessWidget {
                     Flexible(
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => ProfilePage(userId: post.match.user1.id!),
-                            ),
-                          );
+                          if (ModalRoute.of(context)?.settings.name != '/profile_${post.match.user1.id}') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                settings: RouteSettings(name: '/profile_${post.match.user1.id}'),
+                                builder: (_) => ProfilePage(userId: post.match.user1.id!),
+                              ),
+                            );
+                          }
                         },
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -114,6 +124,7 @@ class PostCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             post.match.score1.toString(),
@@ -136,12 +147,17 @@ class PostCard extends StatelessWidget {
                     Flexible(
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => ProfilePage(userId: post.match.user2.id!),
-                            ),
-                          );
+                          if (ModalRoute.of(context)?.settings.name != '/profile_${post.match.user2.id}') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                settings: RouteSettings(
+                                  name: '/profile_${post.match.user2.id}',
+                                ),
+                                builder: (_) => ProfilePage(userId: post.match.user2.id!),
+                              ),
+                            );
+                          }
                         },
                         child: Row(
                           mainAxisSize: MainAxisSize.min,

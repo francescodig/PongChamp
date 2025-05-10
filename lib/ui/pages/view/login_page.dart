@@ -1,3 +1,4 @@
+import 'package:PongChamp/ui/pages/view/forgot_password_page.dart';
 import 'package:PongChamp/ui/pages/view/map_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -87,7 +88,12 @@ class LoginPage extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
+                            );
+                          },
                           child: Text("Forgot password?", style: TextStyle(color: Colors.black)),
                         ),
                       ),
