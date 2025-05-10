@@ -74,6 +74,7 @@ class AuthService {
   }
 }
 
+//singolo utente
 //Singolo utente
 Future<AppUser> fetchUserById(String userId) async {
   final doc = await FirebaseFirestore.instance.collection('User').doc(userId).get();
@@ -92,6 +93,29 @@ Future<List<AppUser>> fetchUsersByIds(List<String> ids) async {
   return users;
 }
 
+///Lista di utenti
+Future<List<AppUser>> fetchUsersByIds(List<String> ids) async {
+  final List<AppUser> users = [];
+
+  for (final id in ids) {
+    final user = await fetchUserById(id); 
+    users.add(user);
+  }
+
+  return users;
+}
+
+//Lista di utenti
+Future<List<AppUser>> fetchUsersByIds(List<String> ids) async {
+  final List<AppUser> users = [];
+
+  for (final id in ids) {
+    final user = await fetchUserById(id); 
+    users.add(user);
+  }
+
+  return users;
+}
 
 Future<void> signOut() async {
   await _auth.signOut();

@@ -1,4 +1,5 @@
 import 'package:PongChamp/ui/pages/view/events_page.dart';
+import 'package:PongChamp/ui/pages/view/search_page.dart';
 import 'package:flutter/material.dart';
 import '/ui/pages/view/profile_page.dart';
 import '/ui/pages/view/map_page.dart';
@@ -62,6 +63,13 @@ class CustomNavBar extends StatelessWidget{
                   color: Colors.black,
                   onPressed: () {
                     navigateTo(MapPage(), '/map'); // Naviga alla MapPage
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.search),
+                  color: Colors.black,
+                  onPressed: () {
+                    navigateTo(SearchPage(), '/search'); // Naviga alla HomePage
                   },
                 ),
                 IconButton(
