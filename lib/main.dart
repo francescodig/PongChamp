@@ -60,7 +60,8 @@ void main () async {
           update: (_, service, __) => SearchRepository(service),
         ),
       ChangeNotifierProvider(create: (context) => ProfileViewModel(context.read<UserPostRepository>())),
-      ChangeNotifierProvider(create:  (context) => SearchViewModel(context.read<SearchRepository>()))
+      ChangeNotifierProvider(create:  (context) => SearchViewModel(context.read<SearchRepository>())),
+      ChangeNotifierProvider(create: (_) => ExpiredViewModel())
     ],
     child: MyApp(),
     )
