@@ -74,6 +74,26 @@ class AuthService {
   }
 }
 
+Future <bool> checkIfEmailExists(String email) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('User')
+          .where('email', isEqualTo: email)
+          .limit(1)
+          .get();
+
+      if (snapshot.docs.isEmpty) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+
+
 //Singolo utente
 Future<AppUser> fetchUserById(String userId) async {
   final doc = await FirebaseFirestore.instance.collection('User').doc(userId).get();
