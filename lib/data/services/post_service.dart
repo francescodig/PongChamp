@@ -3,6 +3,11 @@ import 'package:PongChamp/domain/models/user_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+
+
+// Questa classe gestisce le operazioni sui post che appaiono sulla homepage, come il recupero dei post e la gestione dei like
+// e dei commenti. Utilizza Firestore per interagire con il database.
+
 class PostService {
 
   Stream<List<Post>> getPostsStream() {
