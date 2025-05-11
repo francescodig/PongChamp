@@ -100,6 +100,10 @@ Future<AppUser> fetchUserById(String userId) async {
   return AppUser.fromFirestore(doc);
 }
 
+Future<DocumentSnapshot<Map<String, dynamic>>> fetchUserByIdAsDoc(String userId) {
+  return FirebaseFirestore.instance.collection('User').doc(userId).get();
+}
+
 //Lista di utenti
 Future<List<AppUser>> fetchUsersByIds(List<String> ids) async {
   final List<AppUser> users = [];
