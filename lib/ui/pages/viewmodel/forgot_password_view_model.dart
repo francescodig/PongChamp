@@ -18,31 +18,17 @@ class ForgotPasswordViewModel extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
 
-  Future <bool> checkIfEmailExists(String email) async {
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('User')
-          .where('email', isEqualTo: email)
-          .limit(1)
-          .get();
+  
 
-      if (snapshot.docs.isEmpty) {
-        _errorMessage = 'Nessun utente trovato con questa email.';
-        notifyListeners();
-        return false;
-      } else {
-        return true;
-      }
-    } catch (e) {
-      _errorMessage = 'Errore durante la verifica dell\'email.';
-      notifyListeners();
-      return false;
-    }
-  }
-
-    final emailChecker = await checkIfEmailExists(email);
+    
     
     final result = await _authService.sendPasswordResetEmail(email);
+
+    final emailChecker = await _authService.checkIfEmailExists(email);
+
+    print('Email exists: $emailChecker');
+    print('Result: $result');
+    print('1.Error message: $_errorMessage');
 
     
 
@@ -52,7 +38,8 @@ class ForgotPasswordViewModel extends ChangeNotifier {
     if (result == null && emailChecker == true) {
       return true;
     } else if  (emailChecker == false){
-      _errorMessage ='user-not-found';
+      _errorMessage =_mapError('user-not-found');
+      notifyListeners();
       return false;
     }
     else {

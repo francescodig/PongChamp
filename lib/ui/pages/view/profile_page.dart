@@ -1,3 +1,4 @@
+import 'package:PongChamp/data/services/repositories/user_post_repository.dart';
 import 'package:PongChamp/ui/pages/view/expired_event_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,94 +15,99 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      profileViewModel.loadProfile(userId);
-    });
-
-    return Scaffold(
-      appBar: CustomAppBar(),
-      body: Consumer<ProfileViewModel>(
-        builder: (context, viewModel, child) {
-          if (viewModel.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Intestazione profilo con immagine e nome
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundImage: NetworkImage(viewModel.profileImageUrl ?? ''),
-                      backgroundColor: Colors.grey[300],
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Text(
-                        viewModel.userName ?? 'Utente',
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    //bottone per modificare creare un post
-                    IconButton(
-                      icon: const Icon(Icons.post_add, size: 30),
-                      onPressed: () {
-                        Navigator.push(
-                          context, 
-                          MaterialPageRoute(
-                            builder: (context) => ExpiredEventPage(),
-                        ));
-                      },
-                    ),
-                  ],
-                  
-                ),
-              ),
-
-              const Divider(),
-
-              // Elenco post
-              Expanded(
-                child: StreamBuilder<List<Post>>(
-                  stream: viewModel.postStream,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (snapshot.hasError) {
-                      return Center(child: Text('Errore: ${snapshot.error}'));
-                    }
-
-                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('Nessun post pubblicato'));
-                    }
-
-                    final posts = snapshot.data!;
-                    return ListView.builder(
-                      itemCount: posts.length,
-                      itemBuilder: (context, index) {
-                        return PostCard(post: posts[index]);
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-      bottomNavigationBar: CustomNavBar(),
+    final userPostRepository = Provider.of<UserPostRepository>(context, listen: false);
+    return ChangeNotifierProvider(
+      create: (_) {
+        final vm = ProfileViewModel(userPostRepository);
+        Future.microtask(() => vm.loadProfile(userId));
+        return vm;
+      },
+      child: const _ProfilePageContent(),
     );
   }
 }
 
+class _ProfilePageContent extends StatelessWidget {
+  const _ProfilePageContent({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final viewModel = Provider.of<ProfileViewModel>(context);
+
+    return Scaffold(
+      appBar: CustomAppBar(),
+      body: viewModel.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Intestazione profilo
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundImage: NetworkImage(viewModel.profileImageUrl ?? ''),
+                        backgroundColor: Colors.grey[300],
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          viewModel.userName ?? 'Utente',
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.post_add, size: 30),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ExpiredEventPage(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+
+                const Divider(),
+
+                // Elenco post
+                Expanded(
+                  child: StreamBuilder<List<Post>>(
+                    stream: viewModel.postStream,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Errore: ${snapshot.error}'));
+                      }
+
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('Nessun post pubblicato'));
+                      }
+
+                      final posts = snapshot.data!;
+                      return ListView.builder(
+                        itemCount: posts.length,
+                        itemBuilder: (context, index) {
+                          return PostCard(post: posts[index]);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+      bottomNavigationBar: CustomNavBar(),
+    );
+  }
+}

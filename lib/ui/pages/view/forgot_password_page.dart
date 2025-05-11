@@ -55,13 +55,11 @@ return ChangeNotifierProvider(
                       ),
                       SizedBox(height: 10),
                       if (viewModel.errorMessage != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    viewModel.errorMessage!,
-                    style: TextStyle(color: Colors.red, fontSize: 14),
-                  ),
-                ),
+                       Text(
+                          viewModel.errorMessage!,
+                          style: TextStyle(color: Colors.red, fontSize: 14),
+                        ),
+        
 
 
                       SizedBox(height: 20),

@@ -1,4 +1,7 @@
+import 'package:PongChamp/data/services/repositories/search_repository.dart';
+import 'package:PongChamp/data/services/search_service.dart';
 import 'package:PongChamp/ui/pages/viewmodel/forgot_password_view_model.dart';
+import 'package:PongChamp/ui/pages/viewmodel/search_view_model.dart';
 
 import '/ui/pages/viewmodel/participants_view_model.dart';
 import '/data/services/post_service.dart';
@@ -42,6 +45,7 @@ void main () async {
     MultiProvider(
     providers: [
       Provider<AuthService>(create: (_) => AuthService()),
+      Provider<SearchService>(create: (_) => SearchService()),
       ChangeNotifierProvider(create: (_) => RegisterViewModel()),
       ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<AuthService>())),
       ChangeNotifierProvider(create: (context)=> ForgotPasswordViewModel(context.read<AuthService>())),
@@ -51,9 +55,13 @@ void main () async {
       ChangeNotifierProvider(create: (_) => ParticipantsViewModel()),
       Provider<PostRepository>(create: (_) => PostRepository(postService)),
       Provider<UserPostService>(create: (_) => UserPostService()),
-      ProxyProvider<UserPostService, UserPostRepository>(update: (_, userPostService, __) => UserPostRepository(userPostService),),
-      ChangeNotifierProvider(create: (context) => ProfileViewModel(context.read<UserPostRepository>()),), 
-      ChangeNotifierProvider(create: (_) => ExpiredViewModel()),
+      ProxyProvider<UserPostService, UserPostRepository>(update: (_, userPostService, __) => UserPostRepository(userPostService)),
+       ProxyProvider<SearchService, SearchRepository>(
+          update: (_, service, __) => SearchRepository(service),
+        ),
+      ChangeNotifierProvider(create: (context) => ProfileViewModel(context.read<UserPostRepository>())),
+      ChangeNotifierProvider(create:  (context) => SearchViewModel(context.read<SearchRepository>())),
+      ChangeNotifierProvider(create: (_) => ExpiredViewModel())
     ],
     child: MyApp(),
     )
