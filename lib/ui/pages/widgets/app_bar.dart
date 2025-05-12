@@ -2,6 +2,8 @@ import 'package:PongChamp/ui/pages/view/home_page.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget{
+
+
   @override
   Size get preferredSize => Size.fromHeight(80);
   @override
