@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class PostService {
 
+  // Recupera tutti i posti dalla collezione "Post" in Firestore
   Stream<List<Post>> getPostsStream() {
     // Restituisci uno Stream di una lista di Post
     return FirebaseFirestore.instance
@@ -21,6 +22,8 @@ class PostService {
             })
             .toList());  
     }
+
+    //Funzione per mettere mi piace a un post 
     Future<void> addLikeToPost(String postId, int likes) async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -41,6 +44,7 @@ class PostService {
  
   }
 
+  //Funzione per rimuovere mi piace a un post
   Future<void> removeLikeFromPost(String postId, int likes) async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -61,6 +65,8 @@ class PostService {
  
   }
 
+
+  //Funzione per restituire gli utenti che hanno messo mi piace a un post
  Future<List<AppUser>> getUsersWhoLikedPost(String postId) async {
   final postDoc = await FirebaseFirestore.instance.collection('Post').doc(postId).get();
 
