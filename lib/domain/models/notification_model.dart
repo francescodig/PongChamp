@@ -7,7 +7,7 @@ class NotificationModel {
   final String message;
   final String userId;
   final String eventId;
-  final DateTime timestamp;
+  final DateTime? timestamp;
   final bool read;
 
   NotificationModel({
