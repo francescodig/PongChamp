@@ -114,6 +114,7 @@ class EventViewModel extends ChangeNotifier {
     return success;
   }
 
+  //Carica tutti gli eventi nella variabile _events
   Future<void> fetchEvents() async {
     _isLoading = true;
     notifyListeners();
@@ -122,6 +123,7 @@ class EventViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  //Carica tutti gli eventi creati dall'utente nella variabile _userEvents
   Future<void> fetchUserEvents() async {
     _isLoading = true;
     notifyListeners();
@@ -131,6 +133,7 @@ class EventViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  //Carica tutti gli eventi a cui l'utente partecipa nella variabile _userParticipatedEvents
   Future<void> fetchPartecipateEvents() async {
     _isLoading = true;
     notifyListeners();
@@ -140,6 +143,7 @@ class EventViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  //Funzione di partecipazione ad un evento
   Future<void> partecipateToEvent(Event event) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -172,6 +176,7 @@ class EventViewModel extends ChangeNotifier {
     return _events.where((event) => event.locationId.toLowerCase() == location.toLowerCase()).toList();
   }
 
+  //Funzione di rimozione partecipazione ad un evento
   Future<bool> removeParticipant(Event event, String? userId) async{
     //Controllo se l'utente è partecipante
     if (!event.participantIds.contains(userId)) {
@@ -191,13 +196,13 @@ class EventViewModel extends ChangeNotifier {
     }
   }
 
+  //Carica tutti i markers esistenti nella variabile _markers
+  List<MarkerData> _markers = [];
   Future<List<MarkerData>> loadLocationsFromJson() async {
     final jsonString = await rootBundle.loadString('assets/markers.json');
     final List<dynamic> jsonData = json.decode(jsonString);
     return jsonData.map((item) => MarkerData.fromJson(item)).toList();
   }
-
-  List<MarkerData> _markers = [];
   Future<void> fetchMarkers() async {
     try {
       final loadedMarkers = await loadLocationsFromJson(); // questo deve già esserci
@@ -207,6 +212,8 @@ class EventViewModel extends ChangeNotifier {
       debugPrint("Errore nel caricamento dei Marker: $e");
     }
   }
+
+  //Per la gestione della scelta della location nella creazione di un evento
   MarkerData? _selectedLocation;
 
   List<MarkerData> get markers => _markers;
@@ -216,8 +223,6 @@ class EventViewModel extends ChangeNotifier {
     _selectedLocation = loc;
     notifyListeners();
   }
-
-
 
   Future<void> createPost({
     required Event event,

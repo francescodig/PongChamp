@@ -24,7 +24,7 @@ class EventService {
       await _eventsCollection.doc(eventId).delete();
       return true;
     } catch (e) {
-      throw Exception('Errore durante l\'eliminazione dell\'evento: $e');
+      throw Exception("Errore durante l'eliminazione dell'evento: $e");
     }
   }
 

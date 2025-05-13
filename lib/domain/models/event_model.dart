@@ -1,9 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-//**DA RIVEDERE**
-// Gli attributi username, parzialmente risolto con creatorId, e location dovrebbero prendere oggetti particolari e non stringhe 
-
 class Event {
   final String id;
   final String title;
