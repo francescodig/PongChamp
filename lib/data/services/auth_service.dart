@@ -3,10 +3,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// Questa classe gestisce l'autenticazione degli utenti e le operazioni correlate.
+// Utilizza Firebase Authentication per gestire la registrazione, il login e il recupero della password.
+// Inoltre, gestisce anche le operazioni di salvataggio e recupero degli utenti da Firestore.
+// La classe AuthService fornisce metodi per registrare un nuovo utente, effettuare il login, inviare email di reset della password,
+// controllare se un'email esiste già e recuperare informazioni sugli utenti.
+// Inoltre, fornisce metodi per il logout e per recuperare l'ID dell'utente corrente.
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   String? get currentUserId => FirebaseAuth.instance.currentUser?.uid;
+
 
   Future<String?> registerWithEmailAndPassword(
     String email, 
@@ -100,6 +107,8 @@ Future<AppUser> fetchUserById(String userId) async {
   return AppUser.fromFirestore(doc);
 }
 
+//Funzione per recuperare un utente da Firestore 
+// e restituire un DocumentSnapshot
 Future<DocumentSnapshot<Map<String, dynamic>>> fetchUserByIdAsDoc(String userId) {
   return FirebaseFirestore.instance.collection('User').doc(userId).get();
 }
@@ -114,6 +123,32 @@ Future<List<AppUser>> fetchUsersByIds(List<String> ids) async {
   }
 
   return users;
+}
+
+//Funzione per aggiornare i dati dell'utente
+Future<void> updateUserData(
+  String userId,
+  String name,
+  String surname,
+  String nickname,
+  String phoneNumber,
+  String email,
+  String password,
+  String profileImage,
+) async {
+  try {
+    await FirebaseFirestore.instance.collection('User').doc(userId).update({
+      'Name': name,
+      'Surname': surname,
+      'nickname': nickname,
+      'phoneNumber': phoneNumber,
+      'email': email,
+      'password': password,
+      'profileImage': profileImage,
+    });
+  } catch (e) {
+    throw Exception('Errore durante l\'aggiornamento dei dati: $e');
+  }
 }
 
 Future<void> signOut() async {

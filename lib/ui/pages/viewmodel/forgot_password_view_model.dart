@@ -26,9 +26,10 @@ class ForgotPasswordViewModel extends ChangeNotifier {
 
     final emailChecker = await _authService.checkIfEmailExists(email);
 
-    print('Email exists: $emailChecker');
+    /* print('Email exists: $emailChecker');
     print('Result: $result');
     print('1.Error message: $_errorMessage');
+    */
 
     
 
