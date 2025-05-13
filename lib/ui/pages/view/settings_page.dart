@@ -1,8 +1,11 @@
+import 'package:PongChamp/ui/pages/view/edit_profile.dart';
 import 'package:PongChamp/ui/pages/view/informazioni_page.dart';
 import 'package:PongChamp/ui/pages/view/legal_notes_page.dart';
 import 'package:PongChamp/ui/pages/view/login_page.dart';
 import 'package:PongChamp/ui/pages/view/privacy_page.dart';
+import 'package:PongChamp/ui/pages/viewmodel/edit_profile_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '/ui/pages/view/profile_page.dart';
 import '/ui/pages/widgets/bottom_navbar.dart';
 import '/ui/pages/widgets/app_bar.dart';
@@ -71,13 +74,16 @@ class SettingsPage extends StatelessWidget {
                           Text("Modifica Profilo"),
                           IconButton(
                             onPressed: () async {
-                              final String? userId = FirebaseAuth.instance.currentUser?.uid;
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ProfilePage(userId: userId!),
+                                  builder: (_) => ChangeNotifierProvider(
+                                    create: (_) => EditProfileViewModel(),
+                                    child: EditProfilePage(),
+                                  ),
                                 ),
                               );
+
                             },icon: Icon(Icons.arrow_right,size: 35,)
                           ),
                         ],
