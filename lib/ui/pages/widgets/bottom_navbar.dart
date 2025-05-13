@@ -6,6 +6,7 @@ import '/ui/pages/view/map_page.dart';
 import '/ui/pages/view/home_page.dart';
 import '/ui/pages/view/settings_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:PongChamp/domain/functions/utility.dart';
 
 
 class CustomNavBar extends StatelessWidget{
@@ -19,18 +20,6 @@ class CustomNavBar extends StatelessWidget{
     // Se è diversa, naviga alla nuova pagina e rimuove le precedenti
     // Se è la stessa, non fa nulla
     // per evitare di ricreare la pagina corrente
-   void navigateTo(Widget page, String routeName) {
-      if (currentRoute != routeName) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => page,
-            settings: RouteSettings(name: routeName),
-          ),
-          (route) => route.isFirst, //Prende la route e ne conserva solo la prima (presumibilmente Home)
-        );
-      }
-    }
 
 
     return Container(
@@ -55,21 +44,14 @@ class CustomNavBar extends StatelessWidget{
                   icon: Icon(Icons.list),
                   color: Colors.black,
                   onPressed: () {
-                    navigateTo(EventsPage(), '/events'); // Naviga alla EventsPage
+                    navigateTo(context ,EventsPage(), '/events'); // Naviga alla EventsPage
                   },
                 ),
                 IconButton(
                   icon: Icon(Icons.map),
                   color: Colors.black,
                   onPressed: () {
-                    navigateTo(MapPage(), '/map'); // Naviga alla MapPage
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.search),
-                  color: Colors.black,
-                  onPressed: () {
-                    navigateTo(SearchPage(), '/search'); // Naviga alla HomePage
+                    navigateTo(context, MapPage(), '/map'); // Naviga alla MapPage
                   },
                 ),
                 IconButton(
@@ -78,14 +60,14 @@ class CustomNavBar extends StatelessWidget{
                   onPressed: () async {
                     String userId = FirebaseAuth.instance.currentUser!.uid;
                     // naviga passando l'userId alla ProfilePage
-                    navigateTo(ProfilePage(userId: userId), '/profile_${userId}'); // Naviga alla ProfilePage
+                    navigateTo(context, ProfilePage(userId: userId), '/profile_${userId}'); // Naviga alla ProfilePage
                   },
                 ),
                 IconButton(
                   icon: Icon(Icons.settings),
                   color: Colors.black,
                   onPressed: () {
-                    navigateTo(SettingsPage(), '/settings'); // Naviga alla SettingsPage
+                    navigateTo(context, SettingsPage(), '/settings'); // Naviga alla SettingsPage
                   },
                 ),
               ],

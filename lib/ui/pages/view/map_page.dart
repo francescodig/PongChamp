@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../viewmodel/map_view_model.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -16,19 +17,23 @@ class _MapPageState extends State<MapPage> {
   GoogleMapController? _mapController;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
+  bool _isMapCreate = false;
 
-  static const CameraPosition _initialPosition = CameraPosition(
-    target: LatLng(42.34, 13.39),
-    zoom: 12,
-  );
+  CameraPosition? _initialPosition;
+
 
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<MapViewModel>(context, listen: false).loadMarkers(context);
+      Provider.of<MapViewModel>(context, listen: false).setInitialLocation(context);
     });
+
   }
+
+  
 
   @override
   void dispose() {
@@ -38,19 +43,12 @@ class _MapPageState extends State<MapPage> {
     super.dispose();
   }
 
-  void _moveCameraToFirstMarker(MapViewModel viewModel) {
-    if (viewModel.markers.isNotEmpty && _mapController != null) {
-      final firstMarker = viewModel.markers.first;
-      _mapController?.animateCamera(
-        CameraUpdate.newLatLng(firstMarker.position),
-      );
-    }
-  }
 
   @override
     Widget build(BuildContext context) {
     final viewModel = Provider.of<MapViewModel>(context);
     final screenHeight = MediaQuery.of(context).size.height;
+    
 
     return Scaffold(
       appBar: CustomAppBar(),
@@ -142,10 +140,15 @@ class _MapPageState extends State<MapPage> {
                     : Stack(
                         children: [
                           GoogleMap(
-                            initialCameraPosition: _initialPosition,
+                            initialCameraPosition: _initialPosition ??
+                            CameraPosition(
+                                target: LatLng(0, 0), // default se la posizione non è disponibile
+                                zoom: 2,
+                              ),
                             markers: viewModel.markers,
                             onMapCreated: (controller) {
                               _mapController = controller;
+                              _mapController?.moveCamera(CameraUpdate.newCameraPosition(viewModel.cameraPosition!));
                             },
                             myLocationEnabled: true,
                           ),

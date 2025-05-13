@@ -1,5 +1,8 @@
 import 'package:PongChamp/ui/pages/view/home_page.dart';
+import 'package:PongChamp/ui/pages/view/search_page.dart';
 import 'package:flutter/material.dart';
+import 'package:PongChamp/domain/functions/utility.dart';
+
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget{
 
@@ -38,8 +41,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget{
       actions: [
         IconButton(
           iconSize: 30,
-          icon: Icon(Icons.chat_outlined, color: Colors.black),
-          onPressed: () {},
+          icon: Icon(Icons.search, color: Colors.black),
+          onPressed: () {
+            navigateTo(context, SearchPage(), '/search'); // Naviga alla SearchPage
+          },
         ),
         IconButton(
           iconSize: 30,
