@@ -12,24 +12,29 @@ import '/ui/pages/widgets/app_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class SettingsPage extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
-      body: SingleChildScrollView( // ✅ rende scrollabile il contenuto
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.black),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+     appBar: CustomAppBar(),
+      body: 
+        Container(
+          margin: EdgeInsets.all(12),
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.black),
+          ),
+          child: Column(
+            spacing: 20,
+            children: [
+              Text("Impostazioni",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold
+                ),            
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                spacing: 7,
                 children: [
                   Container( 
                     padding: EdgeInsets.symmetric(horizontal: 12),
@@ -69,13 +74,16 @@ class SettingsPage extends StatelessWidget {
                           Text("Modifica Profilo"),
                           IconButton(
                             onPressed: () async {
-                              final String? userId = FirebaseAuth.instance.currentUser?.uid;
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ProfilePage(userId: userId!),
+                                  builder: (_) => ChangeNotifierProvider(
+                                    create: (_) => EditProfileViewModel(),
+                                    child: EditProfilePage(),
+                                  ),
                                 ),
                               );
+
                             },icon: Icon(Icons.arrow_right,size: 35,)
                           ),
                         ],
@@ -173,21 +181,4 @@ class SettingsPage extends StatelessWidget {
       bottomNavigationBar: CustomNavBar()
 );
   }
-
-  Widget _buildSettingRow(BuildContext context, {required String label, required VoidCallback onTap}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(fontSize: 16)),
-          IconButton(
-            onPressed: onTap,
-            icon: const Icon(Icons.arrow_right, size: 30),
-          ),
-        ],
-      ),
-    );
-  }
 }
-

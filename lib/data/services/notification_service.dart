@@ -10,7 +10,7 @@ class NotificationService {
     try {
       final snapshot = await _notificationCollection
           .where('userId', isEqualTo: userId)
-          .orderBy('timestampo', descending: true)
+          .orderBy('timestamp', descending: true)
           .get();
       return snapshot.docs.map((doc) {
         return NotificationModel.fromFirestore(doc);
@@ -27,7 +27,7 @@ class NotificationService {
       final snapshot = await _notificationCollection
           .where('userId', isEqualTo: userId)
           .where('read', isEqualTo: false)
-          .orderBy('timestampo', descending: true)
+          .orderBy('timestamp', descending: true)
           .get();
       return snapshot.docs.map((doc) {
         return NotificationModel.fromFirestore(doc);

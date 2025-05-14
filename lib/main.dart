@@ -1,6 +1,7 @@
 import 'package:PongChamp/data/services/repositories/search_repository.dart';
 import 'package:PongChamp/data/services/search_service.dart';
 import 'package:PongChamp/ui/pages/viewmodel/forgot_password_view_model.dart';
+import 'package:PongChamp/ui/pages/viewmodel/notification_view_model.dart';
 import 'package:PongChamp/ui/pages/viewmodel/search_view_model.dart';
 
 import '/ui/pages/viewmodel/participants_view_model.dart';
@@ -52,6 +53,7 @@ void main () async {
       Provider<PostViewModel>.value(value: postViewModel),
       ChangeNotifierProvider(create: (_) => MapViewModel()),
       ChangeNotifierProvider(create: (_) => EventViewModel()),
+      ChangeNotifierProvider(create: (_) => NotificationViewModel()),
       ChangeNotifierProvider(create: (_) => ParticipantsViewModel()),
       Provider<PostRepository>(create: (_) => PostRepository(postService)),
       Provider<UserPostService>(create: (_) => UserPostService()),

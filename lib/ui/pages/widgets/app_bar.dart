@@ -1,4 +1,5 @@
 import 'package:PongChamp/ui/pages/view/home_page.dart';
+import 'package:PongChamp/ui/pages/view/notifications_page.dart';
 import 'package:PongChamp/ui/pages/view/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:PongChamp/domain/functions/utility.dart';
@@ -49,7 +50,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget{
         IconButton(
           iconSize: 30,
           icon: Icon(Icons.notifications_none, color: Colors.black),
-          onPressed: () {},
+          onPressed: () {
+            navigateTo(context, NotificationsPage(), '/notifications'); // Naviga alla NotificationsPage
+          },
         ),
       ],
     );

@@ -80,6 +80,7 @@ class NotificationViewModel extends ChangeNotifier{
     _isLoading=true;
     notifyListeners();
     final success = await _notificationService.removeNotification(notification);
+    if (success) _notifications.remove(notification);
     _isLoading = false;
     notifyListeners();
     return success;
@@ -96,6 +97,24 @@ class NotificationViewModel extends ChangeNotifier{
     } catch (e) {
       debugPrint("$e");
       return false;
+    }
+  }
+
+  Future<bool> clearNotifications(String userId) async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) throw Exception("Utente non loggato");
+    _isLoading=true;
+    notifyListeners();
+    try {
+      final success = await _notificationService.clearNotifications(userId);
+      if (success) _notifications.clear();
+      return success;
+    } catch (e) {
+      debugPrint("$e");
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
       
