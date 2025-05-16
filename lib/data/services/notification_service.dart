@@ -43,7 +43,7 @@ class NotificationService {
     try {
       final completeNotification = notification.copyWith(timestamp: DateTime.now());
       final docRef = await _notificationCollection.add(completeNotification.toFirestore());
-      return completeNotification.copyWith(id: docRef.id);
+      return completeNotification.copyWith(idNotifica:  docRef.id);
     } catch (e) {
       debugPrint("Errore durante l'aggiunta della notifica: $e");
       return notification;
@@ -53,7 +53,7 @@ class NotificationService {
   //Cancella una notifica
   Future<bool> removeNotification (NotificationModel notification) async {
     try {
-      await _notificationCollection.doc(notification.id).delete();
+      await _notificationCollection.doc(notification.idNotifica).delete();
       return true;
     } catch (e) {
       debugPrint("Errore nell'eliminazione della notifica: $e");
@@ -83,7 +83,7 @@ class NotificationService {
     if (notification.read) {return notification;}
     try {
       final updatedNotification = notification.copyWith(read: true);
-      await _notificationCollection.doc(notification.id).update(updatedNotification.toFirestore());
+      await _notificationCollection.doc(notification.idNotifica).update(updatedNotification.toFirestore());
       return updatedNotification;
     } catch (e) {
       debugPrint("Errore nell'aggiornamento della notifica: $e");
