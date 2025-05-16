@@ -1,7 +1,13 @@
+import 'package:PongChamp/data/services/repositories/match_repository.dart';
+import 'package:PongChamp/data/services/repositories/profile_page_repository.dart';
 import 'package:PongChamp/data/services/repositories/search_repository.dart';
+import 'package:PongChamp/data/services/repositories/user_repository.dart';
 import 'package:PongChamp/data/services/search_service.dart';
+import 'package:PongChamp/data/services/user_service.dart';
 import 'package:PongChamp/ui/pages/viewmodel/forgot_password_view_model.dart';
+import 'package:PongChamp/ui/pages/viewmodel/match_view_model.dart';
 import 'package:PongChamp/ui/pages/viewmodel/search_view_model.dart';
+import 'package:PongChamp/ui/pages/viewmodel/user_view_model.dart';
 
 import '/ui/pages/viewmodel/participants_view_model.dart';
 import '/data/services/post_service.dart';
@@ -17,8 +23,8 @@ import 'ui/pages/view/login_page.dart';
 import 'data/services/auth_service.dart';
 import 'ui/pages/viewmodel/map_view_model.dart';
 import '/ui/pages/viewmodel/events_view_model.dart';
-import 'data/services/user_post_service.dart';
-import 'data/services/repositories/user_post_repository.dart';
+import 'data/services/profile_page_service.dart';
+import 'data/services/repositories/profile_page_repository.dart';
 import 'ui/pages/viewmodel/profile_view_model.dart';
 import 'ui/pages/viewmodel/expired_view_model.dart';
 
@@ -36,6 +42,8 @@ void main () async {
   final postService = PostService();
   final postRepository = PostRepository(postService);
   final postViewModel = PostViewModel(postRepository);
+
+
   
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -46,20 +54,23 @@ void main () async {
     providers: [
       Provider<AuthService>(create: (_) => AuthService()),
       Provider<SearchService>(create: (_) => SearchService()),
+      Provider<MatchRepository>(create: (_) => MatchRepository()),
       ChangeNotifierProvider(create: (_) => RegisterViewModel()),
       ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<AuthService>())),
       ChangeNotifierProvider(create: (context)=> ForgotPasswordViewModel(context.read<AuthService>())),
+      ChangeNotifierProvider(create: (context) => MatchViewModel(context.read<MatchRepository>())),
       Provider<PostViewModel>.value(value: postViewModel),
       ChangeNotifierProvider(create: (_) => MapViewModel()),
+      ChangeNotifierProvider(create: (_) => UserViewModel(UserRepository(UserService()))),
       ChangeNotifierProvider(create: (_) => EventViewModel()),
       ChangeNotifierProvider(create: (_) => ParticipantsViewModel()),
       Provider<PostRepository>(create: (_) => PostRepository(postService)),
-      Provider<UserPostService>(create: (_) => UserPostService()),
-      ProxyProvider<UserPostService, UserPostRepository>(update: (_, userPostService, __) => UserPostRepository(userPostService)),
+      Provider<ProfilePageService>(create: (_) => ProfilePageService()),
+      ProxyProvider<ProfilePageService, ProfilePageRepository>(update: (_, profilePageService, __) => ProfilePageRepository(profilePageService)),
        ProxyProvider<SearchService, SearchRepository>(
           update: (_, service, __) => SearchRepository(service),
         ),
-      ChangeNotifierProvider(create: (context) => ProfileViewModel(context.read<UserPostRepository>())),
+      ChangeNotifierProvider(create: (context) => ProfileViewModel(context.read<ProfilePageRepository>())),
       ChangeNotifierProvider(create:  (context) => SearchViewModel(context.read<SearchRepository>())),
       ChangeNotifierProvider(create: (_) => ExpiredViewModel())
     ],

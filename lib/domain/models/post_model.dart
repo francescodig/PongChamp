@@ -5,34 +5,34 @@ import 'package:flutter/material.dart';
 
 class Post {
   final String id;
-  AppUser user;
-  PongMatch match;
   int likes;
   String? image; // URL dell'immagine
-  List<String> likedBy; // Lista di utenti che hanno messo like
+  List<String> likedBy;
+  String idCreator;
+  String idMatch;
 
 
 
   Post({
-    required this.user,
-    required this.match,
     required this.likes,
     required this.image,
     required this.id,
     required this.likedBy,
+    required this.idCreator,
+    required this.idMatch,
   });
 
   factory Post.fromFirestore(DocumentSnapshot doc) {
   final data = doc.data() as Map<String, dynamic>;
 
   return Post(
-    id: doc.id,
+    id: data['id'] ?? doc.id, // Usa l'ID del documento se non è presente
 
     // Conversione sicura dell'utente: controlla che sia una mappa
-    user: AppUser.fromMap(data['user'] as Map<String, dynamic>, data['user']['id']),
+    idCreator: data['idCreator'],
 
     // Conversione sicura del match
-    match: PongMatch.fromMap(data['match'] as Map<String, dynamic>, data['match']['id']),
+    idMatch: data['idMatch'],
 
     // Protezione nel caso 'likes' non esista o sia null
     likes: (data['likes'] ) ?? 0,
@@ -47,9 +47,9 @@ class Post {
    /// Converte una mappa di Firestore in un oggetto Post
   factory Post.fromMap(Map<String, dynamic> map, String docId) {
      return Post(
-    id: docId,
-    user: AppUser.fromMap(map['user'] as Map<String, dynamic>, map['user']['id']),
-    match: PongMatch.fromMap(map['match'] as Map<String, dynamic>, map['match']['id']),
+    id: map['id'] ?? docId,
+    idCreator: map['idCreator'],
+    idMatch: map['idMatch'],
     likes: (map['likes'] as int?) ?? 0,
     image: map['image'],
     likedBy: (map['likedBy'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [], // Converte la lista di likedBy in una lista di stringhe
@@ -60,8 +60,8 @@ class Post {
   /// Converte un oggetto Post in una mappa per Firestore
   Map<String, dynamic> toMap() {
     return {
-      'user': user.toMap(),
-      'match': match.toMap(),
+      'user': idCreator,
+      'match': idMatch,
       'likes': likes,
       'image': image, // se non c'è immagine, metti null, altrimenti converti in un URL
       'likedBy': likedBy, // Lista di utenti che hanno messo like
@@ -71,8 +71,12 @@ class Post {
 
   }
 
+
+
    /// Getter utile per usare facilmente l'immagine profilo
   ImageProvider get postImage => image != null
       ? NetworkImage(image!)
       : const AssetImage('');
+
+  
 }

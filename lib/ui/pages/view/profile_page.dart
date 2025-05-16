@@ -1,4 +1,5 @@
-import 'package:PongChamp/data/services/repositories/user_post_repository.dart';
+import 'package:PongChamp/data/services/repositories/profile_page_repository.dart';
+import 'package:PongChamp/data/services/repositories/profile_page_repository.dart';
 import 'package:PongChamp/ui/pages/view/expired_event_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +16,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userPostRepository = Provider.of<UserPostRepository>(context, listen: false);
+    final userPostRepository = Provider.of<ProfilePageRepository>(context, listen: false);
     return ChangeNotifierProvider(
       create: (_) {
         final vm = ProfileViewModel(userPostRepository);

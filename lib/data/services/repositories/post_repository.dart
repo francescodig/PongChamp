@@ -22,6 +22,12 @@ class PostRepository {
   Future<List<AppUser>> getUsersWhoLikedPost(String postId) async {
     return await service.getUsersWhoLikedPost(postId);
   }
+  Future<String?> getCreatorProfileImageUrl(String userId) async {
+    return await service.getCreatorProfileImageUrl(userId);
+  }
+  Future<AppUser?> getUserById(String userId) async{
+    return await service.getUserById(userId);
+  }
 
 
 }

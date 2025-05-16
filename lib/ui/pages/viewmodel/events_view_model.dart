@@ -36,21 +36,21 @@ class EventViewModel extends ChangeNotifier {
   ///Lista contente solo gli eventi creati dall'utente non ancora scaduti
   List<Event> get userFutureEvents {
     return _userEvents
-    .where((e) => e.orario.isAfter(DateTime.now()))
+    .where((e) => e.dataEvento.isAfter(DateTime.now()))
     .toList();
   }
 
   ///Lista contente solo gli eventi a cui l'utente partecipa non ancora scaduti
   List<Event> get onlyParticipatedFutureEvents {
     return userOnlyParticipatedEvents
-    .where((e) => e.orario.isAfter(DateTime.now()))
+    .where((e) => e.dataEvento.isAfter(DateTime.now()))
     .toList();
   }
 
   ///Lista contenente gli eventi creati o a cui l'utente partecipa ma scaduti
   List<Event> get userExpiredEvents {
-    final createdExpired = userEvents.where((e) => e.orario.isBefore(DateTime.now())).toList();
-    final onlyParticipatedExpired = userOnlyParticipatedEvents.where((e) => e.orario.isBefore(DateTime.now())).toList();
+    final createdExpired = userEvents.where((e) => e.dataEvento.isBefore(DateTime.now())).toList();
+    final onlyParticipatedExpired = userOnlyParticipatedEvents.where((e) => e.dataEvento.isBefore(DateTime.now())).toList();
     return (createdExpired+onlyParticipatedExpired);
   }  
 
@@ -58,8 +58,8 @@ class EventViewModel extends ChangeNotifier {
     required String title,
     required MarkerData location,
     required int maxParticipants,
-    required String matchType,
-    required DateTime orario,
+    required String eventType,
+    required DateTime dataEvento,
   }) async {
     _isLoading = true;
     notifyListeners();
@@ -74,18 +74,15 @@ class EventViewModel extends ChangeNotifier {
     //3. Crea l'oggetto Event
     final nuovoEvento = Event(
       id : "", //verrà assegnato poi dal Service, una volta generato da Firestore
-      creatorId: userId, 
-      creatorNickname: user.nickname, 
-      creatorProfileImage: user.profileImage, 
+      creatorId: userId,  
       title: title,
       locationId: location.id,
-      locationName: location.nome,
       participants: 1,
       maxParticipants: maxParticipants,
       participantIds: [userId], //il creatore è il primo partecipante
-      matchType: matchType,
-      createdAt: null, //verrà assegnato dal Service, al momento del salvataggio su Firestore
-      orario : orario,
+      eventType: eventType,
+      createdAt: DateTime.now(), //verrà assegnato dal Service, al momento del salvataggio su Firestore
+      dataEvento : dataEvento,
     );
     //4. Salva il nuovo Event
     final eventoSalvato = await _eventService.addEvent(nuovoEvento);

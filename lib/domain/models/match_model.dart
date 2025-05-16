@@ -5,64 +5,60 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class PongMatch {
 
   final String id;
-  AppUser user1;
-  AppUser user2;
   int score1;
   int score2;
   DateTime date;
-  Location location;
   String type;
+  String idEvento;
+  List<String> matchPlayers;
 
 
   PongMatch({
     required this.id,
-    required this.user1,
-    required this.user2,
     required this.score1,
     required this.score2,
     required this.date,
-    required this.location,
     required this.type,
+    required this.idEvento,
+    required this.matchPlayers,
   });
 
   factory PongMatch.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return PongMatch(
-      id: doc.id,
-      user1: AppUser.fromMap(data['user1'], data['user1']['id']),
-      user2: AppUser.fromMap(data['user2'], data['user2']['id']),
+      id: data['id']?? doc.id,
       score1: data['score1'],
       score2: data['score2'],
       date: (data['date'] as Timestamp).toDate(),
-      location: Location.fromMap(data['location'], doc.id),
+      idEvento: data['idEvento'],
       type: data['type'],
+      matchPlayers: List<String>.from(data['matchPlayers'] ?? []),
     );
   }
 
   /// Converte una mappa di Firestore in un oggetto Match
   factory PongMatch.fromMap(Map<String, dynamic> map, String docId) {
     return PongMatch(
-      id: docId,
-      user1: AppUser.fromMap(map['user1'], map['user1']['id']),
-      user2: AppUser.fromMap(map['user2'], map['user2']['id']),
+      id: map['id'] ?? docId,
       score1: map['score1'],
       score2: map['score2'],
       date: (map['date'] as Timestamp).toDate(),
-      location: Location.fromMap(map['location'], docId),
+      idEvento: map['idEvento'],
       type: map['type'],
+      matchPlayers: List<String>.from(map['matchPlayers'] ?? []),
     );
   }
 
   /// Converte un oggetto Match in una mappa per Firestore
   Map<String, dynamic> toMap() {
     return {
-      'user1': user1.toMap(),
-      'user2': user2.toMap(),
+      'id': id,
       'score1': score1,
       'score2': score2,
       'date': date,
-      'location': location.toMap(),
+      'idEvento': idEvento,
       'type': type,
+      'matchPlayers': matchPlayers,
     };
   }
   

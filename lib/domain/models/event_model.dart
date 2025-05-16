@@ -6,52 +6,43 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Event {
   final String id;
-  final String title;
-  final String locationId;
-  final String locationName;
+  String title;
+  String locationId;
   final String creatorId;
-  final String creatorNickname;
-  final String creatorProfileImage;
   int participants;
-  final int maxParticipants;
-  final List<String> participantIds;
-  final String matchType;
-  final DateTime? createdAt;
-  final DateTime orario; 
+  int maxParticipants;
+  List<String> participantIds;
+  String eventType;
+  final DateTime createdAt;
+  DateTime dataEvento; 
 
   Event({
     required this.id,
     required this.title,
     required this.locationId,
-    required this.locationName,
     required this.creatorId,
-    required this.creatorNickname,
-    required this.creatorProfileImage,    
     required this.participants,
     required this.maxParticipants,
     required this.participantIds,
-    required this.matchType,
+    required this.eventType,
     required this.createdAt,
-    required this.orario,
+    required this.dataEvento,
   });
 
   /// Converte una mappa di Firestore in un oggetto Event
   factory Event.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return Event(
-      id: doc.id,
-      creatorId: data['creatorId'] ?? "",
-      creatorNickname: data['creatorNickname'] ?? "",
-      creatorProfileImage: data['creatorProfileImage'] ?? "",
+      id: data['id'] ?? doc.id,
+      creatorId: data['creatorId'],
       title: data['title'] ?? '',
       locationId: data['locationId'] ?? '',
-      locationName: data['locationName'] ?? '',
       participants: data['participants'] ?? 0,
-      maxParticipants: data['maxParticipants'] ?? 0,
+      maxParticipants: data['maxParticipants'],
       participantIds: List<String>.from(data['participantIds'] ?? []),
-      matchType: data['matchType'] ?? '',
+      eventType: data['eventType'] ?? '',
       createdAt: (data['createdAt'] as Timestamp).toDate(),
-      orario: (data['orario'] as Timestamp).toDate(),
+      dataEvento: (data['dataEvento'] as Timestamp).toDate(),
     );
   }
 
@@ -59,17 +50,14 @@ class Event {
   Map<String, dynamic> toFirestore() {
     return {
       'creatorId': creatorId,
-      'creatorNickname': creatorNickname,
-      'creatorProfileImage': creatorProfileImage,
       'title': title,
       'locationId': locationId,
-      'locationName': locationName,
       'participants': participants,
       'maxParticipants': maxParticipants,
       'participantIds': participantIds,
-      'matchType': matchType,
+      'eventType': eventType,
       'createdAt': Timestamp.fromDate(createdAt ?? DateTime.now()),
-      'orario': Timestamp.fromDate(orario),
+      'dataEvento': Timestamp.fromDate(dataEvento),
     };
   }
 
@@ -92,16 +80,13 @@ class Event {
       id: id ?? this.id,
       title: title ?? this.title,
       locationId: locationId ?? this.locationId,
-      locationName: locationName ?? this.locationName,
       creatorId: creatorId ?? this.creatorId,
-      creatorNickname: creatorNickname ?? this.creatorNickname,
-      creatorProfileImage: creatorProfileImage ?? this.creatorProfileImage,
       participants: participants ?? this.participants,
       maxParticipants: maxParticipants ?? this.maxParticipants,
       participantIds: participantIds ?? this.participantIds,
-      matchType: matchType ?? this.matchType,
+      eventType: eventType ?? this.eventType,
       createdAt: createdAt ?? this.createdAt,
-      orario : orario /*?? this.orario*/,
+      dataEvento : dataEvento ?? this.dataEvento,
     );
   }
 }
