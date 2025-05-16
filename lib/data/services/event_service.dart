@@ -33,8 +33,8 @@ class EventService {
     try {
       final now = Timestamp.fromDate(DateTime.now());
       final snapshot = await _eventsCollection
-          .where('orario', isGreaterThan: now)
-          .orderBy('orario')
+          .where('dataEvento', isGreaterThan: now)
+          .orderBy('dataEvento')
           .get();
       return snapshot.docs.map((doc) {
         return Event.fromFirestore(doc);

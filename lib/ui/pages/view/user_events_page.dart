@@ -53,7 +53,7 @@ class _UserEventsPage extends State<UserEventsPage> {
               } else if (index > createdHeaderIndex && index <= created.length) {
                 final event = created[index -1];
                 return CustomCard(
-                  event: event,
+                  eventId: event.id,
                   onTap: (){
                     onTapDelete(context, event, viewModel);
                   },
@@ -66,7 +66,7 @@ class _UserEventsPage extends State<UserEventsPage> {
               } else if (index > participatesHeaderIndex && index <= participatesHeaderIndex + participates.length){
                 final event = participates[index-participatesHeaderIndex-1];
                 return CustomCard(
-                  event: event,
+                  eventId: event.id,
                   onTap: (){
                     onTapParticipate(context, event, viewModel);
                   },
@@ -79,7 +79,7 @@ class _UserEventsPage extends State<UserEventsPage> {
               } else {
                 final event = expired[index - expiredHeaderIndex - 1];
                 return CustomCard(
-                  event: event,
+                  eventId: event.id,
                   onTap: () {
                     Navigator.push(
                       context,

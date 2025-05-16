@@ -1,5 +1,9 @@
+import 'package:PongChamp/domain/models/match_model.dart';
+import 'package:PongChamp/domain/models/user_models.dart';
 import 'package:PongChamp/ui/pages/view/likes_page.dart';
 import 'package:PongChamp/ui/pages/view/profile_page.dart';
+import 'package:PongChamp/ui/pages/viewmodel/match_view_model.dart';
+import 'package:PongChamp/ui/pages/viewmodel/user_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import '/ui/pages/viewmodel/post_view_model.dart';
@@ -16,6 +20,8 @@ class PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final postViewModel = Provider.of<PostViewModel>(context, listen: false);
+    final matchViewModel = Provider.of<MatchViewModel>(context, listen: false);
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
     final userId = FirebaseAuth.instance.currentUser!.uid;
     final hasLiked = post.likedBy.contains(userId);
 
@@ -33,188 +39,346 @@ class PostCard extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    if (ModalRoute.of(context)?.settings.name != '/profile_${post.user.id}') {
+                    if (ModalRoute.of(context)?.settings.name != '/profile_${post.idCreator}') {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          settings: RouteSettings(name: '/profile_${post.user.id}'),
-                          builder: (_) => ProfilePage(userId: post.user.id!),
+                          settings: RouteSettings(name: '/profile_${post.idCreator}'),
+                          builder: (_) => ProfilePage(userId: post.idCreator),
                        ),
                       );
                     }
                   },
-                  child: CircleAvatar(
-                    radius: 24,
-                    backgroundImage: post.user.proPic,
+                  child: FutureBuilder<String?>(
+                    future: postViewModel.getCreatorProfileImageUrl(post.idCreator),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircleAvatar(
+                          radius: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        );
+                      } else if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+                        return const CircleAvatar(
+                          radius: 24,
+                          child: Icon(Icons.person),
+                        );
+                      } else {
+                        return CircleAvatar(
+                          radius: 24,
+                          backgroundImage: NetworkImage(snapshot.data!),
+                        );
+                      }
+                    },
                   ),
                 ),
                 const SizedBox(width: 8),
                 GestureDetector(
                   onTap: () {
-                    if (ModalRoute.of(context)?.settings.name != '/profile_${post.user.id}') {
+                    if (ModalRoute.of(context)?.settings.name != '/profile_${post.idCreator}') {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          settings: RouteSettings(name: '/profile_${post.user.id}'),
-                          builder: (_) => ProfilePage(userId: post.user.id!),
+                          settings: RouteSettings(name: '/profile_${post.idCreator}'),
+                          builder: (_) => ProfilePage(userId: post.idCreator),
                        ),
                       );
                     }
                   },
-                  child: Text(
-                    post.user.nickname,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.black,
-                    ),
-                  ),
+                  child: FutureBuilder<AppUser?>(
+
+                      future: userViewModel.getUserById(post.idCreator),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const CircularProgressIndicator(); // o un placeholder
+                        } else if (snapshot.hasError) {
+                          return Text('Errore nel caricamento utente');
+                        } else if (!snapshot.hasData || snapshot.data == null) {
+                          return Text('Utente non trovato');
+                        }
+
+                        final user = snapshot.data!;
+
+
+
+ 
+
+                    return Text(
+                      user.nickname,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    );
+                  },
+                ),
                 ),
               ],
             ),
 
             const SizedBox(height: 30),
 
-            // Parte centrale con i giocatori e punteggio (MODIFICATA)
             LayoutBuilder(
-              builder: (context, constraints) {
-                // Calcoliamo la larghezza disponibile per i nickname
-                final availableWidth = constraints.maxWidth - 100; // Sottrai spazio per avatar, punteggio, ecc.
-                final nicknameWidth = availableWidth / 2 - 16; // Dividi lo spazio tra i due nickname
-                
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Giocatore 1
-                    Flexible(
-                      child: GestureDetector(
-                        onTap: () {
-                          if (ModalRoute.of(context)?.settings.name != '/profile_${post.match.user1.id}') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                settings: RouteSettings(name: '/profile_${post.match.user1.id}'),
-                                builder: (_) => ProfilePage(userId: post.match.user1.id!),
-                              ),
-                            );
-                          }
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CircleAvatar(
-                              radius: 12,
-                              backgroundImage: post.match.user1.proPic,
-                            ),
-                            const SizedBox(width: 8),
-                            SizedBox(
-                              width: nicknameWidth,
-                              child: Text(
-                                post.match.user1.nickname,
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
+  builder: (context, constraints) {
+    final availableWidth = constraints.maxWidth - 100;
+    final nicknameWidth = availableWidth / 2 - 16;
+
+    return FutureBuilder<PongMatch?>(
+      future: matchViewModel.fetchMatchById(post.idMatch),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError || !snapshot.hasData) {
+          return Text('Errore nel caricamento del match');
+        }
+
+        final match = snapshot.data!;
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Giocatore 1
+            Flexible(
+              child: GestureDetector(
+                onTap: () {
+                  if (ModalRoute.of(context)?.settings.name != '/profile_${match.matchPlayers[0]}') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        settings: RouteSettings(name: '/profile_${match.matchPlayers[0]}'),
+                        builder: (_) => ProfilePage(userId: match.matchPlayers[0]),
                       ),
-                    ),
-                    // Punteggio
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Row(
+                    );
+                  }
+                },
+                child: FutureBuilder<AppUser?>(
+                  future: userViewModel.getUserById(match.matchPlayers[0]),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Row(
                         mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            post.match.score1.toString(),
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          CircleAvatar(
+                            radius: 12,
+                            child: SizedBox(
+                              width: 12,
+                              height: 12,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
                           ),
                           const SizedBox(width: 8),
-                          const Text(
-                            '-',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            post.match.score2.toString(),
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          SizedBox(
+                            width: nicknameWidth,
+                            height: 16,
+                            child: Container(color: Colors.grey[300]),
                           ),
                         ],
-                      ),
-                    ),
-                    // Giocatore 2
-                    Flexible(
-                      child: GestureDetector(
-                        onTap: () {
-                          if (ModalRoute.of(context)?.settings.name != '/profile_${post.match.user2.id}') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                settings: RouteSettings(
-                                  name: '/profile_${post.match.user2.id}',
-                                ),
-                                builder: (_) => ProfilePage(userId: post.match.user2.id!),
-                              ),
-                            );
-                          }
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              width: nicknameWidth,
-                              child: Text(
-                                post.match.user2.nickname,
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.end,
-                              ),
+                      );
+                    }
+                    if (snapshot.hasError || !snapshot.hasData) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircleAvatar(
+                            radius: 12,
+                            child: Icon(Icons.error),
+                          ),
+                          const SizedBox(width: 8),
+                          SizedBox(
+                            width: nicknameWidth,
+                            child: Text(
+                              'Errore',
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(width: 8),
-                            CircleAvatar(
-                              radius: 12,
-                              backgroundImage: post.match.user2.proPic,
-                            ),
-                          ],
+                          ),
+                        ],
+                      );
+                    }
+                    final user = snapshot.data!;
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircleAvatar(
+                          radius: 12,
+                          backgroundImage: user.proPic != null
+                              ? NetworkImage(user.profileImage)
+                              : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
                         ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-
-            const SizedBox(height: 30),
-
-            // Immagine del post (se presente)
-            if (post.image != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image(image: post.postImage),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          width: nicknameWidth,
+                          child: Text(
+                            user.nickname,
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
+            ),
+            // Punteggio
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    match.score1.toString(),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    '-',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    match.score2.toString(),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+            // Giocatore 2
+            Flexible(
+              child: GestureDetector(
+                onTap: () {
+                  if (ModalRoute.of(context)?.settings.name != '/profile_${match.matchPlayers[1]}') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        settings: RouteSettings(name: '/profile_${match.matchPlayers[1]}'),
+                        builder: (_) => ProfilePage(userId: match.matchPlayers[1]),
+                      ),
+                    );
+                  }
+                },
+                child: FutureBuilder<AppUser?>(
+                  future: userViewModel.getUserById(match.matchPlayers[1]),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: nicknameWidth,
+                            height: 16,
+                            child: Container(color: Colors.grey[300]),
+                          ),
+                          const SizedBox(width: 8),
+                          CircleAvatar(
+                            radius: 12,
+                            child: SizedBox(
+                              width: 12,
+                              height: 12,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    if (snapshot.hasError || !snapshot.hasData) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: nicknameWidth,
+                            child: Text(
+                              'Errore',
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.end,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          CircleAvatar(
+                            radius: 12,
+                            child: Icon(Icons.error),
+                          ),
+                        ],
+                      );
+                    }
+                    final user = snapshot.data!;
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: nicknameWidth,
+                          child: Text(
+                            user.nickname,
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.end,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        CircleAvatar(
+                          radius: 12,
+                          backgroundImage: user.proPic != null
+                              ? NetworkImage(user.profileImage)
+                              : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  },
+),
+
+
+
+if (post.image != null && post.image!.isNotEmpty)
+  Padding(
+    padding: const EdgeInsets.only(top: 16.0),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Image.network(
+        post.image!,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return const Center(child: CircularProgressIndicator());
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return const Center(child: Icon(Icons.broken_image, size: 40));
+        },
+      ),
+    ),
+  ),
+
 
             const SizedBox(height: 12),
 
-            // Dettagli della partita
-            Text(
-              'Tipo: ${post.match.type} • ${post.match.location.name}',
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
-            ),
 
-            const SizedBox(height: 8),
-
-            // Reazioni / Mi piace
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+           // Azioni
+          Align(
+            alignment: Alignment.centerRight,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: Icon(Icons.favorite, color: hasLiked ? Colors.red : Colors.grey),
+                  icon: Icon(
+                    hasLiked ? Icons.favorite : Icons.favorite_border,
+                    color: hasLiked ? Colors.red : Colors.grey,
+                  ),
                   onPressed: () {
                     if (hasLiked) {
-                      postViewModel.removeLikeFromPost(post);
+                      postViewModel.removeLikeFromPost(post.id, post.likes);
                     } else {
-                      postViewModel.addLikeToPost(post);
+                      postViewModel.addLikeToPost(post.id, post.likes);
                     }
                   },
                 ),
@@ -229,14 +393,22 @@ class PostCard extends StatelessWidget {
                   },
                   child: Text(
                     '${post.likes} likes',
-                    style: const TextStyle(fontSize: 12),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ],
             ),
+          ),
+
+
+
           ],
         ),
       ),
     );
   }
-}
+} 

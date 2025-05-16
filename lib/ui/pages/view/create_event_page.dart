@@ -156,8 +156,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       location : viewModel.selectedLocation!,
                       maxParticipants:
                           int.parse(_maxParticipantsController.text),
-                      matchType: selectedMatchType!,
-                      orario: selectedDateTime!,
+                      eventType: selectedMatchType!,
+                      dataEvento: selectedDateTime!,
                     );
                   CustomSnackBar.show(
                     context,

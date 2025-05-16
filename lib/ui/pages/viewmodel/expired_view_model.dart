@@ -17,7 +17,7 @@ List<Event> get expiredUserParticipatedEvents {
   final now = DateTime.now();
   return _userParticipatedEvents
       .where((event) {
-        final eventTime = event.orario;  
+        final eventTime = event.dataEvento;  
         print('Event time: $eventTime');
         return eventTime.isBefore(now);  
       })

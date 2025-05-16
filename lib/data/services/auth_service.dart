@@ -107,6 +107,8 @@ Future<AppUser> fetchUserById(String userId) async {
   return AppUser.fromFirestore(doc);
 }
 
+
+
 //Funzione per recuperare un utente da Firestore 
 // e restituire un DocumentSnapshot
 Future<DocumentSnapshot<Map<String, dynamic>>> fetchUserByIdAsDoc(String userId) {
@@ -123,6 +125,11 @@ Future<List<AppUser>> fetchUsersByIds(List<String> ids) async {
   }
 
   return users;
+}
+
+Future<AppUser> fetchUserByIdasAppUser(String userId) async {
+  final doc = await FirebaseFirestore.instance.collection('User').doc(userId).get();
+  return AppUser.fromFirestore(doc);
 }
 
 //Funzione per aggiornare i dati dell'utente
@@ -154,6 +161,8 @@ Future<void> updateUserData(
 Future<void> signOut() async {
   await _auth.signOut();
 }
+
+
 
 
 }
