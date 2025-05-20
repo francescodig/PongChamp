@@ -64,14 +64,12 @@ class EventViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-    // 1. Recupera l'id dell'utente attualmente loggato
+    //Recupera l'id dell'utente attualmente loggato
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) {
       throw Exception("Nessun utente loggato.");
     }
-    //2. Chiama il Service per ottenere un oggetto User
-    final user = await _authService.fetchUserById(userId);
-    //3. Crea l'oggetto Event
+    //Crea l'oggetto Event
     final nuovoEvento = Event(
       id : "", //verrà assegnato poi dal Service, una volta generato da Firestore
       creatorId: userId,  
@@ -84,7 +82,7 @@ class EventViewModel extends ChangeNotifier {
       createdAt: DateTime.now(), //verrà assegnato dal Service, al momento del salvataggio su Firestore
       dataEvento : dataEvento,
     );
-    //4. Salva il nuovo Event
+    //Salva il nuovo Event
     final eventoSalvato = await _eventService.addEvent(nuovoEvento);
     _events.add(eventoSalvato);
     } catch (e) {

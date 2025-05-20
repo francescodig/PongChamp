@@ -31,12 +31,12 @@ class NotificationService {
   Future<NotificationModel> addNotification(NotificationModel notification) async {
     final completeNotification = notification.copyWith(timestamp: DateTime.now());
     final docRef = await _notificationCollection.add(completeNotification.toFirestore());
-    return completeNotification.copyWith(id: docRef.id);
+    return completeNotification.copyWith(idNotifica: docRef.id);
   }
 
   //Cancella una notifica
   Future<bool> removeNotification (NotificationModel notification) async {
-    await _notificationCollection.doc(notification.id).delete();
+    await _notificationCollection.doc(notification.idNotifica).delete();
     return true;
   }
 
@@ -56,7 +56,7 @@ class NotificationService {
   Future<NotificationModel> markAsRead(NotificationModel notification) async {
     if (notification.read) {return notification;}
     final updatedNotification = notification.copyWith(read: true);
-    await _notificationCollection.doc(notification.id).update(updatedNotification.toFirestore());
+    await _notificationCollection.doc(notification.idNotifica).update(updatedNotification.toFirestore());
     return updatedNotification;
   }
   

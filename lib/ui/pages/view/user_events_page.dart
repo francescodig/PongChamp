@@ -1,5 +1,4 @@
-import 'package:PongChamp/ui/pages/view/create_post_page.dart';
-
+import '/ui/pages/view/create_post_page.dart';
 import '../widgets/custom_section_header.dart';
 import '/ui/pages/widgets/custom_snackBar.dart';
 import '/domain/models/event_model.dart';
@@ -53,7 +52,7 @@ class _UserEventsPage extends State<UserEventsPage> {
               } else if (index > createdHeaderIndex && index <= created.length) {
                 final event = created[index -1];
                 return CustomCard(
-                  eventId: event.id,
+                  event: event,
                   onTap: (){
                     onTapDelete(context, event, viewModel);
                   },
@@ -66,7 +65,7 @@ class _UserEventsPage extends State<UserEventsPage> {
               } else if (index > participatesHeaderIndex && index <= participatesHeaderIndex + participates.length){
                 final event = participates[index-participatesHeaderIndex-1];
                 return CustomCard(
-                  eventId: event.id,
+                  event: event,
                   onTap: (){
                     onTapParticipate(context, event, viewModel);
                   },
@@ -79,7 +78,7 @@ class _UserEventsPage extends State<UserEventsPage> {
               } else {
                 final event = expired[index - expiredHeaderIndex - 1];
                 return CustomCard(
-                  eventId: event.id,
+                  event: event,
                   onTap: () {
                     Navigator.push(
                       context,

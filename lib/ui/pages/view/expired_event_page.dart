@@ -1,10 +1,10 @@
-import 'package:PongChamp/ui/pages/view/create_post_page.dart';
-import 'package:PongChamp/ui/pages/viewmodel/expired_view_model.dart';
-import 'package:PongChamp/ui/pages/widgets/custom_card_post.dart';
+import '/ui/pages/view/create_post_page.dart';
+import '/ui/pages/viewmodel/expired_view_model.dart';
+import '/ui/pages/widgets/custom_card_post.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:PongChamp/ui/pages/widgets/app_bar.dart';
-import 'package:PongChamp/ui/pages/widgets/bottom_navbar.dart';
+import '/ui/pages/widgets/app_bar.dart';
+import '/ui/pages/widgets/bottom_navbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ExpiredEventPage extends StatefulWidget {
@@ -42,7 +42,7 @@ class _ExpiredEventPageState extends State<ExpiredEventPage> {
                     return CustomCard(
                       buttonText: "Crea post",
                       buttonColor: Colors.blue,
-                      eventId: event.id,
+                      event: event,
                       onTap: () {
                         Navigator.push(context,
                           MaterialPageRoute(builder: (_) => CreatePostPage(event: event),
