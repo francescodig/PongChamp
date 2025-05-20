@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import '/data/services/notification_service.dart';
 import '/domain/models/notification_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,7 +20,11 @@ class NotificationViewModel extends ChangeNotifier{
     _isLoading = true;
     notifyListeners();
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    _notifications = await _notificationService.fetchUserNotification(uid!);
+    if (uid==null) {
+      debugPrint("Errore: $e");
+      return;
+      }
+    _notifications = await _notificationService.fetchUserNotification(uid);
     _isLoading = false;
     notifyListeners();
   }
@@ -100,7 +106,7 @@ class NotificationViewModel extends ChangeNotifier{
     }
   }
 
-  Future<bool> clearNotifications(String userId) async {
+  Future<bool> clearNotifications() async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) throw Exception("Utente non loggato");
     _isLoading=true;
