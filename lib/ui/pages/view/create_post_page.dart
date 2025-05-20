@@ -1,26 +1,25 @@
-import 'package:PongChamp/domain/models/event_model.dart';
-
-import '/ui/pages/viewmodel/events_view_model.dart';
+import '/ui/pages/viewmodel/match_view_model.dart';
+import '/domain/models/event_model.dart';
+//import '/ui/pages/viewmodel/events_view_model.dart';
 import '/ui/pages/widgets/custom_snackBar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CreatePostPage extends StatefulWidget{
+class CreateMatchPage extends StatefulWidget{
   final Event event;
-  const CreatePostPage({Key? key, required this.event}) : super(key: key);
+  const CreateMatchPage({Key? key, required this.event}) : super(key: key);
   @override
-  State<CreatePostPage> createState() => _CreatePostPageState();
+  State<CreateMatchPage> createState() => _CreateMatchPageState();
 }
 
-class _CreatePostPageState extends State<CreatePostPage> {
+class _CreateMatchPageState extends State<CreateMatchPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _player1scoreController = TextEditingController();
   final TextEditingController _player2scoreController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
   
   @override
   Widget build(BuildContext context){
-    final viewModel = context.watch<EventViewModel>();
+    final matchViewModel = context.watch<MatchViewModel>();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -53,11 +52,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 ),
                 validator: (value) => value!.isEmpty ? 'Campo obbligatorio' : null,
               ),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Breve descrizione della partita',
-                ),
-              ),
               ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 245, 192, 41)),
@@ -65,11 +59,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 ),
                 onPressed: ()  async{
                   if (_formKey.currentState!.validate()) {
-                    await viewModel.createPost(
+                    await matchViewModel.createMatch(
                       event: widget.event,
-                      player1score: int.parse(_player1scoreController.text),
-                      player2score: int.parse(_player2scoreController.text),
-                      description: _descriptionController.text,
+                      score1: int.parse(_player1scoreController.text),
+                      score2: int.parse(_player2scoreController.text),
                     );
                     CustomSnackBar.show(
                       context,
@@ -87,7 +80,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     );
                   }
                 },
-                child: Text('Crea Post'),
+                child: Text('Crea Match'),
               ),
             ],
           ),

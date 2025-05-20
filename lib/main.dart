@@ -1,3 +1,4 @@
+import 'package:PongChamp/data/services/match_service.dart';
 import 'package:PongChamp/data/services/repositories/match_repository.dart';
 import 'package:PongChamp/data/services/repositories/profile_page_repository.dart';
 import 'package:PongChamp/data/services/repositories/search_repository.dart';
@@ -55,7 +56,7 @@ void main () async {
     providers: [
       Provider<AuthService>(create: (_) => AuthService()),
       Provider<SearchService>(create: (_) => SearchService()),
-      Provider<MatchRepository>(create: (_) => MatchRepository()),
+      Provider<MatchRepository>(create: (_) => MatchRepository(MatchService())),
       ChangeNotifierProvider(create: (_) => RegisterViewModel()),
       ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<AuthService>())),
       ChangeNotifierProvider(create: (context)=> ForgotPasswordViewModel(context.read<AuthService>())),

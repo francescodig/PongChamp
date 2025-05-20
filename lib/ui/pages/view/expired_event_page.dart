@@ -45,7 +45,7 @@ class _ExpiredEventPageState extends State<ExpiredEventPage> {
                       event: event,
                       onTap: () {
                         Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => CreatePostPage(event: event),
+                          MaterialPageRoute(builder: (_) => CreateMatchPage(event: event),
                           ),
                         );
                       },

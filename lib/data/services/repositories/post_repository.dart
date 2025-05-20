@@ -13,6 +13,9 @@ class PostRepository {
     return service.getPostsStream();
   }
   
+  Future<Post> addPost(Post post) async {
+    return await service.addPost(post);
+  }
   Future<void> addLikeToPost(String postId, int likes) async {
     await service.addLikeToPost(postId, likes);
   }

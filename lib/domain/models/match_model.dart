@@ -59,7 +59,27 @@ class PongMatch {
       'idEvento': idEvento,
       'type': type,
       'matchPlayers': matchPlayers,
-    };
+    };  
+  }
+
+  PongMatch copyWith ({
+    String? id,
+    int? score1,
+    int? score2,
+    DateTime? date,
+    List<String>? matchPlayers,
+    String? type,
+    String? idEvento,
+  }) {
+    return PongMatch( 
+      id: id ?? this.id,
+      score1: score1 ?? this.score1,
+      score2: score2 ?? this.score2,
+      date: date ?? this.date,
+      idEvento: idEvento ?? this.idEvento,
+      type: type ?? this.type,
+      matchPlayers: matchPlayers ?? this.matchPlayers,
+    );
   }
   
 

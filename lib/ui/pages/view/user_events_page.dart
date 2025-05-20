@@ -82,10 +82,10 @@ class _UserEventsPage extends State<UserEventsPage> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => CreatePostPage(event: event)),
+                      MaterialPageRoute(builder: (_) => CreateMatchPage(event: event)),
                     );
                   },
-                  buttonText: "Crea Post", 
+                  buttonText: "Crea Match", 
                   buttonColor: Color.fromARGB(255, 245, 192, 41),);
               }
             },);

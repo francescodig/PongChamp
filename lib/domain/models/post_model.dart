@@ -71,8 +71,22 @@ class Post {
 
   }
 
-
-
+  Post copyWith ({
+    String? id,
+    int? likes,
+    String? image,
+    List<String>? likedBy,
+    String? idCreator,
+    String? idMatch,
+  }) {
+    return Post(
+      likes: likes ?? this.likes, 
+      image: image ?? this.image, 
+      id: id ?? this.id, 
+      likedBy: likedBy ?? this.likedBy, 
+      idCreator: idCreator ?? this.idCreator, 
+      idMatch: idMatch ?? this.idMatch);
+  }
    /// Getter utile per usare facilmente l'immagine profilo
   ImageProvider get postImage => image != null
       ? NetworkImage(image!)

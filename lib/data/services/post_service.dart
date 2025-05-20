@@ -1,5 +1,5 @@
-import 'package:PongChamp/domain/models/post_model.dart';
-import 'package:PongChamp/domain/models/user_models.dart';
+import '/domain/models/post_model.dart';
+import '/domain/models/user_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -10,6 +10,13 @@ import 'package:flutter/foundation.dart';
 // e dei commenti. Utilizza Firestore per interagire con il database.
 
 class PostService {
+  final CollectionReference _postCollection = FirebaseFirestore.instance.collection("Post");
+
+  Future<Post> addPost(Post post) async {
+    final docRef = await _postCollection.add(post.toMap());
+    final completePost = post.copyWith(id: docRef.id);
+    return completePost;
+  }
 
   // Recupera tutti i posti dalla collezione "Post" in Firestore
   Stream<List<Post>> getPostsStream() {
