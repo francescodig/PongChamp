@@ -94,7 +94,7 @@ class _EventsPageState extends State<EventsPage> {
                     itemBuilder: (context, index) {
                       final event = viewModel.events[index];
                       return CustomCard(
-                        event: event,
+                        eventId: event.id,
                         onTap: (){
                           onTapPartecipate(context,event,viewModel);
                         },

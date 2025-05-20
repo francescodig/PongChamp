@@ -1,7 +1,7 @@
 import 'package:PongChamp/domain/models/post_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class UserPostService {
+class ProfilePageService {
   
   // ottieni i post di un utente specifico
   
@@ -9,7 +9,7 @@ class UserPostService {
 
     return FirebaseFirestore.instance
         .collection('Post')
-        .where('user.id', isEqualTo: userId)
+        .where('idCreator', isEqualTo: userId)
         //.orderBy('timestamp', descending: true) // ordina per data (più recenti prima)
         .snapshots()
         .map((snapshot) => snapshot.docs
@@ -20,7 +20,7 @@ class UserPostService {
   Future<List<Post>> getUserPosts(String userId) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('Post')
-        .where('user.id', isEqualTo: userId)
+        .where('idCreator', isEqualTo: userId)
         //.orderBy('timestamp', descending: true)
         .get();
         print("Post trovati: ${snapshot.docs.length}"); 

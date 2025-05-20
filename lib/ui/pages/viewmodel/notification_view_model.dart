@@ -42,7 +42,7 @@ class NotificationViewModel extends ChangeNotifier{
         throw Exception("Nessun utente loggato.");
       }
       final newNotification = NotificationModel(
-        id: '', //verrà assegnato dal service, una volta generato da Firestore
+        idNotifica: '', //verrà assegnato dal service, una volta generato da Firestore
         title: title,
         message: message, 
         userId: userId, 
@@ -66,7 +66,7 @@ class NotificationViewModel extends ChangeNotifier{
     if (userId!=notification.userId) return false;
     try {
       final updated = await _notificationService.markAsRead(notification);
-      final index = _notifications.indexWhere((n) => n.id == updated.id);
+      final index = _notifications.indexWhere((n) => n.idNotifica == updated.idNotifica);
       if (index != -1) {
         _notifications[index] = updated;
         notifyListeners();

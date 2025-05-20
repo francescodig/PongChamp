@@ -42,7 +42,7 @@ class _ExpiredEventPageState extends State<ExpiredEventPage> {
                     return CustomCard(
                       buttonText: "Crea post",
                       buttonColor: Colors.blue,
-                      event: event,
+                      eventId: event.id,
                       onTap: () {
                         Navigator.push(context,
                           MaterialPageRoute(builder: (_) => CreatePostPage(event: event),

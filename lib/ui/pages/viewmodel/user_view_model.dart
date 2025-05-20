@@ -1,0 +1,18 @@
+import 'package:PongChamp/data/services/repositories/user_repository.dart';
+import 'package:PongChamp/domain/models/user_models.dart';
+import 'package:flutter/material.dart';
+
+
+class UserViewModel extends ChangeNotifier{
+
+  final UserRepository repository;
+  UserViewModel(this.repository);
+
+  Future<AppUser?> getUserById(String userId) async {
+    return await repository.getUserById(userId);
+  }
+
+
+
+
+}

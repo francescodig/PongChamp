@@ -2,16 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NotificationModel {
   
-  final String id;
+  final String idNotifica;
   final String title;
   final String message;
   final String userId;
   final String eventId;
   final DateTime? timestamp;
-  final bool read;
+  bool read;
 
   NotificationModel({
-    required this.id,
+    required this.idNotifica,
     required this.title,
     required this.message,
     required this.userId,
@@ -24,11 +24,11 @@ class NotificationModel {
   factory NotificationModel.fromFirestore(DocumentSnapshot doc){
     final data = doc.data() as Map<String, dynamic>;
     return NotificationModel(
-      id: doc.id,
-      userId: data['userId'] ?? '',
-      eventId: data['eventId'] ?? '',
-      title: data['title'] ?? '',
-      message: data['message'] ?? '',
+      idNotifica: data['idNotifica'] ?? doc.id,
+      userId: data['userId'],
+      eventId: data['eventId'],
+      title: data['title'],
+      message: data['message'],
       timestamp: (data['timestamp'] as Timestamp).toDate(),
       read: data['read'] ?? false,
     );
@@ -37,6 +37,7 @@ class NotificationModel {
   //Scrittura su Firestore
   Map<String, dynamic> toFirestore() {
     return {
+      'idNotifica': idNotifica,
       'userId': userId,
       'eventId': eventId,
       'title': title,
@@ -48,7 +49,7 @@ class NotificationModel {
 
   //Metodo per copiare una notifica cambiando certi attributi
   NotificationModel copyWith({
-    String? id,
+    String? idNotifica,
     String? userId,
     String? eventId,
     String? title,
@@ -57,7 +58,7 @@ class NotificationModel {
     bool? read,
   }) {
     return NotificationModel(
-      id: id ?? this.id,
+      idNotifica: idNotifica ?? this.idNotifica,
       userId: userId ?? this.userId,
       eventId: eventId ?? this.eventId,
       title: title ?? this.title,
