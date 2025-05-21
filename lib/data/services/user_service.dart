@@ -11,19 +11,14 @@ import 'package:flutter/foundation.dart';
 
 class UserService {
 
-  Future<AppUser?> getUserById(String userId) async {
-  try {
-    final doc = await FirebaseFirestore.instance.collection('User').doc(userId).get();
-    if (doc.exists) {
-      return AppUser.fromFirestore(doc);
-    }
-    return null;
-  } catch (e) {
-    print("Errore nel recupero utente: $e");
-    return null;
-  }
-}
 
+  Stream<AppUser?> getUserStreamById(String id) {
+  return FirebaseFirestore.instance
+    .collection('User')
+    .doc(id)
+    .snapshots()
+    .map((snapshot) => snapshot.exists ? AppUser.fromSnapshot(snapshot) : null);
+}
 
 
 }

@@ -8,8 +8,8 @@ class UserViewModel extends ChangeNotifier{
   final UserRepository repository;
   UserViewModel(this.repository);
 
-  Future<AppUser?> getUserById(String userId) async {
-    return await repository.getUserById(userId);
+  Stream<AppUser?> getUserStreamById(String userId){
+    return  repository.getUserStreamById(userId);
   }
 
 

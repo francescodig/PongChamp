@@ -1,16 +1,67 @@
 import 'package:PongChamp/ui/pages/view/forgot_password_page.dart';
-import 'package:PongChamp/ui/pages/view/map_page.dart';
+import 'package:PongChamp/ui/pages/viewmodel/register_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/ui/pages/viewmodel/login_view_model.dart';
 import '/data/services/auth_service.dart';
 import 'register_page.dart';
 import 'home_page.dart';
-import 'map_page.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _isLoading = false;
+
+
+  Future<bool> _onWillPop() async {
+    final shouldLeave = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Are you sure?', style: TextStyle(fontSize: 20, color: Color.fromARGB(255, 245, 192, 41))),
+        content: Text('Do you want to quit PongChamp?', style: TextStyle(fontSize: 15, color: Color.fromARGB(255, 245, 192, 41))),
+        backgroundColor: Colors.black,
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.white)),
+            child: Text('No', style: TextStyle(fontSize: 12, color: Colors.black)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.white)),
+            child: Text('Sì', style: TextStyle(fontSize: 12, color: Colors.black)),
+          ),
+        ],
+      ),
+    );
+    return shouldLeave ?? false;
+  }
+
+  Future<void> _handleLogin(LoginViewModel viewModel) async {
+    setState(() => _isLoading = true);
+    
+    final success = await viewModel.login(
+      _emailController.text.trim(),
+      _passwordController.text.trim(),
+    );
+    
+    if (mounted) {
+      setState(() => _isLoading = false);
+      
+      if (success) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,42 +69,20 @@ class LoginPage extends StatelessWidget {
       create: (_) => LoginViewModel(AuthService()),
       child: Consumer<LoginViewModel>(
         builder: (context, viewModel, child) => WillPopScope(
-          onWillPop: () async {
-            final shouldLeave = await showDialog<bool>(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text('Are you sure?', style: TextStyle(fontSize: 20, color: Color.fromARGB(255, 245, 192, 41))),
-                content: Text('Do you want to quit PongChamp?', style: TextStyle(fontSize: 15, color: Color.fromARGB(255, 245, 192, 41))),
-                backgroundColor: Colors.black,
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(false),
-                    style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.white)),
-                    child: Text('No', style: TextStyle(fontSize: 12, color: Colors.black)),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(true),
-                    style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.white)),
-                    child: Text('Sì', style: TextStyle(fontSize: 12, color: Colors.black)),
-                  ),
-                ],
-              ),
-            );
-            return shouldLeave ?? false;
-          },
+          onWillPop: _onWillPop,
           child: Scaffold(
             appBar: AppBar(
-                automaticallyImplyLeading: false,
-                toolbarHeight: 150, // altezza personalizzata della AppBar
-                centerTitle: true,
-                backgroundColor: Color.fromARGB(255, 245, 192, 41),
-                title: SizedBox(
-                  height: 100, // altezza del logo
-                  child: Image.asset(
-                    'assets/logo.png',
-                    fit: BoxFit.contain,
-                  ),
+              automaticallyImplyLeading: false,
+              toolbarHeight: 150,
+              centerTitle: true,
+              backgroundColor: Color.fromARGB(255, 245, 192, 41),
+              title: SizedBox(
+                height: 100,
+                child: Image.asset(
+                  'assets/logo.png',
+                  fit: BoxFit.contain,
                 ),
+              ),
             ),
             body: Center(
               child: Padding(
@@ -77,11 +106,19 @@ class LoginPage extends StatelessWidget {
                       SizedBox(height: 15),
                       TextField(
                         controller: _passwordController,
-                        obscureText: true,
+                        obscureText: _obscurePassword,
                         decoration: InputDecoration(
                           labelText: "Password",
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                           prefixIcon: Icon(Icons.lock),
+                          suffixIcon: IconButton(
+                            icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
                         ),
                       ),
                       SizedBox(height: 10),
@@ -101,30 +138,38 @@ class LoginPage extends StatelessWidget {
                         Text(viewModel.errorMessage, style: TextStyle(color: Colors.red)),
                       SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () async {
-                          final success = await viewModel.login(
-                            _emailController.text.trim(),
-                            _passwordController.text.trim(),
-                          );
-                          if (success) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomePage()),
-                            );
-                          }
-                        },
+                        onPressed: _isLoading ? null : () => _handleLogin(viewModel),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
                           padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
-                        child: Text("Sign In", style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 245, 192, 41))),
+                        child: _isLoading
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 245, 192, 41)),
+                              ),
+                            )
+                          : Text("Sign In", style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 245, 192, 41))),
                       ),
                       SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterPage()));
-                        },
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ChangeNotifierProvider(
+                                      create: (_) => RegisterViewModel(),
+                                      child: RegisterPage(),
+                                    ),
+                                  ),
+                                );
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromARGB(255, 245, 192, 41),
                           padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
