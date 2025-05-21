@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:PongChamp/data/services/auth_service.dart';
+import 'package:PongChamp/data/services/uploadImage_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import '/data/services/uploadImage_service.dart';
 import '/ui/pages/viewmodel/edit_profile_view_model.dart';
 
 class EditProfilePage extends StatefulWidget {

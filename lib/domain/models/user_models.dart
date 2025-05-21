@@ -76,10 +76,30 @@ class AppUser {
     };
   }
 
+
+  factory AppUser.fromSnapshot(DocumentSnapshot snapshot) {
+  final data = snapshot.data() as Map<String, dynamic>;
+  return AppUser(
+    id: snapshot.id,
+    name: data['Name'],
+    surname: data['Surname'],
+    phoneNumber: data['phoneNumber'],
+    email: data['email'],
+    password: data['password'],
+    profileImage: data['profileImage'],
+    birthDay: (data['birthday'] as Timestamp).toDate(),
+    sex: data['sex'] ?? '',
+    nickname: data['nickname'] ?? '',
+  );
+}
+
+
   ImageProvider get proPic => profileImage != null
       ? NetworkImage(profileImage)
       : const AssetImage('');
   
 }
+
+
 
 
