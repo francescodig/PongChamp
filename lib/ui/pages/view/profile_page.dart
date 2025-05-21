@@ -1,6 +1,6 @@
 import 'package:PongChamp/data/services/repositories/profile_page_repository.dart';
 import 'package:PongChamp/data/services/repositories/profile_page_repository.dart';
-import 'package:PongChamp/ui/pages/view/expired_event_page.dart';
+import 'package:PongChamp/ui/pages/view/match_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:PongChamp/domain/models/post_model.dart';
@@ -68,7 +68,7 @@ class _ProfilePageContent extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ExpiredEventPage(),
+                              builder: (context) => MatchPage(),
                             ),
                           );
                         },

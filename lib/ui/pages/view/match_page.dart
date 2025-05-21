@@ -1,3 +1,6 @@
+import 'package:PongChamp/domain/models/match_model.dart';
+
+import '/ui/pages/viewmodel/match_view_model.dart';
 import '/ui/pages/view/create_post_page.dart';
 import '/ui/pages/viewmodel/expired_view_model.dart';
 import '/ui/pages/widgets/custom_card_post.dart';
@@ -7,14 +10,14 @@ import '/ui/pages/widgets/app_bar.dart';
 import '/ui/pages/widgets/bottom_navbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class ExpiredEventPage extends StatefulWidget {
-  const ExpiredEventPage({Key? key}) : super(key: key);
+class MatchPage extends StatefulWidget {
+  const MatchPage({Key? key}) : super(key: key);
 
   @override
-  State<ExpiredEventPage> createState() => _ExpiredEventPageState();
+  State<MatchPage> createState() => _MatchPageState();
 }
 
-class _ExpiredEventPageState extends State<ExpiredEventPage> {
+class _MatchPageState extends State<MatchPage> {
   @override
   void initState() {
     super.initState();
@@ -27,13 +30,14 @@ class _ExpiredEventPageState extends State<ExpiredEventPage> {
 
   @override
   Widget build(BuildContext context) {
-    final createPostViewModel = Provider.of<ExpiredViewModel>(context);
+    final createPostViewModel = Provider.of<MatchViewModel>(context);
+    Stream<List<PongMatch>> userMatch = createPostViewModel.getUserMatchStream(); 
 
     return Scaffold(
       appBar: CustomAppBar(),
       body: createPostViewModel.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : createPostViewModel.expiredUserParticipatedEvents.isEmpty
+          : userMatch.isEmpty
               ? const Center(child: Text("Nessun evento scaduto trovato."))
               : ListView.builder(
                   itemCount: createPostViewModel.expiredUserParticipatedEvents.length,

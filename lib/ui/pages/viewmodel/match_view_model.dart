@@ -1,11 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '/domain/models/event_model.dart';
 import '/domain/models/match_model.dart';
-import '/data/services/match_service.dart';
 import '/data/services/repositories/match_repository.dart';
 import 'package:flutter/material.dart';
 
 class MatchViewModel  extends ChangeNotifier{
   bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  List<PongMatch> _matches = [];
+
   final MatchRepository repository;
   MatchViewModel(this.repository);
 
@@ -21,8 +25,10 @@ class MatchViewModel  extends ChangeNotifier{
     _isLoading = true;
     notifyListeners();
     try {
+      final userId = FirebaseAuth.instance.currentUser!.uid;
       final newMatch = PongMatch(
         id: "", //viene aggiunto dal service una volta generato da Firestore
+        creatorId: userId,
         score1: score1,
         score2: score2,
         date: event.dataEvento,
@@ -41,6 +47,11 @@ class MatchViewModel  extends ChangeNotifier{
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Stream<List<PongMatch>> getUserMatchStream() {
+    final creatorId = FirebaseAuth.instance.currentUser!.uid;
+    return repository.getUserMatchStream(creatorId);
   }
 
 

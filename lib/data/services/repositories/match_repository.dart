@@ -12,4 +12,8 @@ class MatchRepository {
   Future<PongMatch> addMatch(PongMatch match) async {
     return await service.addMatch(match);
   }
+
+  Stream<List<PongMatch>> getUserMatchStream(String creatorId) {
+    return service.getUserMatchStream(creatorId);
+  }
 }

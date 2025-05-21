@@ -17,13 +17,13 @@ class PostViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      final userId = FirebaseAuth.instance.currentUser?.uid;
+      final userId = FirebaseAuth.instance.currentUser!.uid;
       final newPost = Post(
         likes: 0,
         image: image,
         id: "", //verrà assegnato dal service una volta generato da Firestore
         likedBy: [], 
-        idCreator: userId!, 
+        idCreator: userId, 
         idMatch: idMatch
       );
     final postSaved = await repository.addPost(newPost);
