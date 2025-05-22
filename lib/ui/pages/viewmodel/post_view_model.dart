@@ -9,10 +9,10 @@ class PostViewModel extends ChangeNotifier {
   final PostRepository repository;
   PostViewModel(this.repository);
   bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
   Future<void> createPost({
     required String idMatch,
-    required String image,
   }) async {
     _isLoading = true;
     notifyListeners();
@@ -20,7 +20,7 @@ class PostViewModel extends ChangeNotifier {
       final userId = FirebaseAuth.instance.currentUser!.uid;
       final newPost = Post(
         likes: 0,
-        image: image,
+        image: "",
         id: "", //verrà assegnato dal service una volta generato da Firestore
         likedBy: [], 
         idCreator: userId, 

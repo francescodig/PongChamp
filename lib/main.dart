@@ -28,22 +28,10 @@ import 'data/services/profile_page_service.dart';
 import 'ui/pages/viewmodel/profile_view_model.dart';
 import 'ui/pages/viewmodel/expired_view_model.dart';
 
-
-
-
 void main () async {
 
   //vedere questa cosa in un secondo momento... Aggiunta perchè dava errori strani in debugging
   Provider.debugCheckInvalidValueType = null;
-
-
-
-
-  final postService = PostService();
-  final postRepository = PostRepository(postService);
-  final postViewModel = PostViewModel(postRepository);
-
-
   
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -54,18 +42,22 @@ void main () async {
     providers: [
       Provider<AuthService>(create: (_) => AuthService()),
       Provider<SearchService>(create: (_) => SearchService()),
-      ChangeNotifierProvider(create: (_) => MatchViewModel(MatchRepository(MatchService()))),
+      Provider<MatchService>(create: (_) => MatchService()),
+      Provider<PostService>(create: (_) => PostService()),
+
+      Provider<MatchRepository>(create: (context) => MatchRepository(context.read<MatchService>()),),
+      Provider<PostRepository>(create: (context) => PostRepository(context.read<PostService>())),
+
+      ChangeNotifierProvider(create: (context) => MatchViewModel(context.read<MatchRepository>())),
+      ChangeNotifierProvider<PostViewModel>(create: (context) => PostViewModel(context.read<PostRepository>())),
       ChangeNotifierProvider(create: (_) => RegisterViewModel()),
       ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<AuthService>())),
       ChangeNotifierProvider(create: (context)=> ForgotPasswordViewModel(context.read<AuthService>())),
-      ChangeNotifierProvider(create: (context) => MatchViewModel(context.read<MatchRepository>())),
-      Provider<PostViewModel>.value(value: postViewModel),
       ChangeNotifierProvider(create: (_) => MapViewModel()),
       ChangeNotifierProvider(create: (_) => UserViewModel(UserRepository(UserService()))),
       ChangeNotifierProvider(create: (_) => EventViewModel()),
       ChangeNotifierProvider(create: (_) => NotificationViewModel()),
       ChangeNotifierProvider(create: (_) => ParticipantsViewModel()),
-      Provider<PostRepository>(create: (_) => PostRepository(postService)),
       Provider<ProfilePageService>(create: (_) => ProfilePageService()),
       ProxyProvider<ProfilePageService, ProfilePageRepository>(update: (_, profilePageService, __) => ProfilePageRepository(profilePageService)),
        ProxyProvider<SearchService, SearchRepository>(
