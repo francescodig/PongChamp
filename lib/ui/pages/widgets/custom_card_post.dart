@@ -1,3 +1,5 @@
+import 'package:PongChamp/domain/functions/utility.dart';
+
 import '/domain/models/event_model.dart';
 import '/domain/models/user_models.dart';
 import '/ui/pages/viewmodel/post_view_model.dart';
@@ -7,15 +9,7 @@ import '/ui/pages/view/profile_page.dart';
 import 'package:provider/provider.dart';
 import '/ui/pages/view/participants_page.dart';
 
-String formatDateTimeManually(DateTime dateTime) {
-  String day = dateTime.day.toString().padLeft(2, '0');
-  String month = dateTime.month.toString().padLeft(2, '0');
-  String year = dateTime.year.toString();
-  String hour = dateTime.hour.toString().padLeft(2, '0');
-  String minute = dateTime.minute.toString().padLeft(2, '0');
 
-  return '$day/$month/$year\n$hour:$minute';
-}
 
 class CustomCard extends StatelessWidget {
   final Event event;

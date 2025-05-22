@@ -9,6 +9,15 @@ class MatchService {
     return PongMatch.fromFirestore(doc);
   }
   
+  Future<List<PongMatch>> fetchUserMatches(String creatorId) async {
+    final snapshot = await _matchCollection
+      .where('creatorId', isEqualTo: creatorId)
+      .get();
+    return snapshot.docs.map((doc) {
+        return PongMatch.fromFirestore(doc);
+      }).toList();
+  }
+
   Stream<List<PongMatch>> getUserMatchStream(String creatorId) {
     return _matchCollection.where("creatorId", isEqualTo: creatorId).snapshots()
         .map((snapshot) => snapshot.docs

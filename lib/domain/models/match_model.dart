@@ -1,5 +1,3 @@
-import '/domain/models/location_model.dart';
-import '/domain/models/user_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PongMatch {

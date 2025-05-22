@@ -85,7 +85,7 @@ class _UserEventsPage extends State<UserEventsPage> {
                       MaterialPageRoute(builder: (_) => CreateMatchPage(event: event)),
                     );
                   },
-                  buttonText: "Crea Match", 
+                  buttonText: "Inserisci Risultato", 
                   buttonColor: Color.fromARGB(255, 245, 192, 41),);
               }
             },);

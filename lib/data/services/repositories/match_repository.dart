@@ -13,6 +13,10 @@ class MatchRepository {
     return await service.addMatch(match);
   }
 
+  Future<List<PongMatch>> fetchUserMatches(String creatorId) async {
+    return service.fetchUserMatches(creatorId);
+  }
+
   Stream<List<PongMatch>> getUserMatchStream(String creatorId) {
     return service.getUserMatchStream(creatorId);
   }
