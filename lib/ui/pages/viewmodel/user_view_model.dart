@@ -12,6 +12,10 @@ class UserViewModel extends ChangeNotifier{
     return  repository.getUserStreamById(userId);
   }
 
+  Future<AppUser?> getUserById(String userId) async {
+    return repository.getUserById(userId);
+  }
+
 
 
 
