@@ -219,12 +219,6 @@ class EventViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> createPost({
-    required Event event,
-    required int player1score,
-    required int player2score,
-    required String description,
-  }) async {}
 }
 
 

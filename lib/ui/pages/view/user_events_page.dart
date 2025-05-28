@@ -1,4 +1,4 @@
-import '/ui/pages/view/create_post_page.dart';
+import 'create_match_page.dart';
 import '../widgets/custom_section_header.dart';
 import '/ui/pages/widgets/custom_snackBar.dart';
 import '/domain/models/event_model.dart';
@@ -77,6 +77,7 @@ class _UserEventsPage extends State<UserEventsPage> {
                 return CustomSectionheader(title: "Eventi scaduti: $expiredLength");
               } else {
                 final event = expired[index - expiredHeaderIndex - 1];
+                //if (event.participants == event.maxParticipants){
                 return CustomCard(
                   event: event,
                   onTap: () {
@@ -86,7 +87,8 @@ class _UserEventsPage extends State<UserEventsPage> {
                     );
                   },
                   buttonText: "Inserisci Risultato", 
-                  buttonColor: Color.fromARGB(255, 245, 192, 41),);
+                  buttonColor: Color.fromARGB(255, 245, 192, 41),);//}
+                //else {return null;}
               }
             },);
         }

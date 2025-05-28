@@ -44,12 +44,13 @@ void main () async {
       Provider<SearchService>(create: (_) => SearchService()),
       Provider<MatchService>(create: (_) => MatchService()),
       Provider<PostService>(create: (_) => PostService()),
+      Provider<ProfilePageService>(create: (_) => ProfilePageService()),
 
       Provider<MatchRepository>(create: (context) => MatchRepository(context.read<MatchService>()),),
       Provider<PostRepository>(create: (context) => PostRepository(context.read<PostService>())),
 
       ChangeNotifierProvider(create: (context) => MatchViewModel(context.read<MatchRepository>())),
-      ChangeNotifierProvider<PostViewModel>(create: (context) => PostViewModel(context.read<PostRepository>())),
+      ChangeNotifierProvider(create: (context) => PostViewModel(context.read<PostRepository>())),
       ChangeNotifierProvider(create: (_) => RegisterViewModel()),
       ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<AuthService>())),
       ChangeNotifierProvider(create: (context)=> ForgotPasswordViewModel(context.read<AuthService>())),
@@ -58,11 +59,11 @@ void main () async {
       ChangeNotifierProvider(create: (_) => EventViewModel()),
       ChangeNotifierProvider(create: (_) => NotificationViewModel()),
       ChangeNotifierProvider(create: (_) => ParticipantsViewModel()),
-      Provider<ProfilePageService>(create: (_) => ProfilePageService()),
+      
       ProxyProvider<ProfilePageService, ProfilePageRepository>(update: (_, profilePageService, __) => ProfilePageRepository(profilePageService)),
-       ProxyProvider<SearchService, SearchRepository>(
-          update: (_, service, __) => SearchRepository(service),
-        ),
+      ProxyProvider<SearchService, SearchRepository>(
+        update: (_, service, __) => SearchRepository(service),
+      ),
       ChangeNotifierProvider(create: (context) => ProfileViewModel(context.read<ProfilePageRepository>())),
       ChangeNotifierProvider(create:  (context) => SearchViewModel(context.read<SearchRepository>())),
       ChangeNotifierProvider(create: (_) => ExpiredViewModel())
