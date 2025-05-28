@@ -1,12 +1,14 @@
+import 'package:PongChamp/data/services/uploadImage_service.dart';
 import 'package:PongChamp/ui/pages/view/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:provider/provider.dart';
 import '/ui/pages/viewmodel/register_view_model.dart';
 import 'login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import '/data/services/uploadImage_service.dart';
+
 
 class RegisterPage extends StatefulWidget {
 
@@ -28,9 +30,9 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _birthdayController = TextEditingController();
   String? selectedSex; // Variabile per memorizzare il sesso selezionato
   File? _image; // Variabile per memorizzare l'immagine selezionata
+  bool _obscurePassword = true;
 
   final ImagePicker _picker = ImagePicker(); // Inizializza l'ImagePicker
-
 
    // Funzione per selezionare l'immagine dalla galleria
   Future<void> _pickImage() async {
@@ -56,6 +58,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
     }
   }
+
+
+
+
+  
 
 
 
@@ -133,13 +140,18 @@ class _RegisterPageState extends State<RegisterPage> {
                 SizedBox(height: 15),
                 TextField(
                   controller: _phoneNumberController,
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: [
+                    PhoneInputFormatter(), // formatter dinamico internazionale
+                  ],
                   decoration: InputDecoration(
                     labelText: "Phone Number",
                     prefixIcon: Icon(Icons.phone),
+                    hintText: "+39 345 123 4567", // esempio con prefisso
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                 ),
-                SizedBox(height: 15),
+                  SizedBox(height: 15),
                 TextField(
                   controller: _nicknameController,
                   decoration: InputDecoration(
@@ -180,48 +192,61 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 15),
                 TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: "Password",
-                    prefixIcon: Icon(Icons.lock),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
+                  labelText: "Password",
+                  prefixIcon: Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
                   ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 ),
+              ),
+
                 SizedBox(height: 15),
-                ElevatedButton(
-                  onPressed: () async {
-                    final success = await viewModel.register(
-                      _emailController.text,
-                      _passwordController.text,
-                      _nameController.text,
-                      _surnameController.text,
-                      _nicknameController.text,
-                      _phoneNumberController.text,
-                      selectedSex!,
-                      _birthdayController.text,
-                      _profileImageController.text,
-                    );
-                    if (selectedSex == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Please select your sex"))
+                viewModel.isLoading
+                ? CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: () async {
+                      if (selectedSex == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Please select your sex"))
+                        );
+                        return;
+                      }
+
+                      final success = await viewModel.register(
+                        _emailController.text,
+                        _passwordController.text,
+                        _nameController.text,
+                        _surnameController.text,
+                        _nicknameController.text,
+                        _phoneNumberController.text,
+                        selectedSex!,
+                        _birthdayController.text,
+                        _profileImageController.text,
                       );
-                      return;
-                    }
-                    if (success) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => HomePage() ),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+
+                      if (success) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => HomePage()),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    child: Text("Sign Up", style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 245, 192, 41))),
                   ),
-                  child: Text("Sign Up", style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 245, 192, 41))),
-                ),
                 if (viewModel.errorMessage != null)...[
                   SizedBox(height: 10),
                   Text(viewModel.errorMessage!, style: TextStyle(color: Colors.red)),

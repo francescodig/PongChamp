@@ -3,6 +3,10 @@ import '/data/services/auth_service.dart';
 
 class RegisterViewModel extends ChangeNotifier {
   final AuthService _authService = AuthService();
+
+  bool isLoading = false;
+
+  
   
   String? errorMessage;
 
@@ -19,6 +23,16 @@ class RegisterViewModel extends ChangeNotifier {
   ) async {
 
 
+
+    if (email.isEmpty || password.isEmpty || name.isEmpty || surname.isEmpty) {
+    errorMessage = "Please fill in all required fields.";
+    notifyListeners();
+    return false;
+  }
+
+  // eventualmente altre validazioni tipo email valida, password forte, ecc.
+
+
     final result = await _authService.registerWithEmailAndPassword(
       email,
       password,
@@ -31,7 +45,13 @@ class RegisterViewModel extends ChangeNotifier {
       profileImage,
     );
 
+    isLoading = true;
+
+
     if (result != null) {
+      isLoading = false;
+      errorMessage = "Registration failed. Try again.";
+      notifyListeners();
       switch (result) {
         case 'email-already-in-use':
           errorMessage = "The email address is already in use.";

@@ -1,5 +1,9 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+//Funzione per la navigazione nella navBar
 void navigateTo(BuildContext context, Widget page, String routeName) {
   final ModalRoute? currentRoute = ModalRoute.of(context);
 
@@ -14,6 +18,10 @@ void navigateTo(BuildContext context, Widget page, String routeName) {
     );
   }
 }
+
+
+
+
 
 String formatDateTimeManually(DateTime dateTime) {
   String day = dateTime.day.toString().padLeft(2, '0');

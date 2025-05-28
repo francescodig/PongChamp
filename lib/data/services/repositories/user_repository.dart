@@ -10,7 +10,7 @@ class UserRepository {
 
   UserRepository(this._service);
 
-  Future<AppUser?> getUserById(String userId) async {
-    return await _service.getUserById(userId);
+  Stream<AppUser?> getUserStreamById(String userId)  {
+    return  _service.getUserStreamById(userId);
   }
 }

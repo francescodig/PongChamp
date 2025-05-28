@@ -5,25 +5,76 @@ import 'package:PongChamp/ui/pages/view/profile_page.dart';
 import 'package:PongChamp/ui/pages/viewmodel/match_view_model.dart';
 import 'package:PongChamp/ui/pages/viewmodel/user_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import '/ui/pages/viewmodel/post_view_model.dart';
 import 'package:provider/provider.dart';
+import '/ui/pages/viewmodel/post_view_model.dart';
 import '/domain/models/post_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart'; // per debugPrintStack()
 
-class PostCard extends StatelessWidget {
+class PostCard extends StatefulWidget {
   final Post post;
 
-  const PostCard({required this.post});
+  const PostCard({required this.post, Key? key}) : super(key: key);
+
+  @override
+  _PostCardState createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
+  late final PostViewModel _postViewModel;
+  late final MatchViewModel _matchViewModel;
+  late final UserViewModel _userViewModel;
+  late final String _userId;
+  
+  // Streams
+  late final Stream<AppUser?> _creatorStream;
+  late final Future<PongMatch?> _matchFuture;
+  String? _creatorProfileImageUrl;
+  
+  // Match players data
+  late final Stream<AppUser?> _player1Stream;
+  late final Stream<AppUser?> _player2Stream;
+  
+  @override
+  void initState() {
+    super.initState();
+    _postViewModel = Provider.of<PostViewModel>(context, listen: false);
+    _matchViewModel = Provider.of<MatchViewModel>(context, listen: false);
+    _userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    _userId = FirebaseAuth.instance.currentUser!.uid;
+    
+    // Initialize streams and futures
+    _creatorStream = _userViewModel.getUserStreamById(widget.post.idCreator);
+    _matchFuture = _matchViewModel.fetchMatchById(widget.post.idMatch);
+    
+    // Load creator profile image once
+    _loadCreatorProfileImage();
+    
+    // Initialize player streams after getting match data
+    _initializePlayerStreams();
+  }
+
+  Future<void> _loadCreatorProfileImage() async {
+    final url = await _postViewModel.getCreatorProfileImageUrl(widget.post.idCreator);
+    if (mounted) {
+      setState(() {
+        _creatorProfileImageUrl = url;
+      });
+    }
+  }
+
+  Future<void> _initializePlayerStreams() async {
+    final match = await _matchFuture;
+    if (match != null && mounted) {
+      setState(() {
+        _player1Stream = _userViewModel.getUserStreamById(match.matchPlayers[0]);
+        _player2Stream = _userViewModel.getUserStreamById(match.matchPlayers[1]);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final postViewModel = Provider.of<PostViewModel>(context, listen: false);
-    final matchViewModel = Provider.of<MatchViewModel>(context, listen: false);
-    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    final userId = FirebaseAuth.instance.currentUser!.uid;
-    final hasLiked = post.likedBy.contains(userId);
+    final hasLiked = widget.post.likedBy.contains(_userId);
 
     return Card(
       elevation: 4,
@@ -35,380 +86,344 @@ class PostCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Intestazione con avatar e nickname
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    if (ModalRoute.of(context)?.settings.name != '/profile_${post.idCreator}') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          settings: RouteSettings(name: '/profile_${post.idCreator}'),
-                          builder: (_) => ProfilePage(userId: post.idCreator),
-                       ),
-                      );
-                    }
-                  },
-                  child: FutureBuilder<String?>(
-                    future: postViewModel.getCreatorProfileImageUrl(post.idCreator),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircleAvatar(
-                          radius: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        );
-                      } else if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
-                        return const CircleAvatar(
-                          radius: 24,
-                          child: Icon(Icons.person),
-                        );
-                      } else {
-                        return CircleAvatar(
-                          radius: 24,
-                          backgroundImage: NetworkImage(snapshot.data!),
-                        );
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: () {
-                    if (ModalRoute.of(context)?.settings.name != '/profile_${post.idCreator}') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          settings: RouteSettings(name: '/profile_${post.idCreator}'),
-                          builder: (_) => ProfilePage(userId: post.idCreator),
-                       ),
-                      );
-                    }
-                  },
-                  child: FutureBuilder<AppUser?>(
-
-                      future: userViewModel.getUserById(post.idCreator),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const CircularProgressIndicator(); // o un placeholder
-                        } else if (snapshot.hasError) {
-                          return Text('Errore nel caricamento utente');
-                        } else if (!snapshot.hasData || snapshot.data == null) {
-                          return Text('Utente non trovato');
-                        }
-
-                        final user = snapshot.data!;
-
-
-
- 
-
-                    return Text(
-                      user.nickname,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.black,
-                      ),
-                    );
-                  },
-                ),
-                ),
-              ],
-            ),
-
+            _creatorHeader(),
             const SizedBox(height: 30),
-
+            // Match details
             LayoutBuilder(
-  builder: (context, constraints) {
-    final availableWidth = constraints.maxWidth - 100;
-    final nicknameWidth = availableWidth / 2 - 16;
-
-    return FutureBuilder<PongMatch?>(
-      future: matchViewModel.fetchMatchById(post.idMatch),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError || !snapshot.hasData) {
-          return Text('Errore nel caricamento del match');
-        }
-
-        final match = snapshot.data!;
-
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Giocatore 1
-            Flexible(
-              child: GestureDetector(
-                onTap: () {
-                  if (ModalRoute.of(context)?.settings.name != '/profile_${match.matchPlayers[0]}') {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        settings: RouteSettings(name: '/profile_${match.matchPlayers[0]}'),
-                        builder: (_) => ProfilePage(userId: match.matchPlayers[0]),
-                      ),
-                    );
-                  }
-                },
-                child: FutureBuilder<AppUser?>(
-                  future: userViewModel.getUserById(match.matchPlayers[0]),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CircleAvatar(
-                            radius: 12,
-                            child: SizedBox(
-                              width: 12,
-                              height: 12,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          SizedBox(
-                            width: nicknameWidth,
-                            height: 16,
-                            child: Container(color: Colors.grey[300]),
-                          ),
-                        ],
-                      );
+              builder: (context, constraints) {
+                return FutureBuilder<PongMatch?>(
+                  future: _matchFuture,
+                  builder: (context, matchSnapshot) {
+                    if (matchSnapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
                     }
-                    if (snapshot.hasError || !snapshot.hasData) {
-                      return Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CircleAvatar(
-                            radius: 12,
-                            child: Icon(Icons.error),
-                          ),
-                          const SizedBox(width: 8),
-                          SizedBox(
-                            width: nicknameWidth,
-                            child: Text(
-                              'Errore',
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      );
+                    if (matchSnapshot.hasError || !matchSnapshot.hasData) {
+                      return const Text('Errore nel caricamento del match');
                     }
-                    final user = snapshot.data!;
-                    return Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CircleAvatar(
-                          radius: 12,
-                          backgroundImage: user.proPic != null
-                              ? NetworkImage(user.profileImage)
-                              : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
-                        ),
-                        const SizedBox(width: 8),
-                        SizedBox(
-                          width: nicknameWidth,
-                          child: Text(
-                            user.nickname,
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    );
+                    
+                    final match = matchSnapshot.data!;
+                    return _buildMatchRow(match, constraints.maxWidth);
                   },
-                ),
-              ),
+                );
+              },
             ),
-            // Punteggio
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    match.score1.toString(),
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    '-',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    match.score2.toString(),
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                ],
-              ),
-            ),
-            // Giocatore 2
-            Flexible(
-              child: GestureDetector(
-                onTap: () {
-                  if (ModalRoute.of(context)?.settings.name != '/profile_${match.matchPlayers[1]}') {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        settings: RouteSettings(name: '/profile_${match.matchPlayers[1]}'),
-                        builder: (_) => ProfilePage(userId: match.matchPlayers[1]),
-                      ),
-                    );
-                  }
-                },
-                child: FutureBuilder<AppUser?>(
-                  future: userViewModel.getUserById(match.matchPlayers[1]),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            width: nicknameWidth,
-                            height: 16,
-                            child: Container(color: Colors.grey[300]),
-                          ),
-                          const SizedBox(width: 8),
-                          CircleAvatar(
-                            radius: 12,
-                            child: SizedBox(
-                              width: 12,
-                              height: 12,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    if (snapshot.hasError || !snapshot.hasData) {
-                      return Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            width: nicknameWidth,
-                            child: Text(
-                              'Errore',
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.end,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          CircleAvatar(
-                            radius: 12,
-                            child: Icon(Icons.error),
-                          ),
-                        ],
-                      );
-                    }
-                    final user = snapshot.data!;
-                    return Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          width: nicknameWidth,
-                          child: Text(
-                            user.nickname,
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.end,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        CircleAvatar(
-                          radius: 12,
-                          backgroundImage: user.proPic != null
-                              ? NetworkImage(user.profileImage)
-                              : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  },
-),
-
-
-
-if (post.image != null && post.image!.isNotEmpty)
-  Padding(
-    padding: const EdgeInsets.only(top: 16.0),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Image.network(
-        post.image!,
-        fit: BoxFit.cover,
-        width: double.infinity,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return const Center(child: CircularProgressIndicator());
-        },
-        errorBuilder: (context, error, stackTrace) {
-          return const Center(child: Icon(Icons.broken_image, size: 40));
-        },
-      ),
-    ),
-  ),
-
-
+            // Post image if available
+            if (widget.post.image != null && widget.post.image!.isNotEmpty)
+              _postImage(),
             const SizedBox(height: 12),
-
-
-           // Azioni
-          Align(
-            alignment: Alignment.centerRight,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(
-                    hasLiked ? Icons.favorite : Icons.favorite_border,
-                    color: hasLiked ? Colors.red : Colors.grey,
-                  ),
-                  onPressed: () {
-                    if (hasLiked) {
-                      postViewModel.removeLikeFromPost(post.id, post.likes);
-                    } else {
-                      postViewModel.addLikeToPost(post.id, post.likes);
-                    }
-                  },
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => LikesPage(postId: post.id),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    '${post.likes} likes',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-
-
+            // Like actions
+            _likeAction(hasLiked),
           ],
         ),
       ),
     );
   }
-} 
+
+  Widget _creatorHeader() {
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: () => _navigateToProfile(widget.post.idCreator),
+          child: CircleAvatar(
+            radius: 24,
+            backgroundImage: _creatorProfileImageUrl != null
+                ? NetworkImage(_creatorProfileImageUrl!)
+                : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+          ),
+        ),
+        const SizedBox(width: 8),
+        GestureDetector(
+          onTap: () => _navigateToProfile(widget.post.idCreator),
+          child: StreamBuilder<AppUser?>(
+            stream: _creatorStream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return const Text('Errore nel caricamento utente');
+              } else if (!snapshot.hasData || snapshot.data == null) {
+                return const Text('Utente non trovato');
+              }
+
+              final user = snapshot.data!;
+              return Text(
+                user.nickname,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMatchRow(PongMatch match, double maxWidth) {
+    final availableWidth = maxWidth - 100;
+    final nicknameWidth = availableWidth / 2 - 16;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Giocatore 1
+        Flexible(
+          child: GestureDetector(
+            onTap: () => _navigateToProfile(match.matchPlayers[0]),
+            child: StreamBuilder<AppUser?>(
+              stream: _player1Stream,
+              builder: (context, snapshot) {
+                return _buildPlayerWidget(
+                  snapshot: snapshot,
+                  nicknameWidth: nicknameWidth,
+                  isPlayer1: true,
+                );
+              },
+            ),
+          ),
+        ),
+        // Punteggio
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                match.score1.toString(),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                '-',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                match.score2.toString(),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+        // Giocatore 2
+        Flexible(
+          child: GestureDetector(
+            onTap: () => _navigateToProfile(match.matchPlayers[1]),
+            child: StreamBuilder<AppUser?>(
+              stream: _player2Stream,
+              builder: (context, snapshot) {
+                return _buildPlayerWidget(
+                  snapshot: snapshot,
+                  nicknameWidth: nicknameWidth,
+                  isPlayer1: false,
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPlayerWidget({
+    required AsyncSnapshot<AppUser?> snapshot,
+    required double nicknameWidth,
+    required bool isPlayer1,
+  }) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: isPlayer1
+            ? [
+                CircleAvatar(
+                  radius: 12,
+                  child: SizedBox(
+                    width: 12,
+                    height: 12,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: nicknameWidth,
+                  height: 16,
+                  child: Container(color: Colors.grey[300]),
+                ),
+              ]
+            : [
+                SizedBox(
+                  width: nicknameWidth,
+                  height: 16,
+                  child: Container(color: Colors.grey[300]),
+                ),
+                const SizedBox(width: 8),
+                CircleAvatar(
+                  radius: 12,
+                  child: SizedBox(
+                    width: 12,
+                    height: 12,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+              ],
+      );
+    }
+
+    if (snapshot.hasError || !snapshot.hasData) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: isPlayer1
+            ? [
+                CircleAvatar(
+                  radius: 12,
+                  child: Icon(Icons.error),
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: nicknameWidth,
+                  child: Text(
+                    'Errore',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ]
+            : [
+                SizedBox(
+                  width: nicknameWidth,
+                  child: Text(
+                    'Errore',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.end,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                CircleAvatar(
+                  radius: 12,
+                  child: Icon(Icons.error),
+                ),
+              ],
+      );
+    }
+
+    final user = snapshot.data!;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: isPlayer1
+          ? [
+              CircleAvatar(
+                radius: 12,
+                backgroundImage: user.proPic != null
+                    ? NetworkImage(user.profileImage)
+                    : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+              ),
+              const SizedBox(width: 8),
+              SizedBox(
+                width: nicknameWidth,
+                child: Text(
+                  user.nickname,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ]
+          : [
+              SizedBox(
+                width: nicknameWidth,
+                child: Text(
+                  user.nickname,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                ),
+              ),
+              const SizedBox(width: 8),
+              CircleAvatar(
+                radius: 12,
+                backgroundImage: user.proPic != null
+                    ? NetworkImage(user.profileImage)
+                    : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+              ),
+            ],
+    );
+  }
+
+  Widget _postImage() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image.network(
+          widget.post.image!,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return const Center(child: CircularProgressIndicator());
+          },
+          errorBuilder: (context, error, stackTrace) {
+            return const Center(child: Icon(Icons.broken_image, size: 40));
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _likeAction(bool hasLiked) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: Icon(
+              hasLiked ? Icons.favorite : Icons.favorite_border,
+              color: hasLiked ? Colors.red : Colors.grey,
+            ),
+            onPressed: () {
+              if (hasLiked) {
+                _postViewModel.removeLikeFromPost(widget.post.id, widget.post.likes);
+              } else {
+                _postViewModel.addLikeToPost(widget.post.id, widget.post.likes);
+              }
+            },
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => LikesPage(postId: widget.post.id),
+                ),
+              );
+            },
+            child: Text(
+              '${widget.post.likes} likes',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _navigateToProfile(String userId) {
+    if (ModalRoute.of(context)?.settings.name != '/profile_$userId') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          settings: RouteSettings(name: '/profile_$userId'),
+          builder: (_) => ProfilePage(userId: userId),
+        ),
+      );
+    }
+  }
+}
