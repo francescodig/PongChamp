@@ -60,8 +60,8 @@ class Post {
   /// Converte un oggetto Post in una mappa per Firestore
   Map<String, dynamic> toMap() {
     return {
-      'user': idCreator,
-      'match': idMatch,
+      'idCreator': idCreator,
+      'idMatch': idMatch,
       'likes': likes,
       'image': image, // se non c'è immagine, metti null, altrimenti converti in un URL
       'likedBy': likedBy, // Lista di utenti che hanno messo like

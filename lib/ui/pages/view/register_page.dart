@@ -31,6 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String? selectedSex; // Variabile per memorizzare il sesso selezionato
   File? _image; // Variabile per memorizzare l'immagine selezionata
   bool _obscurePassword = true;
+  final ImageService _imageService = ImageService();
 
   final ImagePicker _picker = ImagePicker(); // Inizializza l'ImagePicker
 
@@ -42,7 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
         _image = File(pickedFile.path); // Aggiorna l'immagine con quella selezionata
       });
         // Carica l'immagine su Firebase Storage e ottieni l'URL
-      String? imageUrl = await uploadImage(_image!); // Carica l'immagine e ottieni l'URL
+      String? imageUrl = await _imageService.uploadImage(_image!); // Carica l'immagine e ottieni l'URL
       print("URL dell'immagine: $imageUrl"); // Stampa l'URL dell'immagine DEBUG
       if (imageUrl != null) {
         // Aggiorna il controller con l'URL dell'immagine

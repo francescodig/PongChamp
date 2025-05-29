@@ -24,6 +24,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
   final AuthService _authService = AuthService();
+  final ImageService _imageService = ImageService();
 
 
   Future<void> _pickImage() async {
@@ -33,7 +34,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _image = File(pickedFile.path);
       });
 
-      String? imageUrl = await uploadImage(_image!);
+      String? imageUrl = await _imageService.uploadImage(_image!);
       if (imageUrl != null) {
         _profileImageController.text = imageUrl;
       } else {

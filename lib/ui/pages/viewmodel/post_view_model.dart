@@ -1,3 +1,7 @@
+import 'dart:io';
+import '/data/services/uploadImage_service.dart';
+import 'package:image_picker/image_picker.dart';
+import '/domain/models/match_model.dart';
 import '/domain/models/user_models.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -7,26 +11,33 @@ import '/domain/models/post_model.dart';
 class PostViewModel extends ChangeNotifier {
 
   final PostRepository repository;
+  final ImageService _imageService = ImageService();
   PostViewModel(this.repository);
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
   Future<void> createPost({
-    required String idMatch,
+    required PongMatch match,
+    XFile? image,
   }) async {
     _isLoading = true;
     notifyListeners();
     try {
+      String? path = "";
+      if (image != null) {
+        File realImage = File(image.path);
+        path = await _imageService.uploadImage(realImage);
+      }
       final userId = FirebaseAuth.instance.currentUser!.uid;
       final newPost = Post(
         likes: 0,
-        image: "",
+        image: path,
         id: "", //verrà assegnato dal service una volta generato da Firestore
         likedBy: [], 
         idCreator: userId, 
-        idMatch: idMatch
+        idMatch: match.id,
       );
-    final postSaved = await repository.addPost(newPost);
+      await repository.addPost(newPost);
     } catch(e) {
       debugPrint("$e");
     } finally {

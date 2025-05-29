@@ -1,3 +1,5 @@
+import 'package:PongChamp/data/services/uploadImage_service.dart';
+
 import '/data/services/match_service.dart';
 import '/data/services/repositories/match_repository.dart';
 import '/data/services/repositories/profile_page_repository.dart';
@@ -44,6 +46,7 @@ void main () async {
       Provider<SearchService>(create: (_) => SearchService()),
       Provider<MatchService>(create: (_) => MatchService()),
       Provider<PostService>(create: (_) => PostService()),
+      Provider<ImageService>(create: (_) => ImageService()),
       Provider<ProfilePageService>(create: (_) => ProfilePageService()),
 
       Provider<MatchRepository>(create: (context) => MatchRepository(context.read<MatchService>()),),

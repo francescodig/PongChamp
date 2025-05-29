@@ -20,41 +20,6 @@ class MatchViewModel  extends ChangeNotifier{
     return match;
   }
 
-  Future<void> createMatch({
-    required int score1,
-    required int score2,
-    required Event event,
-  }) async {
-    _isLoading = true;
-    notifyListeners();
-    try {
-      final userId = FirebaseAuth.instance.currentUser!.uid;
-      final String winner;
-      if(score1 > score2) {winner = event.participantIds[0];}
-      else if (score1 < score2) {winner = event.participantIds[1];}
-      else {winner = 'Tie';}
-      final newMatch = PongMatch(
-        id: "", //viene aggiunto dal service una volta generato da Firestore
-        creatorId: userId,
-        score1: score1,
-        score2: score2,
-        date: event.dataEvento,
-        idEvento: event.id,
-        type: event.eventType,
-        matchPlayers: [],
-        matchTitle: event.title,
-        winnerId: winner,
-      );
-      final matchSaved = await repository.addMatch(newMatch.copyWith(matchPlayers: event.participantIds));
-      _matches.add(matchSaved);
-    } catch(e) {
-      debugPrint("$e");
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
   Future<void> fetchUserMatches() async {
     _isLoading = true;
     notifyListeners();
@@ -75,19 +40,7 @@ class MatchViewModel  extends ChangeNotifier{
     final creatorId = FirebaseAuth.instance.currentUser!.uid;
     return repository.getUserMatchStream(creatorId);
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
+  
   Future<void> createSingleMatch({
     required int score1,
     required int score2,

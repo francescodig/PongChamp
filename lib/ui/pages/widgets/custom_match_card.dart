@@ -1,3 +1,5 @@
+import 'package:PongChamp/ui/pages/view/create_post_page.dart';
+
 import '/ui/pages/viewmodel/user_view_model.dart';
 import 'package:provider/provider.dart';
 import '/domain/functions/utility.dart';
@@ -18,7 +20,12 @@ class CustomMatchCard extends StatelessWidget {
         final userViewModel = context.watch<UserViewModel>();
 
     return GestureDetector(
-      onTap: () => {},
+      onTap: () {
+        Navigator.push(
+          context, 
+          MaterialPageRoute(builder: (_) => CreatePostPage(match: match,))
+        );
+      },
       child: Card(
         elevation: 3,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
