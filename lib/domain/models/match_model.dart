@@ -12,6 +12,7 @@ class PongMatch {
   String matchTitle;
   List<String> matchPlayers;
   String winnerId;
+  bool hasPost;
 
 
   PongMatch({
@@ -25,6 +26,7 @@ class PongMatch {
     required this.matchTitle,
     required this.matchPlayers,
     required this.winnerId,
+    required this.hasPost,
   });
 
   factory PongMatch.fromFirestore(DocumentSnapshot doc) {
@@ -40,6 +42,7 @@ class PongMatch {
       type: data['type'],
       matchPlayers: List<String>.from(data['matchPlayers'] ?? []),
       winnerId: data['winnerId'],
+      hasPost: data['hasPost'],
     );
   }
 
@@ -55,7 +58,8 @@ class PongMatch {
       matchTitle: map['matchTitle'],
       type: map['type'],
       matchPlayers: List<String>.from(map['matchPlayers'] ?? []),
-      winnerId: map['winnerId']
+      winnerId: map['winnerId'],
+      hasPost: map['hasPost'],
     );
   }
 
@@ -71,6 +75,7 @@ class PongMatch {
       'matchTitle': matchTitle,
       'matchPlayers': matchPlayers,
       'winnerId': winnerId,
+      'hasPost': hasPost,
     };  
   }
 
@@ -85,6 +90,7 @@ class PongMatch {
     String? idEvento,
     String? matchTitle,
     String? winnerId,
+    bool? hasPost,
   }) {
     return PongMatch( 
       id: id ?? this.id,
@@ -97,6 +103,7 @@ class PongMatch {
       matchTitle: matchTitle ?? this.matchTitle,
       matchPlayers: matchPlayers ?? this.matchPlayers,
       winnerId: winnerId ?? this.winnerId,
+      hasPost: hasPost ?? this.hasPost,
     );
   }
   

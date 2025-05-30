@@ -11,6 +11,7 @@ class Event {
   String eventType;
   final DateTime createdAt;
   DateTime dataEvento; 
+  bool hasMatch;
 
   Event({
     required this.id,
@@ -23,6 +24,7 @@ class Event {
     required this.eventType,
     required this.createdAt,
     required this.dataEvento,
+    required this.hasMatch,
   });
 
   /// Converte una mappa di Firestore in un oggetto Event
@@ -39,6 +41,7 @@ class Event {
       eventType: data['eventType'] ?? '',
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       dataEvento: (data['dataEvento'] as Timestamp).toDate(),
+      hasMatch: (data['hasMatch']) ?? false,
     );
   }
 
@@ -52,8 +55,9 @@ class Event {
       'maxParticipants': maxParticipants,
       'participantIds': participantIds,
       'eventType': eventType,
-      'createdAt': Timestamp.fromDate(createdAt ?? DateTime.now()),
+      'createdAt': Timestamp.fromDate(createdAt),
       'dataEvento': Timestamp.fromDate(dataEvento),
+      'hasMatch': hasMatch,
     };
   }
 
@@ -69,8 +73,9 @@ class Event {
     int? participants,
     int? maxParticipants,
     List<String>? participantIds,
-    String? matchType,
+    String? eventType,
     DateTime? createdAt,
+    bool? hasMatch,
   }) {
     return Event(
       id: id ?? this.id,
@@ -82,7 +87,8 @@ class Event {
       participantIds: participantIds ?? this.participantIds,
       eventType: eventType ?? this.eventType,
       createdAt: createdAt ?? this.createdAt,
-      dataEvento : dataEvento ?? this.dataEvento,
+      dataEvento : dataEvento,
+      hasMatch: hasMatch ?? this.hasMatch,
     );
   }
 }

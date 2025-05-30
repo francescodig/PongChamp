@@ -65,8 +65,11 @@ class MatchViewModel  extends ChangeNotifier{
         matchPlayers: event.participantIds,
         matchTitle: event.title,
         winnerId: winner,
+        hasPost: false,
       );
       final matchSaved = await repository.addMatch(newMatch);
+      final updatedEvent = event.copyWith(hasMatch: true);
+      
       _matches.add(matchSaved);
     } catch(e) {
       debugPrint("$e");
@@ -95,6 +98,7 @@ class MatchViewModel  extends ChangeNotifier{
         matchPlayers: event.participantIds,
         matchTitle: event.title,
         winnerId: winnerId,
+        hasPost: false, 
       );
       final matchSaved = await repository.addMatch(newMatch);
       _matches.add(matchSaved);

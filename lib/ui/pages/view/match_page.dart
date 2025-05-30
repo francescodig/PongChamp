@@ -41,7 +41,6 @@ class _MatchPageState extends State<MatchPage> {
         if (viewModel.matches.isEmpty) {
           return _buildEmptyState();
         }
-
         return _buildMatchList(viewModel.matches);
       },
     );

@@ -81,6 +81,7 @@ class EventViewModel extends ChangeNotifier {
       eventType: eventType,
       createdAt: DateTime.now(), //verrà assegnato dal Service, al momento del salvataggio su Firestore
       dataEvento : dataEvento,
+      hasMatch: false,
     );
     //Salva il nuovo Event
     final eventoSalvato = await _eventService.addEvent(nuovoEvento);
