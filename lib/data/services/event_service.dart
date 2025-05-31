@@ -8,7 +8,7 @@ class EventService {
   ///Salvataggio di un nuovo evento
   Future<Event> addEvent(Event event) async {
     // Se l'oggetto Event ha già un createdAt lo usa, altrimenti imposta l'orario attuale
-    final completeEvent = event.copyWith(createdAt: event.createdAt ?? DateTime.now(),);
+    final completeEvent = event.copyWith(createdAt: event.createdAt);
     // Salva il documento nel database, Firestore genera l'id
     final docRef = await _eventsCollection.add(completeEvent.toFirestore());
     // Restituisce l'oggetto Event con id aggiornato
@@ -112,6 +112,13 @@ class EventService {
     );
     await _eventsCollection.doc(event.id).update(updatedEvent.toFirestore());
     return updatedEvent;
+  }
+
+  //Aggiorna il valore hasMatch di un evento a true 
+  Future<void> markEventWithMatch(String eventId) async {
+    await _eventsCollection.doc(eventId).update({
+      'hasMatch': true,
+    });
   }
 
 }

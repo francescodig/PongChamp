@@ -77,7 +77,6 @@ class _UserEventsPage extends State<UserEventsPage> {
                 return CustomSectionheader(title: "Eventi scaduti: $expiredLength");
               } else {
                 final event = expired[index - expiredHeaderIndex - 1];
-                //if (event.participants == event.maxParticipants){
                 return CustomCard(
                   event: event,
                   onTap: () {
@@ -88,7 +87,6 @@ class _UserEventsPage extends State<UserEventsPage> {
                   },
                   buttonText: "Inserisci Risultato", 
                   buttonColor: Color.fromARGB(255, 245, 192, 41),);//}
-                //else {return null;}
               }
             },);
         }

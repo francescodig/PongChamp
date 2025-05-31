@@ -47,12 +47,15 @@ class EventViewModel extends ChangeNotifier {
     .toList();
   }
 
-  ///Lista contenente gli eventi creati o a cui l'utente partecipa ma scaduti
+  ///Lista contenente gli eventi creati o a cui l'utente partecipa ma scaduti e con partecipanti massimi
   List<Event> get userExpiredEvents {
-    final createdExpired = userEvents.where((e) => e.dataEvento.isBefore(DateTime.now())).toList();
-    final onlyParticipatedExpired = userOnlyParticipatedEvents.where((e) => e.dataEvento.isBefore(DateTime.now())).toList();
-    return (createdExpired+onlyParticipatedExpired);
-  }  
+    final now = DateTime.now();
+    final allUserEvents = [...userEvents, ...userOnlyParticipatedEvents];
+    return allUserEvents.where((event) => 
+      event.dataEvento.isBefore(now) &&
+      event.participantIds.length >= event.maxParticipants
+      ).toList();
+  }
 
   Future<void> creaEvento({
     required String title,
@@ -123,8 +126,10 @@ class EventViewModel extends ChangeNotifier {
   Future<void> fetchUserEvents() async {
     _isLoading = true;
     notifyListeners();
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    _userEvents = await _eventService.fetchUserEvents(uid!);
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final uid = user.uid;
+    _userEvents = await _eventService.fetchUserEvents(uid);
     _isLoading = false;
     notifyListeners();
   }
@@ -133,8 +138,10 @@ class EventViewModel extends ChangeNotifier {
   Future<void> fetchPartecipateEvents() async {
     _isLoading = true;
     notifyListeners();
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    _userParticipatedEvents = await _eventService.fetchEventsUserParticipates(uid!);
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final uid = user.uid;
+    _userParticipatedEvents = await _eventService.fetchEventsUserParticipates(uid);
     _isLoading = false;
     notifyListeners();
   }
