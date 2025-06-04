@@ -1,5 +1,6 @@
-import 'package:PongChamp/data/services/uploadImage_service.dart';
-
+import '/data/services/event_service.dart';
+import '/data/services/repositories/event_repository.dart';
+import '/data/services/uploadImage_service.dart';
 import '/data/services/match_service.dart';
 import '/data/services/repositories/match_repository.dart';
 import '/data/services/repositories/profile_page_repository.dart';
@@ -44,11 +45,13 @@ void main () async {
     providers: [
       Provider<AuthService>(create: (_) => AuthService()),
       Provider<SearchService>(create: (_) => SearchService()),
+      Provider<EventService>(create: (_) => EventService()),
       Provider<MatchService>(create: (_) => MatchService()),
       Provider<PostService>(create: (_) => PostService()),
       Provider<ImageService>(create: (_) => ImageService()),
       Provider<ProfilePageService>(create: (_) => ProfilePageService()),
 
+      Provider<EventRepository>(create: (context) => EventRepository(context.read<EventService>())),
       Provider<MatchRepository>(create: (context) => MatchRepository(context.read<MatchService>()),),
       Provider<PostRepository>(create: (context) => PostRepository(context.read<PostService>())),
 
@@ -59,7 +62,7 @@ void main () async {
       ChangeNotifierProvider(create: (context)=> ForgotPasswordViewModel(context.read<AuthService>())),
       ChangeNotifierProvider(create: (_) => MapViewModel()),
       ChangeNotifierProvider(create: (_) => UserViewModel(UserRepository(UserService()))),
-      ChangeNotifierProvider(create: (_) => EventViewModel()),
+      ChangeNotifierProvider(create: (context) => EventViewModel(context.read<EventRepository>())),
       ChangeNotifierProvider(create: (_) => NotificationViewModel()),
       ChangeNotifierProvider(create: (_) => ParticipantsViewModel()),
       
