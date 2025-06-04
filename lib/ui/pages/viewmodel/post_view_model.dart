@@ -37,7 +37,7 @@ class PostViewModel extends ChangeNotifier {
         idCreator: userId, 
         idMatch: match.id,
       );
-      await repository.addPost(newPost);
+      await repository.createPostWithMatchUpdate(newPost);
     } catch(e) {
       debugPrint("$e");
     } finally {

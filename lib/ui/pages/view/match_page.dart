@@ -18,7 +18,7 @@ class _MatchPageState extends State<MatchPage> {
   void initState() {
     super.initState();
     // Carica i match dopo il primo frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    Future.microtask(() {
       context.read<MatchViewModel>().fetchUserMatches();
     });
   }

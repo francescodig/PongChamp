@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '/data/services/event_service.dart';
 import '/domain/models/event_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -86,5 +87,25 @@ class EventRepository {
       return false;
     }
   }
+
+  Future<Event> getEventWithTransaction(String eventId, Transaction transaction) async {
+    try {
+      final event = await _eventService.getEventWithTransaction(eventId, transaction);
+      return event;
+    } catch (e) {
+      debugPrint("Errore: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> markEventWithMatchTransaction(String eventId, Transaction transaction) async {
+    try {
+      await _eventService.markEventWithMatchTransaction(eventId, transaction);
+    } catch (e) {
+      debugPrint("Errore: $e");
+      rethrow;
+    }
+  }
+
 
 }

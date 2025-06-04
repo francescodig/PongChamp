@@ -121,4 +121,16 @@ class EventService {
     });
   }
 
+  
+  Future<Event> getEventWithTransaction(String eventId, Transaction transaction) async {
+    final doc = await transaction.get(_eventsCollection.doc(eventId));
+    return Event.fromFirestore(doc);
+  }
+
+  Future<void> markEventWithMatchTransaction(String eventId, Transaction transaction) async {
+    transaction.update(_eventsCollection.doc(eventId), {
+      'hasMatch': true,
+    });
+  }
+
 }

@@ -1,4 +1,6 @@
+import 'package:PongChamp/data/services/repositories/match_repository.dart';
 import 'package:PongChamp/domain/models/user_models.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '/data/services/post_service.dart';
 import '/domain/models/post_model.dart';
@@ -7,7 +9,10 @@ import '/domain/models/post_model.dart';
 // Utilizza il servizio PostService per interagire con Firestore.
 class PostRepository {
   final PostService service;
-  PostRepository(this.service);
+  final MatchRepository _matchRepository;
+  PostRepository(this.service, this._matchRepository);
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Stream<List<Post>> getPostsStream() {
     return service.getPostsStream();
@@ -16,6 +21,16 @@ class PostRepository {
   Future<Post> addPost(Post post) async {
     return await service.addPost(post);
   }
+
+  Future<void> createPostWithMatchUpdate(Post post) async {
+    await _firestore.runTransaction((transaction) async {
+      final match = await _matchRepository.getMatchWithTransaction(post.idMatch, transaction);
+      if (match.hasPost) throw Error();
+      await service.createPostWithTransaction(post, transaction);
+      await _matchRepository.markMatchWithPostTransaction(post.idMatch, transaction);
+    });
+  }
+
   Future<void> addLikeToPost(String postId, int likes) async {
     await service.addLikeToPost(postId, likes);
   }

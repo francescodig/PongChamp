@@ -54,6 +54,7 @@ class EventViewModel extends ChangeNotifier {
     final allUserEvents = [...userEvents, ...userOnlyParticipatedEvents];
     return allUserEvents.where((event) => 
       event.dataEvento.isBefore(now) &&
+      !(event.hasMatch) &&
       event.participantIds.length >= event.maxParticipants
       ).toList();
   }

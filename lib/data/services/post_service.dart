@@ -18,6 +18,11 @@ class PostService {
     return completePost;
   }
 
+  Future<void> createPostWithTransaction(Post post, Transaction transaction) async {
+    final matchRef = _postCollection.doc();
+    transaction.set(matchRef, post.toMap());
+  }
+
   // Recupera tutti i posti dalla collezione "Post" in Firestore
   Stream<List<Post>> getPostsStream() {
     // Restituisci uno Stream di una lista di Post

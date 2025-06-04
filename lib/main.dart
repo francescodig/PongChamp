@@ -52,8 +52,8 @@ void main () async {
       Provider<ProfilePageService>(create: (_) => ProfilePageService()),
 
       Provider<EventRepository>(create: (context) => EventRepository(context.read<EventService>())),
-      Provider<MatchRepository>(create: (context) => MatchRepository(context.read<MatchService>()),),
-      Provider<PostRepository>(create: (context) => PostRepository(context.read<PostService>())),
+      Provider<MatchRepository>(create: (context) => MatchRepository(context.read<MatchService>(), context.read<EventRepository>())),
+      Provider<PostRepository>(create: (context) => PostRepository(context.read<PostService>(), context.read<MatchRepository>())),
 
       ChangeNotifierProvider(create: (context) => MatchViewModel(context.read<MatchRepository>())),
       ChangeNotifierProvider(create: (context) => PostViewModel(context.read<PostRepository>())),
