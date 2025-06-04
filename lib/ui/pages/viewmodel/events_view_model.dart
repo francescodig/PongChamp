@@ -1,15 +1,16 @@
 import 'dart:convert';
+import '/data/services/repositories/event_repository.dart';
 import '/domain/models/marker_model.dart';
 import 'package:flutter/services.dart';
 import '/data/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '/data/services/event_service.dart';
 import '/domain/models/event_model.dart';
 import 'package:flutter/material.dart';
 
 class EventViewModel extends ChangeNotifier {
     
-  final EventService _eventService = EventService();
+  final EventRepository _eventRepository;
+  EventViewModel(this._eventRepository);
   final AuthService _authService=AuthService();
 
   List<Event> _events = [];
@@ -87,7 +88,7 @@ class EventViewModel extends ChangeNotifier {
       hasMatch: false,
     );
     //Salva il nuovo Event
-    final eventoSalvato = await _eventService.addEvent(nuovoEvento);
+    final eventoSalvato = await _eventRepository.addEvent(nuovoEvento);
     _events.add(eventoSalvato);
     } catch (e) {
       debugPrint("$e");
@@ -104,7 +105,7 @@ class EventViewModel extends ChangeNotifier {
       return false;
     }
     final eventId = event.id;
-    final success =await _eventService.removeEvent(event,userId);
+    final success =await _eventRepository.removeEvent(event,userId);
     if (success){
       _events.remove((e) => e.id = eventId);
     }
@@ -117,7 +118,7 @@ class EventViewModel extends ChangeNotifier {
   Future<void> fetchEvents() async {
     _isLoading = true;
     notifyListeners();
-    _events = await _eventService.fetchUpcomingEvents();
+    _events = await _eventRepository.fetchUpcomingEvents();
     _isLoading = false;
     notifyListeners();
   }
@@ -129,7 +130,7 @@ class EventViewModel extends ChangeNotifier {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
     final uid = user.uid;
-    _userEvents = await _eventService.fetchUserEvents(uid);
+    _userEvents = await _eventRepository.fetchUserEvents(uid);
     _isLoading = false;
     notifyListeners();
   }
@@ -141,7 +142,7 @@ class EventViewModel extends ChangeNotifier {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
     final uid = user.uid;
-    _userParticipatedEvents = await _eventService.fetchEventsUserParticipates(uid);
+    _userParticipatedEvents = await _eventRepository.fetchEventsUserParticipates(uid);
     _isLoading = false;
     notifyListeners();
   }
@@ -163,7 +164,7 @@ class EventViewModel extends ChangeNotifier {
     }
     try {
       // Chiede al Service di aggiornare l'evento su Firestore
-      final updatedEvent = await _eventService.addParticipant(event, userId);
+      final updatedEvent = await _eventRepository.addParticipant(event, userId);
       // Aggiorna l'evento localmente
       final index = _events.indexWhere((e) => e.id == event.id);
       if (index != -1) {
@@ -187,7 +188,7 @@ class EventViewModel extends ChangeNotifier {
     }
     try {
       // Chiamata al Service
-      await _eventService.removeParticipant(event, userId);
+      await _eventRepository.removeParticipant(event, userId);
       // Aggiorna la lista localmente
       event.participantIds.remove(userId);
       event.participants = event.participantIds.length;
