@@ -1,3 +1,5 @@
+import 'package:flutter/services.dart';
+
 import '/data/services/event_service.dart';
 import '/data/services/repositories/event_repository.dart';
 import '/data/services/uploadImage_service.dart';
@@ -37,6 +39,10 @@ void main () async {
   Provider.debugCheckInvalidValueType = null;
   
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform, // se usi firebase_options.dart
   );
