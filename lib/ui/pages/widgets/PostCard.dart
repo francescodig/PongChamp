@@ -24,37 +24,41 @@ class _PostCardState extends State<PostCard> {
   late final MatchViewModel _matchViewModel;
   late final UserViewModel _userViewModel;
   late final String _userId;
-  
+
   // Streams
   late final Stream<AppUser?> _creatorStream;
   late final Future<PongMatch?> _matchFuture;
   String? _creatorProfileImageUrl;
-  
+
   // Match players data
   late final Stream<AppUser?> _player1Stream;
   late final Stream<AppUser?> _player2Stream;
-  
+
   @override
   void initState() {
     super.initState();
+    //In this phase we set listen: false to avoid unnecessary rebuilds
+    // and to ensure that the streams are initialized only once.
     _postViewModel = Provider.of<PostViewModel>(context, listen: false);
     _matchViewModel = Provider.of<MatchViewModel>(context, listen: false);
     _userViewModel = Provider.of<UserViewModel>(context, listen: false);
     _userId = FirebaseAuth.instance.currentUser!.uid;
-    
+
     // Initialize streams and futures
     _creatorStream = _userViewModel.getUserStreamById(widget.post.idCreator);
     _matchFuture = _matchViewModel.fetchMatchById(widget.post.idMatch);
-    
+
     // Load creator profile image once
     _loadCreatorProfileImage();
-    
+
     // Initialize player streams after getting match data
     _initializePlayerStreams();
   }
 
   Future<void> _loadCreatorProfileImage() async {
-    final url = await _postViewModel.getCreatorProfileImageUrl(widget.post.idCreator);
+    final url = await _postViewModel.getCreatorProfileImageUrl(
+      widget.post.idCreator,
+    );
     if (mounted) {
       setState(() {
         _creatorProfileImageUrl = url;
@@ -66,8 +70,12 @@ class _PostCardState extends State<PostCard> {
     final match = await _matchFuture;
     if (match != null && mounted) {
       setState(() {
-        _player1Stream = _userViewModel.getUserStreamById(match.matchPlayers[0]);
-        _player2Stream = _userViewModel.getUserStreamById(match.matchPlayers[1]);
+        _player1Stream = _userViewModel.getUserStreamById(
+          match.matchPlayers[0],
+        );
+        _player2Stream = _userViewModel.getUserStreamById(
+          match.matchPlayers[1],
+        );
       });
     }
   }
@@ -94,13 +102,14 @@ class _PostCardState extends State<PostCard> {
                 return FutureBuilder<PongMatch?>(
                   future: _matchFuture,
                   builder: (context, matchSnapshot) {
-                    if (matchSnapshot.connectionState == ConnectionState.waiting) {
+                    if (matchSnapshot.connectionState ==
+                        ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     }
                     if (matchSnapshot.hasError || !matchSnapshot.hasData) {
                       return const Text('Errore nel caricamento del match');
                     }
-                    
+
                     final match = matchSnapshot.data!;
                     return _buildMatchRow(match, constraints.maxWidth);
                   },
@@ -126,35 +135,43 @@ class _PostCardState extends State<PostCard> {
           onTap: () => _navigateToProfile(widget.post.idCreator),
           child: CircleAvatar(
             radius: 24,
-            backgroundImage: _creatorProfileImageUrl != null
-                ? NetworkImage(_creatorProfileImageUrl!)
-                : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+            backgroundImage:
+                _creatorProfileImageUrl != null
+                    ? NetworkImage(_creatorProfileImageUrl!)
+                    : const AssetImage('assets/images/default_avatar.png')
+                        as ImageProvider,
           ),
         ),
         const SizedBox(width: 8),
-        GestureDetector(
-          onTap: () => _navigateToProfile(widget.post.idCreator),
-          child: StreamBuilder<AppUser?>(
-            stream: _creatorStream,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                return const Text('Errore nel caricamento utente');
-              } else if (!snapshot.hasData || snapshot.data == null) {
-                return const Text('Utente non trovato');
-              }
+        Flexible(
+          child: GestureDetector(
+            onTap: () => _navigateToProfile(widget.post.idCreator),
+            child: StreamBuilder<AppUser?>(
+              stream: _creatorStream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return const Text('Errore nel caricamento utente');
+                } else if (!snapshot.hasData || snapshot.data == null) {
+                  return const Text('Utente non trovato');
+                }
 
-              final user = snapshot.data!;
-              return Text(
-                user.nickname,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.black,
-                ),
-              );
-            },
+                final user = snapshot.data!;
+                return Flexible(       
+                  child: Text(
+                    user.nickname,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ],
@@ -193,7 +210,10 @@ class _PostCardState extends State<PostCard> {
             children: [
               Text(
                 match.score1.toString(),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
               const SizedBox(width: 8),
               const Text(
@@ -203,7 +223,10 @@ class _PostCardState extends State<PostCard> {
               const SizedBox(width: 8),
               Text(
                 match.score2.toString(),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
             ],
           ),
@@ -236,67 +259,119 @@ class _PostCardState extends State<PostCard> {
     if (snapshot.connectionState == ConnectionState.waiting) {
       return Row(
         mainAxisSize: MainAxisSize.min,
-        children: isPlayer1
-            ? [
-                CircleAvatar(
-                  radius: 12,
-                  child: SizedBox(
-                    width: 12,
-                    height: 12,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+        children:
+            isPlayer1
+                ? [
+                  CircleAvatar(
+                    radius: 12,
+                    child: SizedBox(
+                      width: 12,
+                      height: 12,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                SizedBox(
-                  width: nicknameWidth,
-                  height: 16,
-                  child: Container(color: Colors.grey[300]),
-                ),
-              ]
-            : [
-                SizedBox(
-                  width: nicknameWidth,
-                  height: 16,
-                  child: Container(color: Colors.grey[300]),
-                ),
-                const SizedBox(width: 8),
-                CircleAvatar(
-                  radius: 12,
-                  child: SizedBox(
-                    width: 12,
-                    height: 12,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: nicknameWidth,
+                    height: 16,
+                    child: Container(color: Colors.grey[300]),
                   ),
-                ),
-              ],
+                ]
+                : [
+                  SizedBox(
+                    width: nicknameWidth,
+                    height: 16,
+                    child: Container(color: Colors.grey[300]),
+                  ),
+                  const SizedBox(width: 8),
+                  CircleAvatar(
+                    radius: 12,
+                    child: SizedBox(
+                      width: 12,
+                      height: 12,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                ],
       );
     }
 
     if (snapshot.hasError || !snapshot.hasData) {
       return Row(
         mainAxisSize: MainAxisSize.min,
-        children: isPlayer1
-            ? [
+        children:
+            isPlayer1
+                ? [
+                  CircleAvatar(radius: 12, child: Icon(Icons.error)),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: nicknameWidth,
+                    child: Text(
+                      'Errore',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ]
+                : [
+                  SizedBox(
+                    width: nicknameWidth,
+                    child: Text(
+                      'Errore',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.end,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  CircleAvatar(radius: 12, child: Icon(Icons.error)),
+                ],
+      );
+    }
+
+    final user = snapshot.data!;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children:
+          isPlayer1
+              ? [
                 CircleAvatar(
                   radius: 12,
-                  child: Icon(Icons.error),
+                  backgroundImage:
+                      user.proPic != null
+                          ? NetworkImage(user.profileImage)
+                          : const AssetImage('assets/images/default_avatar.png')
+                              as ImageProvider,
                 ),
                 const SizedBox(width: 8),
                 SizedBox(
                   width: nicknameWidth,
                   child: Text(
-                    'Errore',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    user.nickname,
+                    maxLines: 1,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ]
-            : [
+              : [
                 SizedBox(
                   width: nicknameWidth,
                   child: Text(
-                    'Errore',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    user.nickname,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.end,
                   ),
@@ -304,51 +379,13 @@ class _PostCardState extends State<PostCard> {
                 const SizedBox(width: 8),
                 CircleAvatar(
                   radius: 12,
-                  child: Icon(Icons.error),
+                  backgroundImage:
+                      user.proPic != null
+                          ? NetworkImage(user.profileImage)
+                          : const AssetImage('assets/images/default_avatar.png')
+                              as ImageProvider,
                 ),
               ],
-      );
-    }
-
-    final user = snapshot.data!;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: isPlayer1
-          ? [
-              CircleAvatar(
-                radius: 12,
-                backgroundImage: user.proPic != null
-                    ? NetworkImage(user.profileImage)
-                    : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
-              ),
-              const SizedBox(width: 8),
-              SizedBox(
-                width: nicknameWidth,
-                child: Text(
-                  user.nickname,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ]
-          : [
-              SizedBox(
-                width: nicknameWidth,
-                child: Text(
-                  user.nickname,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.end,
-                ),
-              ),
-              const SizedBox(width: 8),
-              CircleAvatar(
-                radius: 12,
-                backgroundImage: user.proPic != null
-                    ? NetworkImage(user.profileImage)
-                    : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
-              ),
-            ],
     );
   }
 
@@ -386,7 +423,10 @@ class _PostCardState extends State<PostCard> {
             ),
             onPressed: () {
               if (hasLiked) {
-                _postViewModel.removeLikeFromPost(widget.post.id, widget.post.likes);
+                _postViewModel.removeLikeFromPost(
+                  widget.post.id,
+                  widget.post.likes,
+                );
               } else {
                 _postViewModel.addLikeToPost(widget.post.id, widget.post.likes);
               }
