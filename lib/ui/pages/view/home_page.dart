@@ -72,8 +72,11 @@ class HomePage extends StatelessWidget {
           final posts = snapshot.data!;
 
           // Visualizziamo i post usando una ListView
-          return ListView.builder(
+          return ListView.separated(
             itemCount: posts.length,
+            addAutomaticKeepAlives: false, // Disabilitiamo il keep alive automatico per migliorare le performance
+            cacheExtent: 1000, // ad esempio, precarica l'equivalente di ~2-3 post fuori schermo
+            separatorBuilder: (_, __) => SizedBox(height: 12), //Per migliorare visivamente la separazione tra i post
             itemBuilder: (context, index) {
               final post = posts[index];
 

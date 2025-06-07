@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 import '/ui/pages/viewmodel/post_view_model.dart';
 import '/domain/models/post_model.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class PostCard extends StatefulWidget {
   final Post post;
@@ -394,7 +396,7 @@ class _PostCardState extends State<PostCard> {
       padding: const EdgeInsets.only(top: 16.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: Image.network(
+         child: Image.network(
           widget.post.image!,
           fit: BoxFit.cover,
           width: double.infinity,
