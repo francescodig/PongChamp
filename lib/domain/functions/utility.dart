@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 
@@ -25,4 +26,21 @@ String formatDateTimeManually(DateTime dateTime) {
   String minute = dateTime.minute.toString().padLeft(2, '0');
 
   return '$day/$month/$year\n$hour:$minute';
+}
+
+String formatTimestamp(Timestamp? timestamp) {
+  if (timestamp == null) {
+    return 'N/A';
+  } else{
+  final DateTime dateTime = timestamp.toDate();
+  final DateTime now = DateTime.now();
+  final Duration difference = now.difference(dateTime);
+
+  if (difference.inMinutes < 1) return 'Adesso';
+  if (difference.inMinutes < 60) return '${difference.inMinutes} min fa';
+  if (difference.inHours < 24) return '${difference.inHours} h fa';
+
+  return '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year} '
+         'alle ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
 }

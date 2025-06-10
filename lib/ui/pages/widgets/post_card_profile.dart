@@ -1,3 +1,4 @@
+import 'package:PongChamp/domain/functions/utility.dart';
 import 'package:PongChamp/domain/models/match_model.dart';
 import 'package:PongChamp/domain/models/user_models.dart';
 import 'package:PongChamp/ui/pages/view/likes_page.dart';
@@ -163,9 +164,25 @@ class _PostCardProfileState extends State<PostCardProfile> {
             // Like actions and delete button in a row
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-              _likeAction(hasLiked),
-              buildDeleteButton(),
+                _likeAction(hasLiked),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const SizedBox(height: 8),
+                    buildDeleteButton(),
+                    const SizedBox(height: 2), // Spazio verticale, non usare width qui
+                    Text(
+                      formatTimestamp(widget.post.createdAt),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
             const SizedBox(height: 8),
@@ -186,7 +203,7 @@ class _PostCardProfileState extends State<PostCardProfile> {
             backgroundImage:
                 _creatorProfileImageUrl != null
                     ? NetworkImage(_creatorProfileImageUrl!)
-                    : const AssetImage('assets/images/default_profile.png')
+                    : const AssetImage('assets/default_profile.png')
                         as ImageProvider,
           ),
         ),
@@ -394,7 +411,7 @@ class _PostCardProfileState extends State<PostCardProfile> {
                   backgroundImage:
                       user.proPic != null
                           ? NetworkImage(user.profileImage)
-                          : const AssetImage('assets/images/default_profile.png')
+                          : const AssetImage('assets/default_profile.png')
                               as ImageProvider,
                 ),
                 const SizedBox(width: 8),
@@ -430,7 +447,7 @@ class _PostCardProfileState extends State<PostCardProfile> {
                   backgroundImage:
                       user.proPic != null
                           ? NetworkImage(user.profileImage)
-                          : const AssetImage('assets/images/default_profile.png')
+                          : const AssetImage('assets/default_profile.png')
                               as ImageProvider,
                 ),
               ],
@@ -459,50 +476,49 @@ class _PostCardProfileState extends State<PostCardProfile> {
   }
 
   Widget _likeAction(bool hasLiked) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: Icon(
-              hasLiked ? Icons.favorite : Icons.favorite_border,
-              color: hasLiked ? Colors.red : Colors.grey,
+    return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      IconButton(
+        icon: Icon(
+          hasLiked ? Icons.favorite : Icons.favorite_border,
+          color: hasLiked ? Colors.red : Colors.grey,
+          size: 20, // Specifica una dimensione consistente
+        ),
+        padding: EdgeInsets.zero, // Riduci il padding se necessario
+        constraints: const BoxConstraints(), // Rimuovi vincoli predefiniti
+        onPressed: () {
+          if (hasLiked) {
+            _postViewModel.removeLikeFromPost(
+              widget.post.id,
+              widget.post.likes,
+            );
+          } else {
+            _postViewModel.addLikeToPost(widget.post.id, widget.post.likes);
+          }
+        },
+      ), 
+      GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => LikesPage(postId: widget.post.id),
             ),
-            onPressed: () {
-              if (hasLiked) {
-                _postViewModel.removeLikeFromPost(
-                  widget.post.id,
-                  widget.post.likes,
-                );
-              } else {
-                _postViewModel.addLikeToPost(widget.post.id, widget.post.likes);
-              }
-            },
+          );
+        },
+        child: Text(
+          '${widget.post.likes} likes',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+            color: Colors.black,
           ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => LikesPage(postId: widget.post.id),
-                ),
-              );
-            },
-            child: Text(
-              '${widget.post.likes} likes',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-                color: Colors.black,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
-    );
-  }
-
+    ],
+  );
+}
   void _navigateToProfile(String userId) {
     if (ModalRoute.of(context)?.settings.name != '/profile_$userId') {
       Navigator.push(

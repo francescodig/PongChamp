@@ -10,6 +10,7 @@ import '/ui/pages/viewmodel/post_view_model.dart';
 import '/domain/models/post_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:PongChamp/domain/functions/utility.dart';
 
 
 class PostCard extends StatefulWidget {
@@ -123,7 +124,20 @@ class _PostCardState extends State<PostCard> {
               _postImage(),
             const SizedBox(height: 12),
             // Like actions
-            _likeAction(hasLiked),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                _likeAction(hasLiked),
+                const SizedBox(height: 4),
+                Text(
+                  formatTimestamp(widget.post.createdAt),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

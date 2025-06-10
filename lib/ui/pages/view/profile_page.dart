@@ -68,17 +68,18 @@ class _ProfilePageContent extends StatelessWidget {
                             ),
                           ),
                         ),
-                      IconButton(
-                        icon: const Icon(Icons.post_add, size: 30),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MatchPage(),
-                            ),
-                          );
-                        },
-                      ),
+                      if (userId == viewModel.userId)
+                        IconButton(
+                          icon: const Icon(Icons.post_add, size: 30),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MatchPage(),
+                              ),
+                            );
+                          },
+                        ),
                     ],
                   ),
                 ),

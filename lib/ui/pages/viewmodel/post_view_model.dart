@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '/data/services/uploadImage_service.dart';
 import 'package:image_picker/image_picker.dart';
 import '/domain/models/match_model.dart';
@@ -36,6 +38,7 @@ class PostViewModel extends ChangeNotifier {
         likedBy: [], 
         idCreator: userId, 
         idMatch: match.id,
+        createdAt: Timestamp.now(),
       );
       await repository.createPostWithMatchUpdate(newPost);
     } catch(e) {

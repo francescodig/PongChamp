@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:PongChamp/data/services/uploadImage_service.dart';
 import 'package:PongChamp/domain/models/user_models.dart';
 import 'package:PongChamp/ui/pages/viewmodel/user_view_model.dart';
 
@@ -21,6 +22,7 @@ class CreatePostPage extends StatefulWidget {
 }
 
 class _CreatePostPageState extends State<CreatePostPage> {
+  final ImageService _imageService = ImageService();
   File? _imageFile;
   bool _isLoading = false;
 
@@ -221,7 +223,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
     setState(() => _isLoading = true);
     final postViewModel = Provider.of<PostViewModel>(context, listen: false);
     try {
-      await postViewModel.createPost(match: widget.match,);
+      await postViewModel.createPost(
+        match: widget.match,
+        image: _imageFile != null ? XFile(_imageFile!.path) : null,
+      );
       Navigator.pop(context, true); // Ritorna "true" per indicare successo
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
