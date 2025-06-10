@@ -41,7 +41,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Otteniamo l’istanza del PostViewModel tramite Provider
-    final postViewModel = Provider.of<PostViewModel>(context);
+    final postViewModel = Provider.of<PostViewModel>(context, listen: false);
 
     return WillPopScope(
       onWillPop: () => _onWillPop(context),

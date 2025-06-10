@@ -1,9 +1,12 @@
+import 'package:flutter/foundation.dart';
+
 import '/domain/models/match_model.dart';
 import '/domain/models/user_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class Post {
+
+class Post  {
   final String id;
   int likes;
   String? image; // URL dell'immagine
@@ -91,6 +94,7 @@ class Post {
   ImageProvider get postImage => image != null
       ? NetworkImage(image!)
       : const AssetImage('');
+
 
   
 }

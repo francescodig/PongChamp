@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+
 import '/domain/models/post_model.dart';
 import '/domain/models/user_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,33 +38,37 @@ class PostService {
             .toList());  
     }
 
-    //Funzione per mettere mi piace a un post 
+    // Funzione per mettere mi piace a un post usando una transazione
     Future<void> addLikeToPost(String postId, int likes) async {
-    final userId = FirebaseAuth.instance.currentUser!.uid;
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      final docRef = FirebaseFirestore.instance.collection('Post').doc(postId);
 
-    final docRef = FirebaseFirestore.instance.collection('Post').doc(postId);
-    final docSnapshot = await docRef.get();
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final docSnapshot = await transaction.get(docRef);
 
-    if (!docSnapshot.exists) return;
+        if (!docSnapshot.exists) return;
 
-    final data = docSnapshot.data()!;
-    final likedBy = List<String>.from(data['likedBy'] ?? []);
-
+        final data = docSnapshot.data() as Map<String, dynamic>;
+        final likedBy = List<String>.from(data['likedBy'] ?? []);
 
         // Utente non ha messo like → aggiungi il like
-      await docRef.update({
-      'likes':  FieldValue.increment(1),
-      'likedBy': FieldValue.arrayUnion([userId])
+        if (!likedBy.contains(userId)) {
+          transaction.update(docRef, {
+            'likes': FieldValue.increment(1),
+            'likedBy': FieldValue.arrayUnion([userId])
+          });
+        }
       });
- 
-  }
+    }
 
   //Funzione per rimuovere mi piace a un post
   Future<void> removeLikeFromPost(String postId, int likes) async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
 
     final docRef = FirebaseFirestore.instance.collection('Post').doc(postId);
-    final docSnapshot = await docRef.get();
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+
+    final docSnapshot = await transaction.get(docRef);
 
     if (!docSnapshot.exists) return;
 
@@ -71,12 +77,15 @@ class PostService {
 
 
         // Utente ha messo like → rimuovi il like
-      await docRef.update({
-      'likes':  FieldValue.increment(-1),
-      'likedBy': FieldValue.arrayRemove([userId])
-      });
- 
+      if(likedBy.contains(userId)){
+  transaction.update(docRef, {
+    'likes': FieldValue.increment(-1),
+    'likedBy': FieldValue.arrayRemove([userId])
+  });
   }
+  // Close the transaction function
+  });
+}
 
 
   //Funzione per restituire gli utenti che hanno messo mi piace a un post
