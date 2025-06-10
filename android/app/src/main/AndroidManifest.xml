@@ -10,7 +10,7 @@
 
 
     <application
-        android:label="flutter_application_2"
+        android:label="PongChamp"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

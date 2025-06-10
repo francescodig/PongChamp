@@ -1,6 +1,7 @@
 import 'package:PongChamp/data/services/repositories/profile_page_repository.dart';
 import 'package:PongChamp/data/services/repositories/profile_page_repository.dart';
 import 'package:PongChamp/ui/pages/view/match_page.dart';
+import 'package:PongChamp/ui/pages/widgets/post_card_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:PongChamp/domain/models/post_model.dart';
@@ -23,13 +24,14 @@ class ProfilePage extends StatelessWidget {
         Future.microtask(() => vm.loadProfile(userId));
         return vm;
       },
-      child: const _ProfilePageContent(),
+      child: _ProfilePageContent(userId: userId),
     );
   }
 }
 
 class _ProfilePageContent extends StatelessWidget {
-  const _ProfilePageContent({Key? key}) : super(key: key);
+  final String userId;
+  const _ProfilePageContent({required this.userId, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,29 +41,33 @@ class _ProfilePageContent extends StatelessWidget {
       appBar: CustomAppBar(),
       body: viewModel.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Intestazione profilo
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundImage: NetworkImage(viewModel.profileImageUrl ?? ''),
-                        backgroundColor: Colors.grey[300],
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          viewModel.userName ?? 'Utente',
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
+          : RefreshIndicator(
+             onRefresh: () async {
+                await viewModel.loadProfile(userId);
+             },
+             child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Intestazione profilo
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 40,
+                          backgroundImage: NetworkImage(viewModel.profileImageUrl ?? ''),
+                          backgroundColor: Colors.grey[300],
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            viewModel.userName ?? 'Utente',
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
                       IconButton(
                         icon: const Icon(Icons.post_add, size: 30),
                         onPressed: () {
@@ -76,37 +82,41 @@ class _ProfilePageContent extends StatelessWidget {
                     ],
                   ),
                 ),
+                  const Divider(),
 
-                const Divider(),
+                  // Elenco post
+                  Expanded(
+                    child: StreamBuilder<List<Post>>(
+                      stream: viewModel.postStream,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
 
-                // Elenco post
-                Expanded(
-                  child: StreamBuilder<List<Post>>(
-                    stream: viewModel.postStream,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
+                        if (snapshot.hasError) {
+                          return Center(child: Text('Errore: ${snapshot.error}'));
+                        }
 
-                      if (snapshot.hasError) {
-                        return Center(child: Text('Errore: ${snapshot.error}'));
-                      }
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return const Center(child: Text('Nessun post pubblicato'));
+                        }
 
-                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text('Nessun post pubblicato'));
-                      }
-
-                      final posts = snapshot.data!;
-                      return ListView.builder(
-                        itemCount: posts.length,
-                        itemBuilder: (context, index) {
-                          return PostCard(post: posts[index]);
-                        },
-                      );
-                    },
+                        final posts = snapshot.data!;
+                        return ListView.builder(
+                          itemCount: posts.length,
+                          itemBuilder: (context, index) {
+                            if(userId != viewModel.userId) {
+                              return PostCard(post: posts[index]);
+                            } else {
+                              return PostCardProfile(post: posts[index]);
+                            }
+                          },
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
       bottomNavigationBar: CustomNavBar(),
     );

@@ -128,6 +128,33 @@ class PostService {
     return null;
   }
 }
+Future<void> refreshPosts() async {
+    // Implementa la logica per ricaricare i post
+    
+
+     try {
+    // Questo serve per forzare la lettura attuale dei dati dalla collezione.
+    // Anche se lo StreamBuilder continua a lavorare, questa lettura singola è utile per forzare il "refresh"
+    final snapshot = await _postCollection.get(const GetOptions(source: Source.server));
+    
+    // Debug
+    debugPrint("Post aggiornati: ${snapshot.docs.length} documenti ricevuti dal server.");
+    
+  } catch (e) {
+    debugPrint("Errore durante il refresh dei post: $e");
+  }
+    
+  }
+
+  Future<void> deletePost(String postId) async {
+    try {
+      await _postCollection.doc(postId).delete();
+      debugPrint("Post $postId eliminato con successo.");
+    } catch (e) {
+      debugPrint("Errore durante l'eliminazione del post: $e");
+    }
+
+}
 
 }
 

@@ -46,6 +46,10 @@ class PostRepository {
   Future<AppUser?> getUserById(String userId) async{
     return await service.getUserById(userId);
   }
-
-
+  Future<void> refreshPosts() async{
+    return await service.refreshPosts();
+  }
+  Future<void> deletePost(String postId) async {
+    return await service.deletePost(postId);
+  }
 }

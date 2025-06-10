@@ -12,16 +12,16 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 
-class PostCard extends StatefulWidget {
+class PostCardProfile extends StatefulWidget {
   final Post post;
 
-  const PostCard({required this.post, Key? key}) : super(key: key);
+  const PostCardProfile({required this.post, Key? key}) : super(key: key);
 
   @override
-  _PostCardState createState() => _PostCardState();
+  _PostCardProfileState createState() => _PostCardProfileState();
 }
 
-class _PostCardState extends State<PostCard> {
+class _PostCardProfileState extends State<PostCardProfile> {
   late final PostViewModel _postViewModel;
   late final MatchViewModel _matchViewModel;
   late final UserViewModel _userViewModel;
@@ -82,6 +82,44 @@ class _PostCardState extends State<PostCard> {
     }
   }
 
+  Widget buildDeleteButton() {
+  return IconButton(
+    icon: const Icon(Icons.delete_outline),
+    onPressed: () async {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Elimina post'),
+          content: const Text('Sei sicuro di voler eliminare questo post?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annulla'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Elimina', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed == true) {
+        try {
+          await _postViewModel.deletePost(widget.post.id);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Post eliminato con successo')),
+          );
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Errore durante l\'eliminazione: $e')),
+          );
+        }
+      }
+    },
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     final hasLiked = widget.post.likedBy.contains(_userId);
@@ -122,9 +160,17 @@ class _PostCardState extends State<PostCard> {
             if (widget.post.image != null && widget.post.image!.isNotEmpty)
               _postImage(),
             const SizedBox(height: 12),
-            // Like actions
-            _likeAction(hasLiked),
+            // Like actions and delete button in a row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+              _likeAction(hasLiked),
+              buildDeleteButton(),
+              ],
+            ),
+            const SizedBox(height: 8),
           ],
+
         ),
       ),
     );

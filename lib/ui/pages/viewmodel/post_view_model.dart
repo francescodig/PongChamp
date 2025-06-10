@@ -70,4 +70,12 @@ class PostViewModel extends ChangeNotifier {
   Future<AppUser?> getUserById(String userId) async {
     return await repository.getUserById(userId);
   }
+  Future<void> refreshPosts() async{
+    await repository.refreshPosts();
+    notifyListeners(); // Notifica i listener dopo aver ricaricato i post
+  }
+  Future<void> deletePost(String postId) async {
+    await repository.deletePost(postId);
+    notifyListeners(); // Notifica i listener dopo aver eliminato il post
+  }
 }
