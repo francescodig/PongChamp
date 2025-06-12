@@ -6,8 +6,8 @@ class NotificationModel {
   final String title;
   final String message;
   final String userId;
-  final String eventId;
-  final DateTime? timestamp;
+  final String idEvento;
+  final Timestamp timestamp;
   bool read;
 
   NotificationModel({
@@ -15,7 +15,7 @@ class NotificationModel {
     required this.title,
     required this.message,
     required this.userId,
-    required this.eventId,
+    required this.idEvento,
     required this.timestamp,
     required this.read,
   });
@@ -24,12 +24,12 @@ class NotificationModel {
   factory NotificationModel.fromFirestore(DocumentSnapshot doc){
     final data = doc.data() as Map<String, dynamic>;
     return NotificationModel(
-      idNotifica: data['idNotifica'] ?? doc.id,
+      idNotifica: doc.id,
       userId: data['userId'],
-      eventId: data['eventId'],
-      title: data['title'],
-      message: data['message'],
-      timestamp: (data['timestamp'] as Timestamp).toDate(),
+      idEvento: data['idEvento'],
+      title: data['title'] ?? 'No Title',
+      message: data['message'] ?? 'No Message',
+      timestamp: (data['timestamp'] as Timestamp?) ?? Timestamp.now(),
       read: data['read'] ?? false,
     );
   }
@@ -39,7 +39,7 @@ class NotificationModel {
     return {
       'idNotifica': idNotifica,
       'userId': userId,
-      'eventId': eventId,
+      'idEvento': idEvento,
       'title': title,
       'message': message,
       'timestamp': timestamp,
@@ -51,16 +51,16 @@ class NotificationModel {
   NotificationModel copyWith({
     String? idNotifica,
     String? userId,
-    String? eventId,
+    String? idEvento,
     String? title,
     String? message,
-    DateTime? timestamp,
+    Timestamp? timestamp,
     bool? read,
   }) {
     return NotificationModel(
       idNotifica: idNotifica ?? this.idNotifica,
       userId: userId ?? this.userId,
-      eventId: eventId ?? this.eventId,
+      idEvento: idEvento ?? this.idEvento,
       title: title ?? this.title,
       message: message ?? this.message,
       timestamp: timestamp ?? this.timestamp,

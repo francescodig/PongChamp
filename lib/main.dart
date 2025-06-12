@@ -1,3 +1,5 @@
+import 'package:PongChamp/ui/pages/view/home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 
 import '/data/services/event_service.dart';
@@ -45,7 +47,7 @@ void main() async {
   await Firebase.initializeApp(
     options:
         DefaultFirebaseOptions.currentPlatform, // se usi firebase_options.dart
-  );
+  ); // Configura le notifiche Firebase
   runApp(
     MultiProvider(
       providers: [
@@ -123,13 +125,43 @@ void main() async {
   );
 }
 
+class AuthWrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Mostra un loader mentre controlla la sessione
+          return Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasData) {
+          // L'utente è loggato
+          return HomePage(currentUserId: FirebaseAuth.instance.currentUser!.uid);
+        } else {
+          // L'utente non è loggato
+          return LoginPage();
+        }
+      },
+    );
+  }
+}
+
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Login',
-      home: LoginPage(),
+      home:  AuthWrapper(),
+      routes: {
+        '/login': (context) => LoginPage(),
+        '/home': (context) => HomePage(currentUserId: FirebaseAuth.instance.currentUser!.uid),
+      },
     );
   }
 }

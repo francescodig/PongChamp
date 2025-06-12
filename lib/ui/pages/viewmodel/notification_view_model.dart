@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '/data/services/notification_service.dart';
 import '/domain/models/notification_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,8 +25,9 @@ class NotificationViewModel extends ChangeNotifier{
     if (uid==null) {
       debugPrint("Errore: $e");
       return;
-      }
+    }
     _notifications = await _notificationService.fetchUserNotification(uid);
+    print("Notifiche caricate: ${_notifications.length}");
     _isLoading = false;
     notifyListeners();
   }
@@ -32,7 +35,7 @@ class NotificationViewModel extends ChangeNotifier{
   Future<bool> createNotification({
     required String title,
     required String message,
-    required String eventId,
+    required String idEvento,
   }) async {
     _isLoading = true;
     notifyListeners();
@@ -46,8 +49,8 @@ class NotificationViewModel extends ChangeNotifier{
         title: title,
         message: message, 
         userId: userId, 
-        eventId: eventId, 
-        timestamp: null, //viene aggiunto direttamente dal service, al momento del salvataggio su Firestore
+        idEvento: idEvento, 
+        timestamp: Timestamp.now(), //viene aggiunto direttamente dal service, al momento del salvataggio su Firestore
         read: false);
       final savedNotification = await _notificationService.addNotification(newNotification);
       _notifications.add(savedNotification);

@@ -35,7 +35,7 @@ class AuthService {
     String profileImage,
     ) async {
     try {
-      final result = await _auth.createUserWithEmailAndPassword(email: email, password: hashPasswordFirebaseStyle(password, email));
+      final result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       final user = result.user; // success
 
 
@@ -51,7 +51,6 @@ class AuthService {
         'birthday': Timestamp.fromDate(DateTime.parse(birthDay)),
         'profileImage': profileImage,
         'sex': sex,
-        'password': hashPasswordFirebaseStyle(password, email),
         // 'createdAt': FieldValue.serverTimestamp(),
       });
     }
@@ -66,7 +65,7 @@ class AuthService {
 
   Future<String?> signInWithEmailAndPassword(String email, String password) async {
     try {
-      await _auth.signInWithEmailAndPassword(email: email, password: hashPasswordFirebaseStyle(password, email));
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
       return null; // success
     } on FirebaseAuthException catch (e) {
       return e.code;
@@ -148,7 +147,6 @@ Future<void> updateUserData(
   String nickname,
   String phoneNumber,
   String email,
-  String password,
   String profileImage,
 ) async {
   try {
@@ -158,7 +156,6 @@ Future<void> updateUserData(
       'nickname': nickname,
       'phoneNumber': phoneNumber,
       'email': email,
-      'password': password,
       'profileImage': profileImage,
     });
   } catch (e) {
@@ -172,37 +169,5 @@ Future<void> signOut() async {
 
 
  
-String hashPasswordFirebaseStyle(String password, String email) {
-  // Parametri dalla tua configurazione
-  final base64SignerKey = 'lvfopD4goVVeqMdOGe8AMaVMxzfrk5m7gEnPmApgCyMPL/gkBdnbFADCj0GQhqlP/yI/zyRZGGB1N99kXjqQkg==';
-  final base64SaltSeparator = 'Bw==';
-  final rounds = 8;
-  final memCost = 14; // 2^14 = 16384
-  
-  // Decodifica i componenti
-  final signerKey = base64.decode(base64SignerKey);
-  final saltSeparator = base64.decode(base64SaltSeparator);
-  
-  // Crea il salt come fa Firebase: signerKey + email + saltSeparator
-  final salt = Uint8List.fromList([
-    ...signerKey,
-    ...utf8.encode(email),
-    ...saltSeparator
-  ]);
-  
-  // Parametri SCrypt
-  final N = 1 << memCost; // 16384
-  final r = rounds; // 8
-  final p = 1; // parallelization
-  final dkLen = 32; // lunghezza output
-  
-  // Implementazione SCrypt con PointyCastle
-  final scrypt = Scrypt()
-    ..init(ScryptParameters(N, r, p, dkLen, salt));
-  
-  final hash = scrypt.process(utf8.encode(password));
-  
-  return base64.encode(hash);
-}
 
 }

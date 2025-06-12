@@ -51,5 +51,7 @@
 	<string>We need your location to show the map</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>We need your location to show the map</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Questa app ha bisogno dell'accesso alla libreria foto per selezionare immagini.</string>
 </dict>
 </plist>

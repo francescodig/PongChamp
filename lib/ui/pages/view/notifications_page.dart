@@ -1,5 +1,6 @@
 import 'package:PongChamp/ui/pages/widgets/custom_snackBar.dart';
 import 'package:PongChamp/ui/pages/widgets/notification_card.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '/ui/pages/viewmodel/notification_view_model.dart';
 import '/ui/pages/widgets/app_bar.dart';
 import '/ui/pages/widgets/bottom_navbar.dart';
@@ -19,6 +20,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     super.initState();
     Future.microtask((){
       context.read<NotificationViewModel>().fetchUserNotifications();
+      print("SIZE: ${context.size}");
     });
   }
 

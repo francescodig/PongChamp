@@ -105,10 +105,10 @@ class EventViewModel extends ChangeNotifier {
     if (event.creatorId != userId) {
       return false;
     }
-    final eventId = event.id;
+    final idEvento = event.id;
     final success =await _eventRepository.removeEvent(event,userId);
     if (success){
-      _events.remove((e) => e.id = eventId);
+      _events.remove((e) => e.id = idEvento);
     }
     _isLoading = false;
     notifyListeners();

@@ -1,7 +1,9 @@
+import 'package:PongChamp/data/services/auth_service.dart';
 import 'package:PongChamp/data/services/uploadImage_service.dart';
 import 'package:PongChamp/ui/pages/view/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import '/ui/pages/viewmodel/register_view_model.dart';
 import 'login_page.dart';
@@ -32,13 +34,25 @@ class _RegisterPageState extends State<RegisterPage> {
   File? _image; // Variabile per memorizzare l'immagine selezionata
   bool _obscurePassword = true;
   final ImageService _imageService = ImageService();
+  final AuthService _authService = AuthService(); // Inizializza il servizio di autenticazione
 
   final ImagePicker _picker = ImagePicker(); // Inizializza l'ImagePicker
 
    // Funzione per selezionare l'immagine dalla galleria
   Future<void> _pickImage() async {
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery); // Mostra la galleria per selezionare l'immagine
-    if (pickedFile != null) {
+    PermissionStatus permissionStatus; 
+    
+    
+    if(Platform.isIOS){
+      permissionStatus = await Permission.photos.request();
+     } else{
+      permissionStatus = await Permission.storage.request();
+    }
+    
+    if(permissionStatus.isGranted){
+      final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery); // Mostra la galleria per selezionare l'immagine
+
+      if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path); // Aggiorna l'immagine con quella selezionata
       });
@@ -54,6 +68,28 @@ class _RegisterPageState extends State<RegisterPage> {
         print("Impossibile caricare l'immagine.");
       }
 
+    } else if (permissionStatus.isPermanentlyDenied){
+       // Se il permesso è stato negato in modo permanente
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Permesso per accedere alla galleria negato. Abilitalo dalle impostazioni."),
+        action: SnackBarAction(
+          label: "Apri Impostazioni",
+          onPressed: () {
+            openAppSettings(); // Apre le impostazioni dell'app
+          },
+        ),
+      ),
+    );
+  } else {
+    // Permesso negato ma non permanente
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Permesso per accedere alla galleria necessario per selezionare un'immagine.")),
+    );
+
+    }
+
+    
 
 
 
@@ -235,9 +271,10 @@ class _RegisterPageState extends State<RegisterPage> {
                       );
 
                       if (success) {
+                        final currentUserId = _authService.currentUserId;
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (_) => HomePage()),
+                          MaterialPageRoute(builder: (_) => HomePage(currentUserId: currentUserId)),
                         );
                       }
                     },

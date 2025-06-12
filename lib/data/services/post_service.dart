@@ -30,12 +30,75 @@ class PostService {
     // Restituisci uno Stream di una lista di Post
     return FirebaseFirestore.instance
         .collection('Post')
+        .orderBy('createdAt', descending: true) // Ordina per data di creazione
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) {
                return Post.fromFirestore(doc);
             })
             .toList());  
+    } 
+
+
+
+
+  Stream<List<Post>> getFeed(String currentUserId){
+    // Restituisci uno Stream di una lista di Post
+    return FirebaseFirestore.instance
+        .collection('Post')
+        .snapshots()
+        .map((snapshot)  {
+         // Converto tutti i documenti in oggetti Post
+        final allPosts = snapshot.docs.map((doc) => Post.fromFirestore(doc)).toList();
+
+        // Filtra i post per escludere quelli dell'utente corrente
+        final posts = allPosts.where((post) => post.idCreator != currentUserId).toList();
+
+        // Calcola un punteggio per ciascun post (più alto = più in alto nel feed)
+        // - Post recenti ottengono più punteggio
+        // - Più like aumentano il punteggio
+        // - Normalizziamo e ponderiamo i valori per bilanciare i fattori
+
+        // Troviamo il timestamp minimo e massimo per la normalizzazione
+        final now = DateTime.now();
+        final timestamps = posts.map((p) => p.createdAt?.millisecondsSinceEpoch).toList();
+        final maxTimestamp = timestamps.isNotEmpty ? timestamps.reduce((a,b) => a! > b! ? a : b) : now.millisecondsSinceEpoch;
+        final minTimestamp = timestamps.isNotEmpty ? timestamps.reduce((a,b) => a! < b! ? a : b) : now.millisecondsSinceEpoch;
+
+        // Troviamo max like per normalizzare
+        final maxLikes = posts.isNotEmpty ? posts.map((p) => p.likes).reduce((a, b) => a > b ? a : b) : 1;
+
+        double calculateScore(Post post) {
+          // Normalizza data: più recente -> valore vicino a 1
+          double normalizedRecency = 0;
+          if (maxTimestamp != minTimestamp) {
+            normalizedRecency = (post.createdAt!.millisecondsSinceEpoch - minTimestamp!) / (maxTimestamp! - minTimestamp);
+          } else {
+            normalizedRecency = 1; // tutti i post hanno stessa data
+          }
+
+          // Normalizza like (evitiamo divisione per zero)
+          double normalizedLikes = maxLikes > 0 ? post.likes / maxLikes : 0;
+
+          // Ponderazioni personalizzabili
+          const double recencyWeight = 0.7;
+          const double likesWeight = 0.3;
+
+          // Calcola punteggio combinato (esempio: somma pesata)
+          return recencyWeight * normalizedRecency + likesWeight * normalizedLikes;
+        }
+
+        posts.sort((a, b) {
+          final scoreA = calculateScore(a);
+          final scoreB = calculateScore(b);
+          return scoreB.compareTo(scoreA); // decrescente
+        });
+
+        return posts;
+      });
+
+
+
     }
 
     // Funzione per mettere mi piace a un post usando una transazione
@@ -166,4 +229,5 @@ Future<void> refreshPosts() async {
 }
 
 }
+
 

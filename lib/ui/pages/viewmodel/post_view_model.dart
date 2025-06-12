@@ -52,6 +52,9 @@ class PostViewModel extends ChangeNotifier {
   Stream<List<Post>> getPostsStream() {
     return repository.getPostsStream();
   }
+  Stream<List<Post>> getFeed(String currentUserId) {
+    return repository.getFeed(currentUserId);
+  }
   Future<void> addLikeToPost(String id, int likes) async{
     // Implementa la logica per aggiungere un like al post
     // Puoi usare il repository per interagire con il servizio

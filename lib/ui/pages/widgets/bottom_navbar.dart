@@ -1,3 +1,4 @@
+import 'package:PongChamp/data/services/auth_service.dart';
 import 'package:PongChamp/ui/pages/view/events_page.dart';
 import 'package:PongChamp/ui/pages/view/search_page.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,12 @@ import 'package:PongChamp/domain/functions/utility.dart';
 
 
 class CustomNavBar extends StatelessWidget{
+
+  late final String currentUserId;
+  AuthService _authService = AuthService();
+
+
+
   @override
   Widget build(BuildContext context) {
     String currentRoute = ModalRoute.of(context)?.settings.name ?? '';
@@ -33,9 +40,10 @@ class CustomNavBar extends StatelessWidget{
                   icon: Icon(Icons.home),
                   color: Colors.black,
                   onPressed: () {
+                    currentUserId = _authService.currentUserId!;
                     Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) =>  HomePage()),
+                      MaterialPageRoute(builder: (context) =>  HomePage(currentUserId: currentUserId)),
                       (Route<dynamic> route) => false,
                     );
                   },

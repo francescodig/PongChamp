@@ -10,7 +10,6 @@ class AppUser {
   String surname;
   String phoneNumber;
   String email;
-  String password;
   String profileImage;
   DateTime birthDay;
   String sex;
@@ -23,7 +22,6 @@ class AppUser {
   required this.surname, 
   required this.phoneNumber, 
   required this.email, 
-  required this.password,
   required this.profileImage,
   required this.birthDay,
   required this.sex,
@@ -38,7 +36,6 @@ class AppUser {
       surname: data['Surname'],
       phoneNumber: data['phoneNumber'],
       email: data['email'],
-      password: data['password'],
       profileImage: data['profileImage'],
       birthDay: (data['birthday'] as Timestamp).toDate(),
       sex: data['sex'],
@@ -53,7 +50,6 @@ class AppUser {
       surname: map['Surname'],
       phoneNumber: map['phoneNumber'],
       email: map['email'],
-      password: map['password'],
       profileImage: map['profileImage'],
       birthDay: (map['birthday'] as Timestamp).toDate(),
       sex: map['sex'] ?? '',
@@ -68,7 +64,6 @@ class AppUser {
       'Surname': surname,
       'phoneNumber': phoneNumber,
       'email': email,
-      'password': password,
       'profileImage':  profileImage, // lo gestirai separatamente quando salvi l'immagine
       'birthday': birthDay,
       'sex': sex,
@@ -85,7 +80,6 @@ class AppUser {
     surname: data['Surname'],
     phoneNumber: data['phoneNumber'],
     email: data['email'],
-    password: data['password'],
     profileImage: data['profileImage'],
     birthDay: (data['birthday'] as Timestamp).toDate(),
     sex: data['sex'] ?? '',

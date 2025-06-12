@@ -57,9 +57,9 @@ class MatchRepository {
     }
   }
 
-  Future<void> markMatchWithPostTransaction(String eventId, Transaction transaction) async {
+  Future<void> markMatchWithPostTransaction(String idEvento, Transaction transaction) async {
     try {
-      await service.markMatchWithPostTransaction(eventId, transaction);
+      await service.markMatchWithPostTransaction(idEvento, transaction);
     } catch (e) {
       debugPrint("Errore: $e");
       rethrow;

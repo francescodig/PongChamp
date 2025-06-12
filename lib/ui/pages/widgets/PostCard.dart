@@ -154,7 +154,7 @@ class _PostCardState extends State<PostCard> {
             backgroundImage:
                 _creatorProfileImageUrl != null
                     ? NetworkImage(_creatorProfileImageUrl!)
-                    : const AssetImage('assets/images/default_profile.png')
+                    : const AssetImage('assets/default_profile.png')
                         as ImageProvider,
           ),
         ),
@@ -362,7 +362,7 @@ class _PostCardState extends State<PostCard> {
                   backgroundImage:
                       user.proPic != null
                           ? NetworkImage(user.profileImage)
-                          : const AssetImage('assets/images/default_profile.png')
+                          : const AssetImage('assets/default_profile.png')
                               as ImageProvider,
                 ),
                 const SizedBox(width: 8),
@@ -398,7 +398,7 @@ class _PostCardState extends State<PostCard> {
                   backgroundImage:
                       user.proPic != null
                           ? NetworkImage(user.profileImage)
-                          : const AssetImage('assets/images/default_profile.png')
+                          : const AssetImage('assets/default_profile.png')
                               as ImageProvider,
                 ),
               ],

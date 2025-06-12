@@ -40,7 +40,6 @@ class EditProfileViewModel extends ChangeNotifier {
     String nickname,
     String phoneNumber,
     String email,
-    String password,
     String profileImage,
   ) async {
     try {
@@ -51,7 +50,6 @@ class EditProfileViewModel extends ChangeNotifier {
         nickname,
         phoneNumber,
         email,
-        password,
         profileImage,
       );
       return true;
