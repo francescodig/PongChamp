@@ -2,10 +2,8 @@ import 'package:PongChamp/ui/pages/view/login_page.dart';
 import 'package:PongChamp/ui/pages/viewmodel/forgot_password_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/ui/pages/viewmodel/login_view_model.dart';
 import '/data/services/auth_service.dart';
-import 'register_page.dart';
-import 'home_page.dart';
+
 
 
 class ForgotPasswordPage extends StatelessWidget {

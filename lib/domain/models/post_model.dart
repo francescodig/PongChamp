@@ -1,7 +1,3 @@
-import 'package:flutter/foundation.dart';
-
-import '/domain/models/match_model.dart';
-import '/domain/models/user_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -95,7 +91,7 @@ class Post  {
       likedBy: likedBy ?? this.likedBy, 
       idCreator: idCreator ?? this.idCreator, 
       idMatch: idMatch ?? this.idMatch,
-      createdAt: createdAt ?? this.createdAt,
+      createdAt: createdAt ?? createdAt,
       );
   }
    /// Getter utile per usare facilmente l'immagine profilo

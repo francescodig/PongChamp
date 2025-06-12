@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:PongChamp/data/services/uploadImage_service.dart';
 import 'package:PongChamp/domain/models/user_models.dart';
 import 'package:PongChamp/ui/pages/viewmodel/user_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -23,7 +22,6 @@ class CreatePostPage extends StatefulWidget {
 }
 
 class _CreatePostPageState extends State<CreatePostPage> {
-  final ImageService _imageService = ImageService();
   File? _imageFile;
   bool _isLoading = false;
 

@@ -1,6 +1,4 @@
-import '/ui/pages/view/user_events_page.dart';
 import '/domain/models/event_model.dart';
-import '/ui/pages/view/create_event_page.dart';
 import '/ui/pages/viewmodel/events_view_model.dart';
 import 'package:provider/provider.dart';
 import '/ui/pages/widgets/app_bar.dart';
@@ -12,7 +10,7 @@ class EventLocationPage extends StatelessWidget {
 
   final String location;
 
-  EventLocationPage({required this.location});
+  const EventLocationPage({required this.location});
   
   void onTapPartecipate(BuildContext context, Event event, EventViewModel viewModel) async {
     final userId = viewModel.userId;
@@ -79,19 +77,6 @@ class EventLocationPage extends StatelessWidget {
     final events = viewModel.getEventsByLocation(location);
 
 
-    String currentRoute = ModalRoute.of(context)?.settings.name ?? '';
-    void navigateTo(Widget page, String routeName) {
-      if (currentRoute != routeName) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => page,
-            settings: RouteSettings(name: routeName),
-          ),
-          (route) => route.isFirst, //Prende la route e ne conserva solo la prima (presumibilmente Home)
-        );
-      }
-    }
 
     return Scaffold(
       appBar: CustomAppBar(

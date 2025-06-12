@@ -10,8 +10,8 @@ import '../widgets/PostCard.dart'; // dove hai il widget PostCard
 
 class HomePage extends StatelessWidget {
 
-  String? currentUserId;
-  HomePage({Key? key, this.currentUserId}) : super(key: key);
+  final String? currentUserId;
+  const HomePage({Key? key, this.currentUserId}) : super(key: key);
 
   Future <bool> _onWillPop(BuildContext context) async {
     final shouldLeave = await showDialog<bool>(

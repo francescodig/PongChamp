@@ -21,7 +21,7 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formattedDate = formatDateTimeManually(notification.timestamp!);
+    final formattedDate = formatDateTimeManually(notification.timestamp);
 
     return Card(
       elevation: notification.read ? 1 : 3,

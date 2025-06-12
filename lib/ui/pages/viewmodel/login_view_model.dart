@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import '/data/services/auth_service.dart';
 
@@ -40,9 +37,4 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   }
-  String _hashPassword(String plainPassword) {
-  var bytes = utf8.encode(plainPassword); // Converti in bytes
-  var digest = sha256.convert(bytes); // Usa l'algoritmo SHA-256
-  return digest.toString();
-}
 }

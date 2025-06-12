@@ -5,7 +5,6 @@ import 'package:PongChamp/ui/pages/widgets/app_bar.dart';
 import 'package:PongChamp/ui/pages/widgets/bottom_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/domain/models/user_models.dart';
 
 class LikesPage extends StatelessWidget {
   final String postId;

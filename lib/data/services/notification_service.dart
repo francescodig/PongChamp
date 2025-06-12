@@ -1,5 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
-
 import '/domain/models/notification_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -9,30 +7,14 @@ class NotificationService {
   //Recupera tutte le notifiche di un determinato utente
 
    Future<List<NotificationModel>> fetchUserNotification(String userId) async {
-  print("⏳ [DEBUG] Inizio fetch per UID: $userId");
   try {
     final QuerySnapshot snapshot = await _notificationCollection
         .where('userId', isEqualTo: userId)
         .orderBy('timestamp', descending: true)
         .get();
 
-    print("✅ [DEBUG] Documenti trovati: ${snapshot.docs.length}");
-    
-    if (snapshot.docs.isEmpty) {
-      print("⚠️ [DEBUG] Nessun documento trovato per UID: $userId");
-      print("ℹ️ Verifica:");
-      print("- Collection name: 'UserNotifications'");
-      print("- Campo 'userId' nei documenti");
-      print("- UID reale: ${FirebaseAuth.instance.currentUser?.uid}");
-    } else {
-      print("📄 Primo documento: ${snapshot.docs.first.data()}");
-    }
-
     return snapshot.docs.map((doc) => NotificationModel.fromFirestore(doc)).toList();
-  } catch (e, stack) {
-    print("❌ [ERRORE] fetchUserNotification fallito:");
-    print(e);
-    print(stack);
+  } catch (e) {
     return [];
   }
 }

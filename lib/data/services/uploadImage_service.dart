@@ -19,7 +19,6 @@ class ImageService {
       String downloadUrl = await snapshot.ref.getDownloadURL();
       return downloadUrl;
     } catch (e) {
-      print("Error uploading image: $e");
       return null; // Se si verifica un errore, ritorna null
     }
   }

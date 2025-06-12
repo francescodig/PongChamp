@@ -27,7 +27,7 @@ class ProfilePageService {
         .where('idCreator', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
         .get();
-        print("Post trovati: ${snapshot.docs.length}"); 
+ 
         
     return snapshot.docs.map((doc) => Post.fromFirestore(doc)).toList();
   }

@@ -1,5 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
-
 import '/domain/models/post_model.dart';
 import '/domain/models/user_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -196,7 +194,6 @@ class PostService {
     }
     return null;
   } catch (e) {
-    print("Errore nel recupero utente: $e");
     return null;
   }
 }

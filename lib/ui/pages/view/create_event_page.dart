@@ -30,7 +30,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<EventViewModel>();
-    final List<String> matchTypes = ['1 vs 1'];
     final markers = viewModel.markers;
     final selectedLocation = viewModel.selectedLocation;
 

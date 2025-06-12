@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../viewmodel/map_view_model.dart';
-import 'package:geolocator/geolocator.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -17,7 +16,6 @@ class _MapPageState extends State<MapPage> {
   GoogleMapController? _mapController;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
-  bool _isMapCreate = false;
 
   CameraPosition? _initialPosition;
 
@@ -47,7 +45,6 @@ class _MapPageState extends State<MapPage> {
   @override
     Widget build(BuildContext context) {
     final viewModel = Provider.of<MapViewModel>(context);
-    final screenHeight = MediaQuery.of(context).size.height;
     
 
     return Scaffold(

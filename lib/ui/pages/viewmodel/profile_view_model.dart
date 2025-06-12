@@ -1,10 +1,8 @@
 import 'package:PongChamp/data/services/repositories/profile_page_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '/data/services/repositories/profile_page_repository.dart';
 import '/domain/models/post_model.dart';
 import 'package:PongChamp/domain/models/user_models.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:PongChamp/data/services/auth_service.dart';
 
 class ProfileViewModel extends ChangeNotifier {
@@ -38,7 +36,7 @@ class ProfileViewModel extends ChangeNotifier {
         print("Utente non trovato.");
       }
     } catch (e) {
-      print("Errore nel loadProfile: $e");
+      print("Errore nel caricamento del profilo: $e");
     }
 
     isLoading = false;

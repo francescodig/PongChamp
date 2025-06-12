@@ -1,6 +1,5 @@
 import 'package:PongChamp/data/services/auth_service.dart';
 import 'package:PongChamp/ui/pages/view/events_page.dart';
-import 'package:PongChamp/ui/pages/view/search_page.dart';
 import 'package:flutter/material.dart';
 import '/ui/pages/view/profile_page.dart';
 import '/ui/pages/view/map_page.dart';
@@ -13,13 +12,12 @@ import 'package:PongChamp/domain/functions/utility.dart';
 class CustomNavBar extends StatelessWidget{
 
   late final String currentUserId;
-  AuthService _authService = AuthService();
+  final AuthService _authService = AuthService();
 
 
 
   @override
   Widget build(BuildContext context) {
-    String currentRoute = ModalRoute.of(context)?.settings.name ?? '';
 
     // Funzione per navigare a una nuova pagina e rimuovere le precedenti
     // Questa funzione viene chiamata quando si preme un'icona nella barra di navigazione
@@ -68,7 +66,7 @@ class CustomNavBar extends StatelessWidget{
                   onPressed: () async {
                     String userId = FirebaseAuth.instance.currentUser!.uid;
                     // naviga passando l'userId alla ProfilePage
-                    navigateTo(context, ProfilePage(userId: userId), '/profile_${userId}'); // Naviga alla ProfilePage
+                    navigateTo(context, ProfilePage(userId: userId), '/profile_$userId'); // Naviga alla ProfilePage
                   },
                 ),
                 IconButton(

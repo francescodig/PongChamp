@@ -6,7 +6,6 @@ import 'package:PongChamp/ui/pages/view/privacy_page.dart';
 import 'package:PongChamp/ui/pages/viewmodel/edit_profile_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/ui/pages/view/profile_page.dart';
 import '/ui/pages/widgets/bottom_navbar.dart';
 import '/ui/pages/widgets/app_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';

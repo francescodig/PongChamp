@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import '/ui/pages/viewmodel/post_view_model.dart';
 import '/domain/models/post_model.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 
 class PostCardProfile extends StatefulWidget {
@@ -408,11 +407,7 @@ class _PostCardProfileState extends State<PostCardProfile> {
               ? [
                 CircleAvatar(
                   radius: 12,
-                  backgroundImage:
-                      user.proPic != null
-                          ? NetworkImage(user.profileImage)
-                          : const AssetImage('assets/default_profile.png')
-                              as ImageProvider,
+                  backgroundImage: NetworkImage(user.profileImage),
                 ),
                 const SizedBox(width: 8),
                 SizedBox(
@@ -444,11 +439,7 @@ class _PostCardProfileState extends State<PostCardProfile> {
                 const SizedBox(width: 8),
                 CircleAvatar(
                   radius: 12,
-                  backgroundImage:
-                      user.proPic != null
-                          ? NetworkImage(user.profileImage)
-                          : const AssetImage('assets/default_profile.png')
-                              as ImageProvider,
+                  backgroundImage: NetworkImage(user.profileImage),
                 ),
               ],
     );

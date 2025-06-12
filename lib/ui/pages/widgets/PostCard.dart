@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import '/ui/pages/viewmodel/post_view_model.dart';
 import '/domain/models/post_model.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:PongChamp/domain/functions/utility.dart';
 
 
@@ -359,11 +358,7 @@ class _PostCardState extends State<PostCard> {
               ? [
                 CircleAvatar(
                   radius: 12,
-                  backgroundImage:
-                      user.proPic != null
-                          ? NetworkImage(user.profileImage)
-                          : const AssetImage('assets/default_profile.png')
-                              as ImageProvider,
+                  backgroundImage: NetworkImage(user.profileImage),
                 ),
                 const SizedBox(width: 8),
                 SizedBox(
@@ -395,11 +390,7 @@ class _PostCardState extends State<PostCard> {
                 const SizedBox(width: 8),
                 CircleAvatar(
                   radius: 12,
-                  backgroundImage:
-                      user.proPic != null
-                          ? NetworkImage(user.profileImage)
-                          : const AssetImage('assets/default_profile.png')
-                              as ImageProvider,
+                  backgroundImage: NetworkImage(user.profileImage),
                 ),
               ],
     );

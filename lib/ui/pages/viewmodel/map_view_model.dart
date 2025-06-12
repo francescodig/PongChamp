@@ -102,7 +102,6 @@ class MapViewModel extends ChangeNotifier {
       _isLoading = false;
     } catch (error) {
       _isLoading = false;
-      print("Errore nel caricare i marker: $error");
     }
     notifyListeners();
   }
@@ -139,8 +138,7 @@ class MapViewModel extends ChangeNotifier {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('Orario di apertura: ${markerData.orario}'),
-            if (markerData.descrizione != null)
-              Text('Descrizione: ${markerData.descrizione}'),
+            Text('Descrizione: ${markerData.descrizione}'),
             TextButton(
               onPressed:() { Navigator.push(
                 context,

@@ -1,5 +1,4 @@
 import 'package:PongChamp/data/services/repositories/profile_page_repository.dart';
-import 'package:PongChamp/data/services/repositories/profile_page_repository.dart';
 import 'package:PongChamp/ui/pages/view/match_page.dart';
 import 'package:PongChamp/ui/pages/widgets/post_card_profile.dart';
 import 'package:flutter/material.dart';

@@ -88,9 +88,7 @@ class AppUser {
 }
 
 
-  ImageProvider get proPic => profileImage != null
-      ? NetworkImage(profileImage)
-      : const AssetImage('');
+  ImageProvider get proPic => NetworkImage(profileImage);
   
 }
 

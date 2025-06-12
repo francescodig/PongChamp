@@ -1,15 +1,10 @@
-import 'dart:convert';
-import 'dart:typed_data';
 
-import 'package:pointycastle/key_derivators/api.dart';
-import 'package:pointycastle/key_derivators/scrypt.dart';
+
 
 import '/domain/models/user_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:convert'; // per utf8.encode
-import 'package:crypto/crypto.dart'; // per sha256
+import 'package:firebase_auth/firebase_auth.dart'; 
+
 
 // Questa classe gestisce l'autenticazione degli utenti e le operazioni correlate.
 // Utilizza Firebase Authentication per gestire la registrazione, il login e il recupero della password.
