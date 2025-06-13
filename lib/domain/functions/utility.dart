@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 
 
@@ -45,6 +48,18 @@ String formatTimestamp(Timestamp? timestamp) {
          'alle ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 }
+
+  Future<String?> getLocationNameFromJson(String locationId) async {
+  final jsonString = await rootBundle.loadString('assets/markers.json');
+  final List<dynamic> jsonData = json.decode(jsonString);
+  for (var item in jsonData) {
+    if (item['id'] == locationId) {
+      return item['name'];
+    }
+  }
+  return null;
+}
+
 
 
 

@@ -8,6 +8,16 @@ class EventRepository {
   final EventService _eventService;
   EventRepository(this._eventService);
 
+  Future<Event?> getEventById(String eventId) async {
+    try {
+      final event = await _eventService.getEventById(eventId);
+      return event;
+    } catch (e) {
+      debugPrint("Errore durante il recupero dell'evento con ID $eventId: $e");
+      return null;
+    }
+  }
+
   Future<Event> addEvent(Event event) async {
     try {
       final newEvent = await _eventService.addEvent(event);

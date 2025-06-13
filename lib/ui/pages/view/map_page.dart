@@ -6,7 +6,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../viewmodel/map_view_model.dart';
 
 class MapPage extends StatefulWidget {
-  const MapPage({Key? key}) : super(key: key);
+  final LatLng? targetPosition; 
+  const MapPage({Key? key, this.targetPosition}) : super(key: key);
 
   @override
   _MapPageState createState() => _MapPageState();
@@ -28,6 +29,7 @@ class _MapPageState extends State<MapPage> {
       Provider.of<MapViewModel>(context, listen: false).loadMarkers(context);
       Provider.of<MapViewModel>(context, listen: false).setInitialLocation(context);
     });
+
 
   }
 
@@ -87,6 +89,13 @@ class _MapPageState extends State<MapPage> {
                 Future.delayed(const Duration(milliseconds: 300), () {
                   if (value == _searchController.text) {
                     viewModel.searchMarkers(value);
+                          // Sposta la camera se trova un marker
+                    final position = viewModel.getCoordinatesByPlaceName(value);
+                    if (position != null && _mapController != null) {
+                      _mapController!.animateCamera(
+                        CameraUpdate.newLatLngZoom(position, 16),
+                      );
+                    }
                   }
                 });
               },
@@ -145,7 +154,16 @@ class _MapPageState extends State<MapPage> {
                             markers: viewModel.markers,
                             onMapCreated: (controller) {
                               _mapController = controller;
-                              _mapController?.moveCamera(CameraUpdate.newCameraPosition(viewModel.cameraPosition!));
+                              print("TARGET POSITION: ${widget.targetPosition}");
+                              if (widget.targetPosition != null) {
+                                _mapController!.moveCamera(
+                                  CameraUpdate.newLatLngZoom(widget.targetPosition!, 16),
+                                );
+                              } else if (viewModel.cameraPosition != null) {
+                                _mapController!.moveCamera(
+                                  CameraUpdate.newCameraPosition(viewModel.cameraPosition!),
+                                );
+                              }
                             },
                             myLocationEnabled: true,
                           ),

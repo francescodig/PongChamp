@@ -8,6 +8,21 @@ class EventService {
   final CollectionReference _eventsCollection = FirebaseFirestore.instance.collection('Event');
   final NotificationService _notificationService = NotificationService();
 
+  ///Recupero di un evento tramite il suo ID
+  Future<Event> getEventById(String eventId) async {
+    try {
+      final doc = await _eventsCollection.doc(eventId).get();
+      if (doc.exists) {
+        return Event.fromFirestore(doc);
+      } else {
+        throw Exception('Evento non trovato');
+      }
+    } catch (e) {
+      debugPrint('Errore durante il recupero dell\'evento: $e');
+      throw e; // Rilancia l'eccezione per gestirla a livello superiore
+    }
+  }
+
   ///Salvataggio di un nuovo evento
   Future<Event> addEvent(Event event) async {
     // Se l'oggetto Event ha già un createdAt lo usa, altrimenti imposta l'orario attuale
@@ -19,7 +34,7 @@ class EventService {
   }
 
   Future<bool> removeEvent(Event event, String userId) async{
-     final _notificationsCollection = FirebaseFirestore.instance.collection('UserNotifications');
+    final _notificationsCollection = FirebaseFirestore.instance.collection('UserNotifications');
     final idEvento = event.id;
     if (event.creatorId!=userId){
       throw Exception("Non sei il creatore dell'evento, operazione non autorizzata");

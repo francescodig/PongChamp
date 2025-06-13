@@ -1,10 +1,15 @@
+import 'package:PongChamp/domain/models/event_model.dart';
 import 'package:PongChamp/domain/models/match_model.dart';
 import 'package:PongChamp/domain/models/user_models.dart';
 import 'package:PongChamp/ui/pages/view/likes_page.dart';
+import 'package:PongChamp/ui/pages/view/map_page.dart';
 import 'package:PongChamp/ui/pages/view/profile_page.dart';
+import 'package:PongChamp/ui/pages/viewmodel/events_view_model.dart';
+import 'package:PongChamp/ui/pages/viewmodel/map_view_model.dart';
 import 'package:PongChamp/ui/pages/viewmodel/match_view_model.dart';
 import 'package:PongChamp/ui/pages/viewmodel/user_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import '/ui/pages/viewmodel/post_view_model.dart';
 import '/domain/models/post_model.dart';
@@ -25,11 +30,14 @@ class _PostCardState extends State<PostCard> {
   late final PostViewModel _postViewModel;
   late final MatchViewModel _matchViewModel;
   late final UserViewModel _userViewModel;
+  late final EventViewModel _eventViewModel;
+  late final MapViewModel _mapViewModel;
   late final String _userId;
 
   // Streams
   late final Stream<AppUser?> _creatorStream;
   late final Future<PongMatch?> _matchFuture;
+  late final Future<Event?> _eventFuture;
   String? _creatorProfileImageUrl;
 
   // Match players data
@@ -44,11 +52,20 @@ class _PostCardState extends State<PostCard> {
     _postViewModel = Provider.of<PostViewModel>(context, listen: false);
     _matchViewModel = Provider.of<MatchViewModel>(context, listen: false);
     _userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    _eventViewModel = Provider.of<EventViewModel>(context, listen: false);
+    _mapViewModel = Provider.of<MapViewModel>(context, listen: false);
     _userId = FirebaseAuth.instance.currentUser!.uid;
 
     // Initialize streams and futures
     _creatorStream = _userViewModel.getUserStreamById(widget.post.idCreator);
     _matchFuture = _matchViewModel.fetchMatchById(widget.post.idMatch);
+    _eventFuture = _matchFuture.then((match) { //Quando match è disponibile, carica l'evento
+      if (match != null) {
+        // Make sure PongMatch has an eventId property
+        return _eventViewModel.getEventById(match.eventId);
+      }
+      return Future.value(null); //Alla fine restituisce un future null, cioè che è già stato risolto 
+    });
 
     // Load creator profile image once
     _loadCreatorProfileImage();
@@ -118,10 +135,58 @@ class _PostCardState extends State<PostCard> {
                 );
               },
             ),
+
             // Post image if available
             if (widget.post.image != null && widget.post.image!.isNotEmpty)
               _postImage(),
-            const SizedBox(height: 12),
+            const SizedBox(height: 6),
+            FutureBuilder<Event?>(
+                  future: _eventFuture,
+                  builder: (context, eventSnapshot) {
+                    if (eventSnapshot.connectionState == ConnectionState.waiting) {
+                      return const Text(
+                        '...',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      );
+                    }
+                    if (eventSnapshot.hasError || !eventSnapshot.hasData) {
+                      return const Text(
+                        'Location non disponibile',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      );
+                    }
+
+                    final event = eventSnapshot.data!;
+                   return GestureDetector(
+                    onTap: () {
+
+                      navigateTo(context, MapPage(targetPosition: _mapViewModel.getCoordinatesByPlaceName(_eventViewModel.getLocationNameById(event.locationId)!)), '/map');
+
+    
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.location_on,
+                          size: 16,
+                          color: Colors.redAccent,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          _eventViewModel.getLocationNameById(event.locationId) ?? 'Location non disponibile',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
+                            decoration: TextDecoration.underline, // opzionale, per indicare che è cliccabile
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                  },
+                ),
             // Like actions
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,

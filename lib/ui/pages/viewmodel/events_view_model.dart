@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 class EventViewModel extends ChangeNotifier {
     
   final EventRepository _eventRepository;
-  EventViewModel(this._eventRepository);
+  EventViewModel(this._eventRepository){
+    fetchMarkers(); //Carica i markers non appena viene chiamato il view model
+  }
   final AuthService _authService=AuthService();
 
   List<Event> _events = [];
@@ -25,6 +27,16 @@ class EventViewModel extends ChangeNotifier {
   List<Event> get events => _events;
   List<Event> get userEvents => _userEvents;
   List<Event> get userPartecipates => _userParticipatedEvents;
+
+
+  Future<Event?> getEventById(String eventId) async {
+  try {
+    return await _eventRepository.getEventById(eventId);
+  } catch (e) {
+    debugPrint("Errore durante il recupero dell'evento con ID $eventId: $e");
+    return null;
+  }
+}
 
   ///Lista contenente solo gli eventi a cui l'utente partecipa ,che non ha creato
   List<Event> get userOnlyParticipatedEvents {
@@ -217,6 +229,22 @@ class EventViewModel extends ChangeNotifier {
       debugPrint("Errore nel caricamento dei Marker: $e");
     }
   }
+
+  /// Restituisce il nome della location dato l'id, oppure null se non trovato
+  String? getLocationNameById(String id) {
+    fetchMarkers();
+    try {
+      final marker = _markers.firstWhere(
+        (marker) => marker.id == id,
+        orElse: () => MarkerData(id: '', nome: '', latitude: 0.0, longitude: 0.0, descrizione: '', orario: ''),
+      );
+      return marker.id.isEmpty ? null : marker.nome;
+    } catch (e) {
+      debugPrint('Errore in getLocationNameById: $e');
+      return null;
+    }
+  }
+
 
   //Per la gestione della scelta della location nella creazione di un evento
   MarkerData? _selectedLocation;

@@ -124,6 +124,18 @@ class MapViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+LatLng? getCoordinatesByPlaceName(String name) {
+  try {
+    final marker = markers.firstWhere(
+      (m) => m.infoWindow.title?.toLowerCase() == name.toLowerCase(),
+    );
+    return marker.position;
+  } catch (e) {
+    return null;
+  }
+}
+
+
   void _showMarkerDetails(BuildContext context, MarkerData markerData) { // mostra i dettagli del marker in un dialog
     showDialog(
       context: context,
