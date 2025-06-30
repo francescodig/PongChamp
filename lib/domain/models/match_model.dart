@@ -15,6 +15,8 @@ class PongMatch {
   bool hasPost;
 
 
+String get eventId => idEvento;
+
   PongMatch({
     required this.id,
     required this.creatorId,

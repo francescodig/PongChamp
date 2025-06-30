@@ -1,7 +1,10 @@
+
+
+
 import '/domain/models/user_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart'; 
+
 
 // Questa classe gestisce l'autenticazione degli utenti e le operazioni correlate.
 // Utilizza Firebase Authentication per gestire la registrazione, il login e il recupero della password.
@@ -43,7 +46,6 @@ class AuthService {
         'birthday': Timestamp.fromDate(DateTime.parse(birthDay)),
         'profileImage': profileImage,
         'sex': sex,
-        'password': password,
         // 'createdAt': FieldValue.serverTimestamp(),
       });
     }
@@ -140,7 +142,6 @@ Future<void> updateUserData(
   String nickname,
   String phoneNumber,
   String email,
-  String password,
   String profileImage,
 ) async {
   try {
@@ -150,7 +151,6 @@ Future<void> updateUserData(
       'nickname': nickname,
       'phoneNumber': phoneNumber,
       'email': email,
-      'password': password,
       'profileImage': profileImage,
     });
   } catch (e) {
@@ -163,6 +163,6 @@ Future<void> signOut() async {
 }
 
 
-
+ 
 
 }

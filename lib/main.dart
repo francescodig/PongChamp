@@ -1,3 +1,7 @@
+import 'package:PongChamp/ui/pages/view/home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+
 import '/data/services/event_service.dart';
 import '/data/services/repositories/event_repository.dart';
 import '/data/services/uploadImage_service.dart';
@@ -31,53 +35,123 @@ import 'data/services/profile_page_service.dart';
 import 'ui/pages/viewmodel/profile_view_model.dart';
 import 'ui/pages/viewmodel/expired_view_model.dart';
 
-void main () async {
-
+void main() async {
   //vedere questa cosa in un secondo momento... Aggiunta perchè dava errori strani in debugging
   Provider.debugCheckInvalidValueType = null;
-  
+
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform, // se usi firebase_options.dart
-  );
+    options:
+        DefaultFirebaseOptions.currentPlatform, // se usi firebase_options.dart
+  ); // Configura le notifiche Firebase
   runApp(
     MultiProvider(
-    providers: [
-      Provider<AuthService>(create: (_) => AuthService()),
-      Provider<SearchService>(create: (_) => SearchService()),
-      Provider<EventService>(create: (_) => EventService()),
-      Provider<MatchService>(create: (_) => MatchService()),
-      Provider<PostService>(create: (_) => PostService()),
-      Provider<ImageService>(create: (_) => ImageService()),
-      Provider<ProfilePageService>(create: (_) => ProfilePageService()),
+      providers: [
+        Provider<AuthService>(create: (_) => AuthService()),
+        Provider<SearchService>(create: (_) => SearchService()),
+        Provider<EventService>(create: (_) => EventService()),
+        Provider<MatchService>(create: (_) => MatchService()),
+        Provider<PostService>(create: (_) => PostService()),
+        Provider<ImageService>(create: (_) => ImageService()),
+        Provider<ProfilePageService>(create: (_) => ProfilePageService()),
 
-      Provider<EventRepository>(create: (context) => EventRepository(context.read<EventService>())),
-      Provider<MatchRepository>(create: (context) => MatchRepository(context.read<MatchService>(), context.read<EventRepository>())),
-      Provider<PostRepository>(create: (context) => PostRepository(context.read<PostService>(), context.read<MatchRepository>())),
+        Provider<EventRepository>(
+          create: (context) => EventRepository(context.read<EventService>()),
+        ),
+        Provider<MatchRepository>(
+          create:
+              (context) => MatchRepository(
+                context.read<MatchService>(),
+                context.read<EventRepository>(),
+              ),
+        ),
+        Provider<PostRepository>(
+          create:
+              (context) => PostRepository(
+                context.read<PostService>(),
+                context.read<MatchRepository>(),
+              ),
+        ),
 
-      ChangeNotifierProvider(create: (context) => MatchViewModel(context.read<MatchRepository>())),
-      ChangeNotifierProvider(create: (context) => PostViewModel(context.read<PostRepository>())),
-      ChangeNotifierProvider(create: (_) => RegisterViewModel()),
-      ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<AuthService>())),
-      ChangeNotifierProvider(create: (context)=> ForgotPasswordViewModel(context.read<AuthService>())),
-      ChangeNotifierProvider(create: (_) => MapViewModel()),
-      ChangeNotifierProvider(create: (_) => UserViewModel(UserRepository(UserService()))),
-      ChangeNotifierProvider(create: (context) => EventViewModel(context.read<EventRepository>())),
-      ChangeNotifierProvider(create: (_) => NotificationViewModel()),
-      ChangeNotifierProvider(create: (_) => ParticipantsViewModel()),
-      
-      ProxyProvider<ProfilePageService, ProfilePageRepository>(update: (_, profilePageService, __) => ProfilePageRepository(profilePageService)),
-      ProxyProvider<SearchService, SearchRepository>(
-        update: (_, service, __) => SearchRepository(service),
-      ),
-      ChangeNotifierProvider(create: (context) => ProfileViewModel(context.read<ProfilePageRepository>())),
-      ChangeNotifierProvider(create:  (context) => SearchViewModel(context.read<SearchRepository>())),
-      ChangeNotifierProvider(create: (_) => ExpiredViewModel())
-    ],
-    child: MyApp(),
-    )
+        ChangeNotifierProvider(
+          create: (context) => MatchViewModel(context.read<MatchRepository>()),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => PostViewModel(context.read<PostRepository>()),
+        ),
+        ChangeNotifierProvider(create: (_) => RegisterViewModel()),
+        ChangeNotifierProvider(
+          create: (context) => LoginViewModel(context.read<AuthService>()),
+        ),
+        ChangeNotifierProvider(
+          create:
+              (context) => ForgotPasswordViewModel(context.read<AuthService>()),
+        ),
+        ChangeNotifierProvider(create: (_) => MapViewModel()),
+        ChangeNotifierProvider(
+          create: (_) => UserViewModel(UserRepository(UserService())),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => EventViewModel(context.read<EventRepository>()),
+        ),
+        ChangeNotifierProvider(create: (_) => NotificationViewModel()),
+        ChangeNotifierProvider(create: (_) => ParticipantsViewModel()),
+
+        ProxyProvider<ProfilePageService, ProfilePageRepository>(
+          update:
+              (_, profilePageService, __) =>
+                  ProfilePageRepository(profilePageService),
+        ),
+        ProxyProvider<SearchService, SearchRepository>(
+          update: (_, service, __) => SearchRepository(service),
+        ),
+        ChangeNotifierProvider(
+          create:
+              (context) =>
+                  ProfileViewModel(context.read<ProfilePageRepository>()),
+        ),
+        ChangeNotifierProvider(
+          create:
+              (context) => SearchViewModel(context.read<SearchRepository>()),
+        ),
+        ChangeNotifierProvider(create: (_) => ExpiredViewModel()),
+      ],
+      child: MyApp(),
+    ),
   );
 }
+
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Mostra un loader mentre controlla la sessione
+          return Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasData) {
+          // L'utente è loggato
+          return HomePage(currentUserId: FirebaseAuth.instance.currentUser!.uid);
+        } else {
+          // L'utente non è loggato
+          return LoginPage();
+        }
+      },
+    );
+  }
+}
+
 
 class MyApp extends StatelessWidget {
   @override
@@ -85,7 +159,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Login',
-      home: LoginPage(),
+      home:  AuthWrapper(),
+      routes: {
+        '/login': (context) => LoginPage(),
+        '/home': (context) => HomePage(currentUserId: FirebaseAuth.instance.currentUser!.uid),
+      },
     );
   }
 }

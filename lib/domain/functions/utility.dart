@@ -1,4 +1,9 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 
 
 //Funzione per la navigazione nella navBar
@@ -26,3 +31,38 @@ String formatDateTimeManually(DateTime dateTime) {
 
   return '$day/$month/$year\n$hour:$minute';
 }
+
+String formatTimestamp(Timestamp? timestamp) {
+  if (timestamp == null) {
+    return 'N/A';
+  } else{
+  final DateTime dateTime = timestamp.toDate();
+  final DateTime now = DateTime.now();
+  final Duration difference = now.difference(dateTime);
+
+  if (difference.inMinutes < 1) return 'Adesso';
+  if (difference.inMinutes < 60) return '${difference.inMinutes} min fa';
+  if (difference.inHours < 24) return '${difference.inHours} h fa';
+
+  return '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year} '
+         'alle ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
+}
+
+  Future<String?> getLocationNameFromJson(String locationId) async {
+  final jsonString = await rootBundle.loadString('assets/markers.json');
+  final List<dynamic> jsonData = json.decode(jsonString);
+  for (var item in jsonData) {
+    if (item['id'] == locationId) {
+      return item['name'];
+    }
+  }
+  return null;
+}
+
+
+
+
+  
+
+

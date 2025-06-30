@@ -2,18 +2,22 @@ import '/domain/models/notification_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NotificationService {
-  final CollectionReference _notificationCollection = FirebaseFirestore.instance.collection("Notification");
+  final CollectionReference _notificationCollection = FirebaseFirestore.instance.collection("UserNotifications");
 
   //Recupera tutte le notifiche di un determinato utente
-  Future<List<NotificationModel>> fetchUserNotification(String userId) async {
-    final snapshot = await _notificationCollection
+
+   Future<List<NotificationModel>> fetchUserNotification(String userId) async {
+  try {
+    final QuerySnapshot snapshot = await _notificationCollection
         .where('userId', isEqualTo: userId)
         .orderBy('timestamp', descending: true)
         .get();
-    return snapshot.docs.map((doc) {
-      return NotificationModel.fromFirestore(doc);
-    }).toList();
+
+    return snapshot.docs.map((doc) => NotificationModel.fromFirestore(doc)).toList();
+  } catch (e) {
+    return [];
   }
+}
 
   //Recupera solo le notifiche non lette
   Future<List<NotificationModel>> fetchUnreadUserNotification(String userId) async {
@@ -29,7 +33,7 @@ class NotificationService {
 
   //Aggiunge una nuova notifica a Firestore
   Future<NotificationModel> addNotification(NotificationModel notification) async {
-    final completeNotification = notification.copyWith(timestamp: DateTime.now());
+    final completeNotification = notification.copyWith(timestamp: Timestamp.now());
     final docRef = await _notificationCollection.add(completeNotification.toFirestore());
     return completeNotification.copyWith(idNotifica: docRef.id);
   }

@@ -8,6 +8,16 @@ class EventRepository {
   final EventService _eventService;
   EventRepository(this._eventService);
 
+  Future<Event?> getEventById(String eventId) async {
+    try {
+      final event = await _eventService.getEventById(eventId);
+      return event;
+    } catch (e) {
+      debugPrint("Errore durante il recupero dell'evento con ID $eventId: $e");
+      return null;
+    }
+  }
+
   Future<Event> addEvent(Event event) async {
     try {
       final newEvent = await _eventService.addEvent(event);
@@ -78,9 +88,9 @@ class EventRepository {
     }
   }
 
-  Future<bool> markEventWithMatch(String eventId) async {
+  Future<bool> markEventWithMatch(String idEvento) async {
     try {
-      await _eventService.markEventWithMatch(eventId);
+      await _eventService.markEventWithMatch(idEvento);
       return true;
     } catch(e) {
       debugPrint("Errore: $e");
@@ -88,9 +98,9 @@ class EventRepository {
     }
   }
 
-  Future<Event> getEventWithTransaction(String eventId, Transaction transaction) async {
+  Future<Event> getEventWithTransaction(String idEvento, Transaction transaction) async {
     try {
-      final event = await _eventService.getEventWithTransaction(eventId, transaction);
+      final event = await _eventService.getEventWithTransaction(idEvento, transaction);
       return event;
     } catch (e) {
       debugPrint("Errore: $e");
@@ -98,9 +108,9 @@ class EventRepository {
     }
   }
 
-  Future<void> markEventWithMatchTransaction(String eventId, Transaction transaction) async {
+  Future<void> markEventWithMatchTransaction(String idEvento, Transaction transaction) async {
     try {
-      await _eventService.markEventWithMatchTransaction(eventId, transaction);
+      await _eventService.markEventWithMatchTransaction(idEvento, transaction);
     } catch (e) {
       debugPrint("Errore: $e");
       rethrow;

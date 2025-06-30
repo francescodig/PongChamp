@@ -15,9 +15,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _maxParticipantsController = TextEditingController();
+  final TextEditingController _maxParticipantsController = TextEditingController(text: '2');
 
-  String? selectedMatchType;
+  String? selectedMatchType = '1 vs 1'; // Tipo di match predefinito
 
   ///Gestione scelta dell'orario di gioco
   DateTime? selectedDateTime;
@@ -30,7 +30,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<EventViewModel>();
-    final List<String> matchTypes = ['1 vs 1', 'Torneo'];
     final markers = viewModel.markers;
     final selectedLocation = viewModel.selectedLocation;
 
@@ -87,22 +86,17 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) => value!.isEmpty ? 'Campo obbligatorio' : null,
+                enabled: false,
               ),
 
               ///matchType
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Tipo di match'),
-                value: selectedMatchType,
-                items: matchTypes.map((type) {
-                  return DropdownMenuItem<String>(
-                    value: type,
-                    child: Text(type),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  selectedMatchType = newValue;
-                },
-                validator: (value) => value == null ? 'Seleziona il tipo di match' : null,
+              TextFormField(
+                initialValue: selectedMatchType,
+                decoration: const InputDecoration(
+                  labelText: 'Tipo di match',
+                  border: OutlineInputBorder(),
+                ),
+                enabled: false, // 🔒 disabilita modifica
               ),
 
               ///orario

@@ -19,6 +19,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     super.initState();
     Future.microtask((){
       context.read<NotificationViewModel>().fetchUserNotifications();
+      print("SIZE: ${context.size}");
     });
   }
 

@@ -102,7 +102,6 @@ class MapViewModel extends ChangeNotifier {
       _isLoading = false;
     } catch (error) {
       _isLoading = false;
-      print("Errore nel caricare i marker: $error");
     }
     notifyListeners();
   }
@@ -125,6 +124,18 @@ class MapViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+LatLng? getCoordinatesByPlaceName(String name) {
+  try {
+    final marker = markers.firstWhere(
+      (m) => m.infoWindow.title?.toLowerCase() == name.toLowerCase(),
+    );
+    return marker.position;
+  } catch (e) {
+    return null;
+  }
+}
+
+
   void _showMarkerDetails(BuildContext context, MarkerData markerData) { // mostra i dettagli del marker in un dialog
     showDialog(
       context: context,
@@ -139,8 +150,7 @@ class MapViewModel extends ChangeNotifier {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('Orario di apertura: ${markerData.orario}'),
-            if (markerData.descrizione != null)
-              Text('Descrizione: ${markerData.descrizione}'),
+            Text('Descrizione: ${markerData.descrizione}'),
             TextButton(
               onPressed:() { Navigator.push(
                 context,

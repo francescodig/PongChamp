@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '/domain/models/notification_model.dart';
 import 'package:flutter/material.dart';
 
@@ -6,7 +8,8 @@ class NotificationCard extends StatelessWidget {
 
   const NotificationCard({Key? key, required this.notification}) : super(key: key);
 
-  String formatDateTimeManually(DateTime dateTime) {
+  String formatDateTimeManually(Timestamp timestamp) {
+    DateTime dateTime = timestamp.toDate();
     String day = dateTime.day.toString().padLeft(2, '0');
     String month = dateTime.month.toString().padLeft(2, '0');
     String year = dateTime.year.toString();
@@ -18,7 +21,7 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formattedDate = formatDateTimeManually(notification.timestamp!);
+    final formattedDate = formatDateTimeManually(notification.timestamp);
 
     return Card(
       elevation: notification.read ? 1 : 3,

@@ -28,41 +28,108 @@ class PostService {
     // Restituisci uno Stream di una lista di Post
     return FirebaseFirestore.instance
         .collection('Post')
+        .orderBy('createdAt', descending: true) // Ordina per data di creazione
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) {
                return Post.fromFirestore(doc);
             })
             .toList());  
+    } 
+
+
+
+
+  Stream<List<Post>> getFeed(String currentUserId){
+    // Restituisci uno Stream di una lista di Post
+    return FirebaseFirestore.instance
+        .collection('Post')
+        .snapshots()
+        .map((snapshot)  {
+         // Converto tutti i documenti in oggetti Post
+        final allPosts = snapshot.docs.map((doc) => Post.fromFirestore(doc)).toList();
+
+        // Filtra i post per escludere quelli dell'utente corrente
+        final posts = allPosts.where((post) => post.idCreator != currentUserId).toList();
+
+        // Calcola un punteggio per ciascun post (più alto = più in alto nel feed)
+        // - Post recenti ottengono più punteggio
+        // - Più like aumentano il punteggio
+        // - Normalizziamo e ponderiamo i valori per bilanciare i fattori
+
+        // Troviamo il timestamp minimo e massimo per la normalizzazione
+        final now = DateTime.now();
+        final timestamps = posts.map((p) => p.createdAt?.millisecondsSinceEpoch).toList();
+        final maxTimestamp = timestamps.isNotEmpty ? timestamps.reduce((a,b) => a! > b! ? a : b) : now.millisecondsSinceEpoch;
+        final minTimestamp = timestamps.isNotEmpty ? timestamps.reduce((a,b) => a! < b! ? a : b) : now.millisecondsSinceEpoch;
+
+        // Troviamo max like per normalizzare
+        final maxLikes = posts.isNotEmpty ? posts.map((p) => p.likes).reduce((a, b) => a > b ? a : b) : 1;
+
+        double calculateScore(Post post) {
+          // Normalizza data: più recente -> valore vicino a 1
+          double normalizedRecency = 0;
+          if (maxTimestamp != minTimestamp) {
+            normalizedRecency = (post.createdAt!.millisecondsSinceEpoch - minTimestamp!) / (maxTimestamp! - minTimestamp);
+          } else {
+            normalizedRecency = 1; // tutti i post hanno stessa data
+          }
+
+          // Normalizza like (evitiamo divisione per zero)
+          double normalizedLikes = maxLikes > 0 ? post.likes / maxLikes : 0;
+
+          // Ponderazioni personalizzabili
+          const double recencyWeight = 0.7;
+          const double likesWeight = 0.3;
+
+          // Calcola punteggio combinato (esempio: somma pesata)
+          return recencyWeight * normalizedRecency + likesWeight * normalizedLikes;
+        }
+
+        posts.sort((a, b) {
+          final scoreA = calculateScore(a);
+          final scoreB = calculateScore(b);
+          return scoreB.compareTo(scoreA); // decrescente
+        });
+
+        return posts;
+      });
+
+
+
     }
 
-    //Funzione per mettere mi piace a un post 
+    // Funzione per mettere mi piace a un post usando una transazione
     Future<void> addLikeToPost(String postId, int likes) async {
-    final userId = FirebaseAuth.instance.currentUser!.uid;
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      final docRef = FirebaseFirestore.instance.collection('Post').doc(postId);
 
-    final docRef = FirebaseFirestore.instance.collection('Post').doc(postId);
-    final docSnapshot = await docRef.get();
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final docSnapshot = await transaction.get(docRef);
 
-    if (!docSnapshot.exists) return;
+        if (!docSnapshot.exists) return;
 
-    final data = docSnapshot.data()!;
-    final likedBy = List<String>.from(data['likedBy'] ?? []);
-
+        final data = docSnapshot.data() as Map<String, dynamic>;
+        final likedBy = List<String>.from(data['likedBy'] ?? []);
 
         // Utente non ha messo like → aggiungi il like
-      await docRef.update({
-      'likes':  FieldValue.increment(1),
-      'likedBy': FieldValue.arrayUnion([userId])
+        if (!likedBy.contains(userId)) {
+          transaction.update(docRef, {
+            'likes': FieldValue.increment(1),
+            'likedBy': FieldValue.arrayUnion([userId])
+          });
+        }
       });
- 
-  }
+    }
 
   //Funzione per rimuovere mi piace a un post
   Future<void> removeLikeFromPost(String postId, int likes) async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
 
     final docRef = FirebaseFirestore.instance.collection('Post').doc(postId);
-    final docSnapshot = await docRef.get();
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+
+    final docSnapshot = await transaction.get(docRef);
 
     if (!docSnapshot.exists) return;
 
@@ -71,12 +138,15 @@ class PostService {
 
 
         // Utente ha messo like → rimuovi il like
-      await docRef.update({
-      'likes':  FieldValue.increment(-1),
-      'likedBy': FieldValue.arrayRemove([userId])
-      });
- 
+      if(likedBy.contains(userId)){
+  transaction.update(docRef, {
+    'likes': FieldValue.increment(-1),
+    'likedBy': FieldValue.arrayRemove([userId])
+  });
   }
+  // Close the transaction function
+  });
+}
 
 
   //Funzione per restituire gli utenti che hanno messo mi piace a un post
@@ -124,10 +194,37 @@ class PostService {
     }
     return null;
   } catch (e) {
-    print("Errore nel recupero utente: $e");
     return null;
   }
 }
+Future<void> refreshPosts() async {
+    // Implementa la logica per ricaricare i post
+    
+
+     try {
+    // Questo serve per forzare la lettura attuale dei dati dalla collezione.
+    // Anche se lo StreamBuilder continua a lavorare, questa lettura singola è utile per forzare il "refresh"
+    final snapshot = await _postCollection.get(const GetOptions(source: Source.server));
+    
+    // Debug
+    debugPrint("Post aggiornati: ${snapshot.docs.length} documenti ricevuti dal server.");
+    
+  } catch (e) {
+    debugPrint("Errore durante il refresh dei post: $e");
+  }
+    
+  }
+
+  Future<void> deletePost(String postId) async {
+    try {
+      await _postCollection.doc(postId).delete();
+      debugPrint("Post $postId eliminato con successo.");
+    } catch (e) {
+      debugPrint("Errore durante l'eliminazione del post: $e");
+    }
 
 }
+
+}
+
 

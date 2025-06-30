@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:PongChamp/domain/models/user_models.dart';
 import 'package:PongChamp/ui/pages/viewmodel/user_view_model.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '/domain/models/match_model.dart';
 import '/ui/pages/viewmodel/post_view_model.dart';
@@ -191,12 +192,37 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   //Funzioni di gestione anteprima immagine 
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
+    PermissionStatus permissionStatus;
+    if(Platform.isIOS){
+      permissionStatus = await Permission.photos.request();
+    } else {
+      permissionStatus = await Permission.storage.request();
     }
+    if(permissionStatus.isGranted){
+      final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _imageFile = File(pickedFile.path);
+        });
+      } else if (permissionStatus.isPermanentlyDenied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Permesso per accedere alla galleria negato. Abilitalo dalle impostazioni."),
+            action: SnackBarAction(
+              label: "Apri Impostazioni",
+              onPressed: () {
+                openAppSettings();
+              },
+            ),
+          ),
+        );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Permesso per accedere alla galleria necessario per selezionare un'immagine.")),
+    );
+  }
+    }
+    
   }
   void _removeImage() {
     setState(() {
@@ -221,7 +247,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
     setState(() => _isLoading = true);
     final postViewModel = Provider.of<PostViewModel>(context, listen: false);
     try {
-      await postViewModel.createPost(match: widget.match,);
+      await postViewModel.createPost(
+        match: widget.match,
+        image: _imageFile != null ? XFile(_imageFile!.path) : null,
+      );
       Navigator.pop(context, true); // Ritorna "true" per indicare successo
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

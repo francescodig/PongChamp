@@ -1,8 +1,6 @@
-import 'package:PongChamp/domain/models/post_model.dart';
 import 'package:PongChamp/domain/models/user_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
+
 
 
 
@@ -27,7 +25,6 @@ class UserService {
       }
       return null;
     } catch (e) {
-      print("Errore nel recupero utente: $e");
       return null;
     }
   }

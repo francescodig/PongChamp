@@ -17,6 +17,9 @@ class PostRepository {
   Stream<List<Post>> getPostsStream() {
     return service.getPostsStream();
   }
+  Stream<List<Post>> getFeed(String currentUserId) {
+    return service.getFeed(currentUserId);
+  }
   
   Future<Post> addPost(Post post) async {
     return await service.addPost(post);
@@ -46,6 +49,11 @@ class PostRepository {
   Future<AppUser?> getUserById(String userId) async{
     return await service.getUserById(userId);
   }
-
+  Future<void> refreshPosts() async{
+    return await service.refreshPosts();
+  }
+  Future<void> deletePost(String postId) async {
+    return await service.deletePost(postId);
+  }
 
 }

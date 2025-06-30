@@ -17,6 +17,9 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
+  final AuthService _authService = AuthService();
+
+  late final String currentUserId;
 
 
   Future<bool> _onWillPop() async {
@@ -55,9 +58,12 @@ class _LoginPageState extends State<LoginPage> {
       setState(() => _isLoading = false);
       
       if (success) {
+
+        currentUserId = _authService.currentUserId!;
+
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => HomePage(currentUserId: currentUserId)),
         );
       }
     }
@@ -131,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                               MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
                             );
                           },
-                          child: Text("Forgot password?", style: TextStyle(color: Colors.black)),
+                          child: Text("Forgot/Reset password", style: TextStyle(color: Colors.black)),
                         ),
                       ),
                       if (viewModel.errorMessage.isNotEmpty)

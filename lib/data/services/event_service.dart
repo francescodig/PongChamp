@@ -1,9 +1,27 @@
+import 'package:PongChamp/data/services/notification_service.dart';
+import 'package:PongChamp/domain/models/notification_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '/domain/models/event_model.dart';
 
 class EventService {
   final CollectionReference _eventsCollection = FirebaseFirestore.instance.collection('Event');
+  final NotificationService _notificationService = NotificationService();
+
+  ///Recupero di un evento tramite il suo ID
+  Future<Event> getEventById(String eventId) async {
+    try {
+      final doc = await _eventsCollection.doc(eventId).get();
+      if (doc.exists) {
+        return Event.fromFirestore(doc);
+      } else {
+        throw Exception('Evento non trovato');
+      }
+    } catch (e) {
+      debugPrint('Errore durante il recupero dell\'evento: $e');
+      throw e; // Rilancia l'eccezione per gestirla a livello superiore
+    }
+  }
 
   ///Salvataggio di un nuovo evento
   Future<Event> addEvent(Event event) async {
@@ -16,12 +34,28 @@ class EventService {
   }
 
   Future<bool> removeEvent(Event event, String userId) async{
-    final eventId = event.id;
+    final _notificationsCollection = FirebaseFirestore.instance.collection('UserNotifications');
+    final idEvento = event.id;
     if (event.creatorId!=userId){
       throw Exception("Non sei il creatore dell'evento, operazione non autorizzata");
     }
     try {
-      await _eventsCollection.doc(eventId).delete();
+      await _eventsCollection.doc(idEvento).delete();
+
+
+
+          // Creazione delle notifiche per tutti i partecipanti
+    for (String participantId in event.participantIds) {
+      if(participantId == userId) continue; // Salta il creatore dell'evento
+      await _notificationsCollection.add({
+        'userId': participantId,
+        'title': 'Evento cancellato😭',
+        'message': 'L\'evento "${event.title}" è stato cancellato dal creatore.',
+        'timestamp': Timestamp.now(),
+        'read': false,
+        'idEvento': idEvento,
+      });
+    }
       return true;
     } catch (e) {
       throw Exception("Errore durante l'eliminazione dell'evento: $e");
@@ -92,6 +126,30 @@ class EventService {
       participants: updatedParticipantsCount,
     );
     await _eventsCollection.doc(event.id).update(updatedEvent.toFirestore());
+
+
+     // CREAZIONE DELLA NOTIFICA
+    try {
+      final notification = NotificationModel(
+        idNotifica: '',
+        title: "Nuovo partecipante 😁",
+        message: "Un nuovo utente si è iscritto al tuo evento '${event.title}'",
+        userId: event.creatorId,  // destinatario della notifica è il creatore evento
+        idEvento: event.id,
+        timestamp: Timestamp.now(), // il timestamp viene impostato al momento della creazione
+        read: false,
+      );
+      await _notificationService.addNotification(notification);
+    } catch (e) {
+      debugPrint("Errore durante la creazione della notifica: $e");
+    }
+
+ 
+
+
+
+
+
     return updatedEvent;
   }
 
@@ -111,24 +169,46 @@ class EventService {
       participants: updatedParticipantsCount,
     );
     await _eventsCollection.doc(event.id).update(updatedEvent.toFirestore());
+
+     // CREAZIONE DELLA NOTIFICA
+    try {
+      final notification = NotificationModel(
+        idNotifica: '',
+        title: "Partecipazione annullata 😞",
+        message: "Un utente ha annullato la partecipazione al tuo evento'${event.title}'",
+        userId: event.creatorId,  // destinatario della notifica è il creatore evento
+        idEvento: event.id,
+        timestamp: Timestamp.now(), // il timestamp viene impostato al momento della creazione
+        read: false,
+      );
+      await _notificationService.addNotification(notification);
+    } catch (e) {
+      debugPrint("Errore durante la creazione della notifica: $e");
+    }
+
+
+
+
+
+
     return updatedEvent;
   }
 
   //Aggiorna il valore hasMatch di un evento a true 
-  Future<void> markEventWithMatch(String eventId) async {
-    await _eventsCollection.doc(eventId).update({
+  Future<void> markEventWithMatch(String idEvento) async {
+    await _eventsCollection.doc(idEvento).update({
       'hasMatch': true,
     });
   }
 
   
-  Future<Event> getEventWithTransaction(String eventId, Transaction transaction) async {
-    final doc = await transaction.get(_eventsCollection.doc(eventId));
+  Future<Event> getEventWithTransaction(String idEvento, Transaction transaction) async {
+    final doc = await transaction.get(_eventsCollection.doc(idEvento));
     return Event.fromFirestore(doc);
   }
 
-  Future<void> markEventWithMatchTransaction(String eventId, Transaction transaction) async {
-    transaction.update(_eventsCollection.doc(eventId), {
+  Future<void> markEventWithMatchTransaction(String idEvento, Transaction transaction) async {
+    transaction.update(_eventsCollection.doc(idEvento), {
       'hasMatch': true,
     });
   }

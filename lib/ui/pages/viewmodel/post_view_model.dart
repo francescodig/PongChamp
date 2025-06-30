@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '/data/services/uploadImage_service.dart';
 import 'package:image_picker/image_picker.dart';
 import '/domain/models/match_model.dart';
@@ -36,6 +38,7 @@ class PostViewModel extends ChangeNotifier {
         likedBy: [], 
         idCreator: userId, 
         idMatch: match.id,
+        createdAt: Timestamp.now(),
       );
       await repository.createPostWithMatchUpdate(newPost);
     } catch(e) {
@@ -48,6 +51,9 @@ class PostViewModel extends ChangeNotifier {
 
   Stream<List<Post>> getPostsStream() {
     return repository.getPostsStream();
+  }
+  Stream<List<Post>> getFeed(String currentUserId) {
+    return repository.getFeed(currentUserId);
   }
   Future<void> addLikeToPost(String id, int likes) async{
     // Implementa la logica per aggiungere un like al post
@@ -69,5 +75,13 @@ class PostViewModel extends ChangeNotifier {
   }
   Future<AppUser?> getUserById(String userId) async {
     return await repository.getUserById(userId);
+  }
+  Future<void> refreshPosts() async{
+    await repository.refreshPosts();
+    notifyListeners(); // Notifica i listener dopo aver ricaricato i post
+  }
+  Future<void> deletePost(String postId) async {
+    await repository.deletePost(postId);
+    notifyListeners(); // Notifica i listener dopo aver eliminato il post
   }
 }

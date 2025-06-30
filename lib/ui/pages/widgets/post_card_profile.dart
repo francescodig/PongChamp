@@ -1,3 +1,4 @@
+import 'package:PongChamp/domain/functions/utility.dart';
 import 'package:PongChamp/domain/models/event_model.dart';
 import 'package:PongChamp/domain/models/match_model.dart';
 import 'package:PongChamp/domain/models/user_models.dart';
@@ -9,24 +10,22 @@ import 'package:PongChamp/ui/pages/viewmodel/map_view_model.dart';
 import 'package:PongChamp/ui/pages/viewmodel/match_view_model.dart';
 import 'package:PongChamp/ui/pages/viewmodel/user_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import '/ui/pages/viewmodel/post_view_model.dart';
 import '/domain/models/post_model.dart';
 import 'package:flutter/material.dart';
-import 'package:PongChamp/domain/functions/utility.dart';
 
 
-class PostCard extends StatefulWidget {
+class PostCardProfile extends StatefulWidget {
   final Post post;
 
-  const PostCard({required this.post, Key? key}) : super(key: key);
+  const PostCardProfile({required this.post, Key? key}) : super(key: key);
 
   @override
-  _PostCardState createState() => _PostCardState();
+  _PostCardProfileState createState() => _PostCardProfileState();
 }
 
-class _PostCardState extends State<PostCard> {
+class _PostCardProfileState extends State<PostCardProfile> {
   late final PostViewModel _postViewModel;
   late final MatchViewModel _matchViewModel;
   late final UserViewModel _userViewModel;
@@ -59,7 +58,7 @@ class _PostCardState extends State<PostCard> {
     // Initialize streams and futures
     _creatorStream = _userViewModel.getUserStreamById(widget.post.idCreator);
     _matchFuture = _matchViewModel.fetchMatchById(widget.post.idMatch);
-    _eventFuture = _matchFuture.then((match) { //Quando match è disponibile, carica l'evento
+     _eventFuture = _matchFuture.then((match) { //Quando match è disponibile, carica l'evento
       if (match != null) {
         // Make sure PongMatch has an eventId property
         return _eventViewModel.getEventById(match.eventId);
@@ -99,6 +98,44 @@ class _PostCardState extends State<PostCard> {
     }
   }
 
+  Widget buildDeleteButton() {
+  return IconButton(
+    icon: const Icon(Icons.delete_outline),
+    onPressed: () async {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Elimina post'),
+          content: const Text('Sei sicuro di voler eliminare questo post?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annulla'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Elimina', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed == true) {
+        try {
+          await _postViewModel.deletePost(widget.post.id);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Post eliminato con successo')),
+          );
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Errore durante l\'eliminazione: $e')),
+          );
+        }
+      }
+    },
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     final hasLiked = widget.post.likedBy.contains(_userId);
@@ -135,12 +172,11 @@ class _PostCardState extends State<PostCard> {
                 );
               },
             ),
-
             // Post image if available
             if (widget.post.image != null && widget.post.image!.isNotEmpty)
               _postImage(),
             const SizedBox(height: 6),
-            FutureBuilder<Event?>(
+             FutureBuilder<Event?>(
                   future: _eventFuture,
                   builder: (context, eventSnapshot) {
                     if (eventSnapshot.connectionState == ConnectionState.waiting) {
@@ -187,22 +223,33 @@ class _PostCardState extends State<PostCard> {
                   );
                   },
                 ),
-            // Like actions
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+            // Like actions and delete button in a row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 _likeAction(hasLiked),
-                const SizedBox(height: 4),
-                Text(
-                  formatTimestamp(widget.post.createdAt),
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey,
-                  ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const SizedBox(height: 8),
+                    buildDeleteButton(),
+                    const SizedBox(height: 2), // Spazio verticale, non usare width qui
+                    Text(
+                      formatTimestamp(widget.post.createdAt),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
+            const SizedBox(height: 8),
           ],
+
         ),
       ),
     );
@@ -483,50 +530,49 @@ class _PostCardState extends State<PostCard> {
   }
 
   Widget _likeAction(bool hasLiked) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: Icon(
-              hasLiked ? Icons.favorite : Icons.favorite_border,
-              color: hasLiked ? Colors.red : Colors.grey,
+    return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      IconButton(
+        icon: Icon(
+          hasLiked ? Icons.favorite : Icons.favorite_border,
+          color: hasLiked ? Colors.red : Colors.grey,
+          size: 20, // Specifica una dimensione consistente
+        ),
+        padding: EdgeInsets.zero, // Riduci il padding se necessario
+        constraints: const BoxConstraints(), // Rimuovi vincoli predefiniti
+        onPressed: () {
+          if (hasLiked) {
+            _postViewModel.removeLikeFromPost(
+              widget.post.id,
+              widget.post.likes,
+            );
+          } else {
+            _postViewModel.addLikeToPost(widget.post.id, widget.post.likes);
+          }
+        },
+      ), 
+      GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => LikesPage(postId: widget.post.id),
             ),
-            onPressed: () {
-              if (hasLiked) {
-                _postViewModel.removeLikeFromPost(
-                  widget.post.id,
-                  widget.post.likes,
-                );
-              } else {
-                _postViewModel.addLikeToPost(widget.post.id, widget.post.likes);
-              }
-            },
+          );
+        },
+        child: Text(
+          '${widget.post.likes} likes',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+            color: Colors.black,
           ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => LikesPage(postId: widget.post.id),
-                ),
-              );
-            },
-            child: Text(
-              '${widget.post.likes} likes',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-                color: Colors.black,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
-    );
-  }
-
+    ],
+  );
+}
   void _navigateToProfile(String userId) {
     if (ModalRoute.of(context)?.settings.name != '/profile_$userId') {
       Navigator.push(

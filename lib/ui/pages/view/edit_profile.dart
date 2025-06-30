@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:PongChamp/data/services/auth_service.dart';
 import 'package:PongChamp/data/services/uploadImage_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -54,7 +54,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _surnameController.text = data['surname'] ?? '';
         _phoneNumberController.text = data['phoneNumber'] ?? '';
         _emailController.text = data['email'] ?? '';
-        _passwordController.text = data['password'] ?? '';
+        _passwordController.text =  '';
         _profileImageController.text = data['profileImage'] ?? '';
         _nicknameController.text = data['nickname'] ?? '';
       });
@@ -107,23 +107,48 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 buildTextField("Nickname", _nicknameController, Icons.person),
                 buildTextField("Phone Number", _phoneNumberController, Icons.phone),
                 buildTextField("Email", _emailController, Icons.email),
-                buildTextField("Password", _passwordController, Icons.lock, isPassword: true),
+                buildTextField("Inserire la password attuale", _passwordController, Icons.lock, isPassword: true),
                 SizedBox(height: 15),
                 ElevatedButton(
-                  onPressed: () async {
-                    print("Salvo con image URL: ${_profileImageController.text}");
+                onPressed: () async {
+                  // Otteniamo l'ID dell'utente corrente e i dati inseriti nel form
+                  final userId = _authService.currentUserId!;
+                  final newEmail = _emailController.text;
 
-                    final success = await _viewModel.updateUserData(
-                      _authService.currentUserId!,
-                        _nameController.text,
-                        _surnameController.text,
-                        _nicknameController.text,
-                        _phoneNumberController.text,
-                        _emailController.text,
-                        _passwordController.text,
-                        _profileImageController.text,
+                  // Mostra l'URL dell'immagine del profilo (opzionale)
+                  print("Salvo con image URL: ${_profileImageController.text}");
+
+                  try {
+                    // 1. Re-autenticazione per permettere la modifica dell'email
+                    final user = FirebaseAuth.instance.currentUser!;
+                    final cred = EmailAuthProvider.credential(
+                      email: user.email!, // Usa l'email corrente dell'utente
+                      password: _passwordController.text, // Password inserita dall'utente
                     );
 
+                    print('Email: ${user.email}');
+                    print('Password: ${_passwordController.text}');
+
+
+                    await user.reauthenticateWithCredential(cred);
+
+                    // 2. Aggiornamento email in Firebase Authentication
+                    await user.verifyBeforeUpdateEmail(newEmail);
+                    
+                 
+
+                    // 3. Aggiornamento dei dati su Firestore
+                    final success = await _viewModel.updateUserData(
+                      userId,
+                      _nameController.text,
+                      _surnameController.text,
+                      _nicknameController.text,
+                      _phoneNumberController.text,
+                      newEmail,  // Usa la nuova email
+                      _profileImageController.text,
+                    );
+
+                    // 4. Mostra un messaggio di successo o errore
                     if (success) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Profile updated successfully!")),
@@ -133,10 +158,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         SnackBar(content: Text("Update failed.")),
                       );
                     }
-                  },
-                  style: ElevatedButton.styleFrom(
+                  } catch (e) {
+                    // Gestione errori, ad esempio se la password è errata o altre eccezioni
+                    print("Errore nell'aggiornamento dell'email: $e");
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Error: ${e.toString()}")),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15), // ridotto
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -150,8 +182,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
                 ),
-
-                ),
+              ),
+                
               ],
             ),
           ),
