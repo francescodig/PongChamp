@@ -11,13 +11,21 @@ import 'package:PongChamp/domain/functions/utility.dart';
 
 class CustomNavBar extends StatelessWidget{
 
-  late final String currentUserId;
-  final AuthService _authService = AuthService();
+  final AuthService? authService;
+  final FirebaseAuth? firebaseAuth;
+
+  const CustomNavBar({
+    Key? key,
+    this.authService,
+    this.firebaseAuth,
+  }) : super(key: key);
 
 
 
   @override
   Widget build(BuildContext context) {
+    final _authService = authService ?? AuthService();
+    final _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
     // Funzione per navigare a una nuova pagina e rimuovere le precedenti
     // Questa funzione viene chiamata quando si preme un'icona nella barra di navigazione
@@ -38,7 +46,7 @@ class CustomNavBar extends StatelessWidget{
                   icon: Icon(Icons.home),
                   color: Colors.black,
                   onPressed: () {
-                    currentUserId = _authService.currentUserId!;
+                    final currentUserId = _authService.currentUserId!;
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(builder: (context) =>  HomePage(currentUserId: currentUserId)),
@@ -64,9 +72,8 @@ class CustomNavBar extends StatelessWidget{
                   icon: Icon(Icons.person),
                   color: Colors.black,
                   onPressed: () async {
-                    String userId = FirebaseAuth.instance.currentUser!.uid;
-                    // naviga passando l'userId alla ProfilePage
-                    navigateTo(context, ProfilePage(userId: userId), '/profile_$userId'); // Naviga alla ProfilePage
+                    final userId = _firebaseAuth.currentUser!.uid;
+                    navigateTo(context, ProfilePage(userId: userId), '/profile_$userId');                    
                   },
                 ),
                 IconButton(

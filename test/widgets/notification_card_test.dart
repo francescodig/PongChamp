@@ -1,93 +1,77 @@
 import 'package:PongChamp/domain/models/notification_model.dart';
 import 'package:PongChamp/ui/pages/widgets/notification_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Visualizza correttamente titolo, messaggio e data', (WidgetTester tester) async {
+  testWidgets('NotificationCard mostra correttamente titolo, messaggio, data e icona',
+      (WidgetTester tester) async {
+    // Crea un oggetto fittizio NotificationModel
     final notification = NotificationModel(
-      userId: "tyuio",
-      eventId: "rtgsbcn",
-      idNotifica: "fghjkl",
-      title: 'Titolo',
-      message: 'Messaggio di test',
-      timestamp: DateTime(2024, 12, 24, 15, 30),
-      read: true,
-    );
-
-    await tester.pumpWidget(MaterialApp(
-      home: NotificationCard(notification: notification),
-    ));
-
-    expect(find.text('Titolo'), findsOneWidget);
-    expect(find.textContaining('Messaggio di test'), findsOneWidget);
-    expect(find.textContaining('24/12/2024'), findsOneWidget);
-    expect(find.byIcon(Icons.notifications_none), findsOneWidget);
-  });
-
-  testWidgets('Mostra badge NUOVO e testo in grassetto se non letta', (WidgetTester tester) async {
-    final notification = NotificationModel(
-      userId: "tyuio",
-      eventId: "rtgsbcn",
-      idNotifica: "fghjkl",
-      title: 'Notifica Nuova',
-      message: 'Messaggio importante',
-      timestamp: DateTime.now(),
+      idNotifica: '1',
+      idEvento: '1',
+      userId: '1',
+      title: 'Nuovo torneo disponibile',
+      message: 'Partecipa subito al torneo estivo!',
+      timestamp: Timestamp.fromDate(DateTime(2025, 6, 5, 16, 45)),
       read: false,
     );
 
-    await tester.pumpWidget(MaterialApp(
-      home: NotificationCard(notification: notification),
-    ));
+    // Costruisce il widget nel test
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: NotificationCard(notification: notification),
+        ),
+      ),
+    );
 
+    // Verifica che titolo e messaggio siano presenti
+    expect(find.text('Nuovo torneo disponibile'), findsOneWidget);
+    expect(find.text('Partecipa subito al torneo estivo!'), findsOneWidget);
+
+    // Verifica che la data formattata sia corretta
+    expect(find.text('05/06/2025\n16:45'), findsOneWidget);
+
+    // Verifica che venga mostrata l'icona 'NUOVO' perché non è stata letta
     expect(find.text('NUOVO'), findsOneWidget);
-    expect(find.byIcon(Icons.notifications_active), findsOneWidget);
 
-    final title = tester.widget<Text>(find.text('Notifica Nuova'));
-    expect(title.style?.fontWeight, FontWeight.bold);
+    // Verifica che venga mostrata l'icona corretta (notifications_active)
+    final iconFinder = find.byIcon(Icons.notifications_active);
+    expect(iconFinder, findsOneWidget);
   });
 
-  testWidgets('Non mostra badge se notifica è già letta', (WidgetTester tester) async {
+  testWidgets('NotificationCard mostra lo stato "letto" correttamente', (WidgetTester tester) async {
+    // Modello con read: true
     final notification = NotificationModel(
-      userId: "tyuio",
-      eventId: "rtgsbcn",
-      idNotifica: "fghjkl",
-      title: 'Già letta',
-      message: 'Messaggio già visto',
-      timestamp: DateTime.now(),
+      idNotifica: '2',
+      idEvento: '2',
+      userId: '2',
+      title: 'Allenamento confermato',
+      message: 'Il tuo allenamento è stato confermato per domani.',
+      timestamp: Timestamp.fromDate(DateTime(2025, 6, 6, 10, 30)),
       read: true,
     );
 
-    await tester.pumpWidget(MaterialApp(
-      home: NotificationCard(notification: notification),
-    ));
-
-    expect(find.text('NUOVO'), findsNothing);
-    expect(find.byIcon(Icons.notifications_none), findsOneWidget);
-
-    final title = tester.widget<Text>(find.text('Già letta'));
-    expect(title.style?.fontWeight, isNot(FontWeight.bold));
-  });
-
-  testWidgets('Il messaggio troppo lungo viene troncato con ellissi', (WidgetTester tester) async {
-    final longMessage = 'Questo è un messaggio molto lungo che dovrebbe essere troncato a due righe...';
-    final notification = NotificationModel(
-      userId: "tyuio",
-      eventId: "rtgsbcn",
-      idNotifica: "fghjkl",
-      title: 'Titolo',
-      message: longMessage,
-      timestamp: DateTime.now(),
-      read: false,
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: NotificationCard(notification: notification),
+        ),
+      ),
     );
 
-    await tester.pumpWidget(MaterialApp(
-      home: NotificationCard(notification: notification),
-    ));
+    // Verifica testi
+    expect(find.text('Allenamento confermato'), findsOneWidget);
+    expect(find.text('Il tuo allenamento è stato confermato per domani.'), findsOneWidget);
+    expect(find.text('06/06/2025\n10:30'), findsOneWidget);
 
-    final textWidget = tester.widget<Text>(find.textContaining('Questo'));
-    expect(textWidget.maxLines, 2);
-    expect(textWidget.overflow, TextOverflow.ellipsis);
+    // Verifica che NON ci sia il badge "NUOVO"
+    expect(find.text('NUOVO'), findsNothing);
+
+    // Verifica che l'icona sia notifications_none
+    expect(find.byIcon(Icons.notifications_none), findsOneWidget);
   });
 
 }

@@ -8,6 +8,15 @@ import 'package:flutter/material.dart';
 import 'package:PongChamp/data/services/auth_service.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
+  final AuthService? authService;
+  final FirebaseFirestore? firestore;
+
+  const CustomAppBar({
+    Key? key,
+    this.authService,
+    this.firestore,
+  }) : super(key: key);
+
   @override
   Size get preferredSize => const Size.fromHeight(80);
 
@@ -16,19 +25,22 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  final AuthService _authService = AuthService();
+  late final AuthService _authService;
+  late final FirebaseFirestore _firestore;
   late final String currentUserId;
 
   @override
   void initState() {
     super.initState();
+    _authService = widget.authService ?? AuthService();
+    _firestore = widget.firestore ?? FirebaseFirestore.instance;
     currentUserId = _authService.currentUserId!;
   }
 
   @override
   Widget build(BuildContext context) {
     final CollectionReference notificationsCollection =
-        FirebaseFirestore.instance.collection("UserNotifications");
+        _firestore.collection("UserNotifications");
 
     return AppBar(
       automaticallyImplyLeading: false,
