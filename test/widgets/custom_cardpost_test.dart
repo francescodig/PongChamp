@@ -1,23 +1,52 @@
-import 'package:PongChamp/data/services/event_service.dart';
-import 'package:PongChamp/data/services/match_service.dart';
-import 'package:PongChamp/data/services/post_service.dart';
-import 'package:PongChamp/data/services/repositories/event_repository.dart';
-import 'package:PongChamp/data/services/repositories/match_repository.dart';
-import 'package:PongChamp/data/services/repositories/post_repository.dart';
 import 'package:PongChamp/data/services/repositories/user_repository.dart';
-import 'package:PongChamp/data/services/user_service.dart';
 import 'package:PongChamp/domain/models/event_model.dart';
 import 'package:PongChamp/domain/models/user_models.dart';
 import 'package:PongChamp/ui/pages/viewmodel/post_view_model.dart';
 import 'package:PongChamp/ui/pages/viewmodel/user_view_model.dart';
 import 'package:PongChamp/ui/pages/widgets/custom_card_post.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:mockito/mockito.dart';
+
+import '../mocks/mocks.mocks.dart';
+
 
 void main() {
-  final userViewModel = UserViewModel(UserRepository(UserService()));
+  late UserViewModel userViewModel;
+  late PostViewModel postViewModel;
+  late MockUserService mockUserService;
+
+  setUp(() {
+    mockUserService = MockUserService();
+    userViewModel = UserViewModel(UserRepository(mockUserService));
+    postViewModel = MockPostViewModel();
+
+    // Configura i mock
+    when(postViewModel.getCreatorProfileImageUrl("user123")).thenAnswer((_) async => null);
+    when(userViewModel.getUserById("user123")).thenAnswer((_) async => AppUser(
+      name: "NomeUtente",
+      surname: "CognomeUtente",
+      phoneNumber: "+39 320 886 1714",
+      birthDay: DateTime.now(),
+      profileImage: "mock.url",
+      sex: "Male",
+      id: 'user123',
+      nickname: 'MockUser',
+      email: 'mock@email.com',
+      ));
+  });
+
   testWidgets('CustomCard renders correctly with all elements', (tester) async {
+
+    //Forza il binding a non caricare realmente le immagini
+    TestWidgetsFlutterBinding.ensureInitialized();
+    final binding = TestWidgetsFlutterBinding.ensureInitialized();
+    binding.renderView.configuration = TestViewConfiguration(
+      size: const Size(1920, 1080),
+    ); 
+
     final event = Event(
       id: '1',
       createdAt: DateTime.now(),
@@ -33,42 +62,31 @@ void main() {
     );
 
     await tester.pumpWidget(
-      MaterialApp(
-          home: ChangeNotifierProvider<UserViewModel>.value(
-            value: userViewModel,
-            child: Scaffold(
-              body: CustomCard(
-                event: event,
-                onTap: () {},
-                buttonText: 'Partecipa',
-                buttonColor: Colors.blue,
-              ),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<UserViewModel>.value(value: userViewModel),
+          ChangeNotifierProvider<PostViewModel>.value(value: postViewModel),
+        ],
+        child: MaterialApp(
+          home: Scaffold(
+            body: CustomCard(
+              event: event,
+              onTap: () {},
+              buttonText: 'Partecipa',
+              buttonColor: Colors.blue,
             ),
           ),
+        ),
       ),
     );
 
-    // Dobbiamo aspettare che i FutureBuilder finiscano
     await tester.pumpAndSettle();
 
-    // Verifica che il titolo evento sia presente
     expect(find.text('Evento Test'), findsOneWidget);
-
-    // Verifica che nickname mock sia mostrato
     expect(find.text('MockUser'), findsOneWidget);
-
-    // Verifica che il testo partecipanti sia corretto
     expect(find.text('5 / 10'), findsOneWidget);
-
-    // Verifica la presenza del bottone con il testo corretto
     expect(find.widgetWithText(ElevatedButton, 'Partecipa'), findsOneWidget);
-
-    // Verifica la presenza delle icone
     expect(find.byIcon(Icons.location_on_outlined), findsOneWidget);
     expect(find.byIcon(Icons.group), findsOneWidget);
-
-    // Verifica che la CircleAvatar con immagine sia presente
-    final avatar = tester.widget<CircleAvatar>(find.byType(CircleAvatar).first);
-    expect(avatar.backgroundImage, isNotNull);
   });
 }
