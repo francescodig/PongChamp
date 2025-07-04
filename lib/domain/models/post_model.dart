@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class Post  {
   final String id;
   int likes;
-  String? image; // URL dell'immagine
+  String? image; 
   List<String> likedBy;
   String idCreator;
   String idMatch;
@@ -27,23 +27,20 @@ class Post  {
   final data = doc.data() as Map<String, dynamic>;
 
   return Post(
-    id: data['id'] ?? doc.id, // Usa l'ID del documento se non è presente
+    id: data['id'] ?? doc.id, 
 
-    // Conversione sicura dell'utente: controlla che sia una mappa
     idCreator: data['idCreator'],
 
-    // Conversione sicura del match
     idMatch: data['idMatch'],
 
-    // Protezione nel caso 'likes' non esista o sia null
     likes: (data['likes'] ) ?? 0,
 
-    // Se è presente l'immagine, la carica da URL, altrimenti null
+    
     image: data['image'],
 
-    likedBy: (data['likedBy'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [], // Converte la lista di likedBy in una lista di stringhe
+    likedBy: (data['likedBy'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
 
-    createdAt: data['createdAt'] as Timestamp? ?? Timestamp.now(), // Imposta la data di creazione, se non presente usa l'ora attuale
+    createdAt: data['createdAt'] as Timestamp? ?? Timestamp.now(), 
   );
 }
 
@@ -55,9 +52,8 @@ class Post  {
     idMatch: map['idMatch'],
     likes: (map['likes'] as int?) ?? 0,
     image: map['image'],
-    likedBy: (map['likedBy'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [], // Converte la lista di likedBy in una lista di stringhe
-    createdAt: map['createdAt'] as Timestamp? ?? Timestamp.now(), // Imposta la data di creazione, se non presente usa l'ora attuale
-
+    likedBy: (map['likedBy'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [], 
+    createdAt: map['createdAt'] as Timestamp? ?? Timestamp.now(),
   );
   }
 
@@ -67,9 +63,9 @@ class Post  {
       'idCreator': idCreator,
       'idMatch': idMatch,
       'likes': likes,
-      'image': image, // se non c'è immagine, metti null, altrimenti converti in un URL
-      'likedBy': likedBy, // Lista di utenti che hanno messo like
-      'createdAt': createdAt ?? Timestamp.now(), // Data di creazione, se non c'è, usa l'ora attuale
+      'image': image, 
+      'likedBy': likedBy, 
+      'createdAt': createdAt ?? Timestamp.now(), 
     };
   
 
@@ -94,7 +90,7 @@ class Post  {
       createdAt: createdAt ?? createdAt,
       );
   }
-   /// Getter utile per usare facilmente l'immagine profilo
+
   ImageProvider get postImage => image != null
       ? NetworkImage(image!)
       : const AssetImage('');

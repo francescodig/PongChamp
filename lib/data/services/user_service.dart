@@ -4,8 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 
-// Questa classe gestisce le operazioni sui post che appaiono sulla homepage, come il recupero dei post e la gestione dei like
-// e dei commenti. Utilizza Firestore per interagire con il database.
+
 
 class UserService {
 

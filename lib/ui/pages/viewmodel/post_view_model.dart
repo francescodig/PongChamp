@@ -56,16 +56,14 @@ class PostViewModel extends ChangeNotifier {
     return repository.getFeed(currentUserId);
   }
   Future<void> addLikeToPost(String id, int likes) async{
-    // Implementa la logica per aggiungere un like al post
-    // Puoi usare il repository per interagire con il servizio
+
     await repository.addLikeToPost(id, likes);
-    notifyListeners(); // Notifica i listener dopo aver aggiornato il post
+    notifyListeners(); 
   }
   Future<void> removeLikeFromPost(String id, int likes) async {
-    // Implementa la logica per rimuovere un like dal post
-    // Puoi usare il repository per interagire con il servizio
+
     await repository.removeLikeFromPost(id, likes);
-    notifyListeners(); // Notifica i listener dopo aver aggiornato il post
+    notifyListeners(); 
   }
   Future<List<AppUser>> getUsersWhoLikedPost(String postId) async {
     return await repository.getUsersWhoLikedPost(postId);
@@ -78,10 +76,10 @@ class PostViewModel extends ChangeNotifier {
   }
   Future<void> refreshPosts() async{
     await repository.refreshPosts();
-    notifyListeners(); // Notifica i listener dopo aver ricaricato i post
+    notifyListeners(); 
   }
   Future<void> deletePost(String postId) async {
     await repository.deletePost(postId);
-    notifyListeners(); // Notifica i listener dopo aver eliminato il post
+    notifyListeners(); 
   }
 }

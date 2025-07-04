@@ -50,7 +50,7 @@ class NotificationViewModel extends ChangeNotifier{
         message: message, 
         userId: userId, 
         idEvento: idEvento, 
-        timestamp: Timestamp.now(), //viene aggiunto direttamente dal service, al momento del salvataggio su Firestore
+        timestamp: Timestamp.now(), 
         read: false);
       final savedNotification = await _notificationService.addNotification(newNotification);
       _notifications.add(savedNotification);

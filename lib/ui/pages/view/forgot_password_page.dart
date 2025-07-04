@@ -21,11 +21,11 @@ return ChangeNotifierProvider(
          return Scaffold(
             appBar: AppBar(
                 automaticallyImplyLeading: false,
-                toolbarHeight: 150, // altezza personalizzata della AppBar
+                toolbarHeight: 150, 
                 centerTitle: true,
                 backgroundColor: Color.fromARGB(255, 245, 192, 41),
                 title: SizedBox(
-                  height: 100, // altezza del logo
+                  height: 100, 
                   child: Image.asset(
                     'assets/logo.png',
                     fit: BoxFit.contain,

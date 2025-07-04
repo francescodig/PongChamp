@@ -6,8 +6,7 @@ import 'package:flutter/foundation.dart';
 
 
 
-// Questa classe gestisce le operazioni sui post che appaiono sulla homepage, come il recupero dei post e la gestione dei like
-// e dei commenti. Utilizza Firestore per interagire con il database.
+//
 
 class PostService {
   final CollectionReference _postCollection = FirebaseFirestore.instance.collection("Post");
@@ -57,7 +56,6 @@ class PostService {
         // - Più like aumentano il punteggio
         // - Normalizziamo e ponderiamo i valori per bilanciare i fattori
 
-        // Troviamo il timestamp minimo e massimo per la normalizzazione
         final now = DateTime.now();
         final timestamps = posts.map((p) => p.createdAt?.millisecondsSinceEpoch).toList();
         final maxTimestamp = timestamps.isNotEmpty ? timestamps.reduce((a,b) => a! > b! ? a : b) : now.millisecondsSinceEpoch;
@@ -72,24 +70,24 @@ class PostService {
           if (maxTimestamp != minTimestamp) {
             normalizedRecency = (post.createdAt!.millisecondsSinceEpoch - minTimestamp!) / (maxTimestamp! - minTimestamp);
           } else {
-            normalizedRecency = 1; // tutti i post hanno stessa data
+            normalizedRecency = 1; 
           }
 
-          // Normalizza like (evitiamo divisione per zero)
+      
           double normalizedLikes = maxLikes > 0 ? post.likes / maxLikes : 0;
 
-          // Ponderazioni personalizzabili
+          // Peso dei fattori
           const double recencyWeight = 0.7;
           const double likesWeight = 0.3;
 
-          // Calcola punteggio combinato (esempio: somma pesata)
+          // Calcola punteggio combinato 
           return recencyWeight * normalizedRecency + likesWeight * normalizedLikes;
         }
 
         posts.sort((a, b) {
           final scoreA = calculateScore(a);
           final scoreB = calculateScore(b);
-          return scoreB.compareTo(scoreA); // decrescente
+          return scoreB.compareTo(scoreA); 
         });
 
         return posts;
@@ -112,7 +110,7 @@ class PostService {
         final data = docSnapshot.data() as Map<String, dynamic>;
         final likedBy = List<String>.from(data['likedBy'] ?? []);
 
-        // Utente non ha messo like → aggiungi il like
+        
         if (!likedBy.contains(userId)) {
           transaction.update(docRef, {
             'likes': FieldValue.increment(1),
@@ -137,14 +135,14 @@ class PostService {
     final likedBy = List<String>.from(data['likedBy'] ?? []);
 
 
-        // Utente ha messo like → rimuovi il like
+        
       if(likedBy.contains(userId)){
   transaction.update(docRef, {
     'likes': FieldValue.increment(-1),
     'likedBy': FieldValue.arrayRemove([userId])
   });
   }
-  // Close the transaction function
+
   });
 }
 
@@ -177,7 +175,7 @@ class PostService {
       final data = doc.data();
       return data?['profileImage'];
     } else {
-      return null; // Utente non trovato
+      return null; 
     }
   } catch (e) {
     debugPrint('Errore nel recupero della propic: $e');
@@ -198,12 +196,11 @@ class PostService {
   }
 }
 Future<void> refreshPosts() async {
-    // Implementa la logica per ricaricare i post
+    
     
 
      try {
-    // Questo serve per forzare la lettura attuale dei dati dalla collezione.
-    // Anche se lo StreamBuilder continua a lavorare, questa lettura singola è utile per forzare il "refresh"
+
     final snapshot = await _postCollection.get(const GetOptions(source: Source.server));
     
     // Debug

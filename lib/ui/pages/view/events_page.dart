@@ -87,7 +87,7 @@ class _EventsPageState extends State<EventsPage> {
               
               viewModel.isLoading ? Center(child: CircularProgressIndicator(color: Colors.black,))
               : viewModel.events.isEmpty ? Center(child: Text('Nessun evento disponibile'))
-              : Expanded( //serve ad evitare problemi nello scroll della ListView
+              : Expanded( 
                   child: 
                   ListView.builder(
                     itemCount: viewModel.events.length,
@@ -130,7 +130,7 @@ class _EventsPageState extends State<EventsPage> {
     }
     try {
       await viewModel.partecipateToEvent(event);
-      setState(() {}); // 🔄 Forza il rebuild della UI
+      setState(() {}); 
       CustomSnackBar.show(
         context,
         message: "Iscrizione completata con successo!",

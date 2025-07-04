@@ -30,7 +30,7 @@ class RegisterViewModel extends ChangeNotifier {
     return false;
   }
 
-  // eventualmente altre validazioni tipo email valida, password forte, ecc.
+
 
 
     final result = await _authService.registerWithEmailAndPassword(

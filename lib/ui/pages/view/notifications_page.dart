@@ -48,7 +48,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
             
             viewModel.isLoading ? Center(child: CircularProgressIndicator(color: Colors.black,))
             : viewModel.notifications.isEmpty ? Center(child: Text('Nessun evento disponibile'))
-            : Expanded( //serve ad evitare problemi nello scroll della ListView
+            : Expanded( 
                 child: 
                 ListView.builder(
                   itemCount: viewModel.notifications.length,

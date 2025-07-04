@@ -31,7 +31,7 @@ class AuthService {
     ) async {
     try {
       final result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      final user = result.user; // success
+      final user = result.user; 
 
 
       if (user != null) {
@@ -46,7 +46,6 @@ class AuthService {
         'birthday': Timestamp.fromDate(DateTime.parse(birthDay)),
         'profileImage': profileImage,
         'sex': sex,
-        // 'createdAt': FieldValue.serverTimestamp(),
       });
     }
 
@@ -61,7 +60,7 @@ class AuthService {
   Future<String?> signInWithEmailAndPassword(String email, String password) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      return null; // success
+      return null; 
     } on FirebaseAuthException catch (e) {
       return e.code;
     } catch (e) {

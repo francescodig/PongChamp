@@ -17,7 +17,7 @@ class _MatchPageState extends State<MatchPage> {
   @override
   void initState() {
     super.initState();
-    // Carica i match dopo il primo frame
+   
     Future.microtask(() {
       context.read<MatchViewModel>().fetchUserMatches();
     });

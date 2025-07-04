@@ -46,8 +46,7 @@ class _PostCardProfileState extends State<PostCardProfile> {
   @override
   void initState() {
     super.initState();
-    //In this phase we set listen: false to avoid unnecessary rebuilds
-    // and to ensure that the streams are initialized only once.
+
     _postViewModel = Provider.of<PostViewModel>(context, listen: false);
     _matchViewModel = Provider.of<MatchViewModel>(context, listen: false);
     _userViewModel = Provider.of<UserViewModel>(context, listen: false);
@@ -58,18 +57,18 @@ class _PostCardProfileState extends State<PostCardProfile> {
     // Initialize streams and futures
     _creatorStream = _userViewModel.getUserStreamById(widget.post.idCreator);
     _matchFuture = _matchViewModel.fetchMatchById(widget.post.idMatch);
-     _eventFuture = _matchFuture.then((match) { //Quando match è disponibile, carica l'evento
+     _eventFuture = _matchFuture.then((match) {
       if (match != null) {
-        // Make sure PongMatch has an eventId property
+        
         return _eventViewModel.getEventById(match.eventId);
       }
       return Future.value(null); //Alla fine restituisce un future null, cioè che è già stato risolto 
     });
 
-    // Load creator profile image once
+
     _loadCreatorProfileImage();
 
-    // Initialize player streams after getting match data
+
     _initializePlayerStreams();
   }
 
@@ -235,7 +234,7 @@ class _PostCardProfileState extends State<PostCardProfile> {
                   children: [
                     const SizedBox(height: 8),
                     buildDeleteButton(),
-                    const SizedBox(height: 2), // Spazio verticale, non usare width qui
+                    const SizedBox(height: 2),
                     Text(
                       formatTimestamp(widget.post.createdAt),
                       style: const TextStyle(
@@ -537,10 +536,10 @@ class _PostCardProfileState extends State<PostCardProfile> {
         icon: Icon(
           hasLiked ? Icons.favorite : Icons.favorite_border,
           color: hasLiked ? Colors.red : Colors.grey,
-          size: 20, // Specifica una dimensione consistente
+          size: 20, 
         ),
-        padding: EdgeInsets.zero, // Riduci il padding se necessario
-        constraints: const BoxConstraints(), // Rimuovi vincoli predefiniti
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(), 
         onPressed: () {
           if (hasLiked) {
             _postViewModel.removeLikeFromPost(

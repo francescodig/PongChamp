@@ -6,9 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class SearchService {
 
  
-    // Implementa la logica per cercare gli utenti in base al nome utente
-    // Puoi utilizzare Firestore o qualsiasi altro database che stai utilizzando
-    // Restituisci uno stream di lista di AppUser
+
 
    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 

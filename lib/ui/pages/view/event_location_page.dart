@@ -89,7 +89,7 @@ class EventLocationPage extends StatelessWidget {
             children: [
             viewModel.isLoading ? Center(child: CircularProgressIndicator(color: Colors.black,))
             : events.isEmpty ? Center(child: Text('Nessun evento disponibile'))
-            : Expanded( //serve ad evitare problemi nello scroll della ListView
+            : Expanded( 
                 child: 
                 ListView.builder(
                   itemCount: events.length,

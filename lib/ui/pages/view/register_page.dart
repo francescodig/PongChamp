@@ -29,13 +29,13 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _profileImageController = TextEditingController();
   final TextEditingController _birthdayController = TextEditingController();
-  String? selectedSex; // Variabile per memorizzare il sesso selezionato
-  File? _image; // Variabile per memorizzare l'immagine selezionata
+  String? selectedSex; 
+  File? _image; 
   bool _obscurePassword = true;
   final ImageService _imageService = ImageService();
-  final AuthService _authService = AuthService(); // Inizializza il servizio di autenticazione
+  final AuthService _authService = AuthService(); 
 
-  final ImagePicker _picker = ImagePicker(); // Inizializza l'ImagePicker
+  final ImagePicker _picker = ImagePicker(); 
 
    // Funzione per selezionare l'immagine dalla galleria
   Future<void> _pickImage() async {

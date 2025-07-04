@@ -36,7 +36,7 @@ import 'ui/pages/viewmodel/profile_view_model.dart';
 import 'ui/pages/viewmodel/expired_view_model.dart';
 
 void main() async {
-  //vedere questa cosa in un secondo momento... Aggiunta perchè dava errori strani in debugging
+  //Aggiunta perchè dava errori strani in debugging
   Provider.debugCheckInvalidValueType = null;
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,8 +46,8 @@ void main() async {
   ]);
   await Firebase.initializeApp(
     options:
-        DefaultFirebaseOptions.currentPlatform, // se usi firebase_options.dart
-  ); // Configura le notifiche Firebase
+        DefaultFirebaseOptions.currentPlatform,
+  ); 
   runApp(
     MultiProvider(
       providers: [
@@ -134,7 +134,7 @@ class AuthWrapper extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Mostra un loader mentre controlla la sessione
+         
           return Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );

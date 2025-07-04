@@ -40,9 +40,9 @@ class SettingsPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: Colors.black,
-                    ), // colore del contorno
-                    borderRadius: BorderRadius.circular(8), // bordi arrotondati
-                    color: Colors.white, // colore sfondo (opzionale)
+                    ), 
+                    borderRadius: BorderRadius.circular(8), 
+                    color: Colors.white, 
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,9 +68,9 @@ class SettingsPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: Colors.black,
-                    ), // colore del contorno
-                    borderRadius: BorderRadius.circular(8), // bordi arrotondati
-                    color: Colors.white, // colore sfondo (opzionale)
+                    ), 
+                    borderRadius: BorderRadius.circular(8), 
+                    color: Colors.white, 
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -100,9 +100,9 @@ class SettingsPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: Colors.black,
-                    ), // colore del contorno
-                    borderRadius: BorderRadius.circular(8), // bordi arrotondati
-                    color: Colors.white, // colore sfondo (opzionale)
+                    ), 
+                    borderRadius: BorderRadius.circular(8), 
+                    color: Colors.white, 
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -121,9 +121,9 @@ class SettingsPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: Colors.black,
-                    ), // colore del contorno
-                    borderRadius: BorderRadius.circular(8), // bordi arrotondati
-                    color: Colors.white, // colore sfondo (opzionale)
+                    ), 
+                    borderRadius: BorderRadius.circular(8), 
+                    color: Colors.white, 
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -149,9 +149,9 @@ class SettingsPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: Colors.black,
-                    ), // colore del contorno
-                    borderRadius: BorderRadius.circular(8), // bordi arrotondati
-                    color: Colors.white, // colore sfondo (opzionale)
+                    ), 
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white, 
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

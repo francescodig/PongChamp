@@ -37,7 +37,7 @@ List<Event> get expiredUserParticipatedEvents {
         return Event.fromFirestore(doc);
       }).toList();
 
-      // Notifica che i dati sono stati caricati
+    
       notifyListeners();
     } catch (e) {
       print("Errore nel caricare gli eventi dell'utente: $e");

@@ -48,10 +48,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Anteprima del Post
+            
             _buildPostPreview(),
             const SizedBox(height: 20),
-            // Sezione immagine opzionale
+            
             _buildImageSection(),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -68,7 +68,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
     );
   }
 
-  //Funzioni di costruzione
+
   Widget _buildPostPreview() {
     final userViewModel = context.watch<UserViewModel>();
     String score="";
@@ -81,7 +81,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Anteprima immagine
+           
             if (_imageFile != null)
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
@@ -251,7 +251,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
         match: widget.match,
         image: _imageFile != null ? XFile(_imageFile!.path) : null,
       );
-      Navigator.pop(context, true); // Ritorna "true" per indicare successo
+      Navigator.pop(context, true); 
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Errore: ${e.toString()}')),

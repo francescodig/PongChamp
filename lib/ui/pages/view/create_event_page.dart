@@ -17,7 +17,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _maxParticipantsController = TextEditingController(text: '2');
 
-  String? selectedMatchType = '1 vs 1'; // Tipo di match predefinito
+  String? selectedMatchType = '1 vs 1';
 
   ///Gestione scelta dell'orario di gioco
   DateTime? selectedDateTime;
@@ -66,7 +66,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 items: markers.map((marker) {
                   return DropdownMenuItem<MarkerData>(
                     value: marker,
-                    child: Text(marker.nome), // o altro attributo descrittivo
+                    child: Text(marker.nome),
                   );
                 }).toList(),
                 onChanged: (value) {
@@ -96,7 +96,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   labelText: 'Tipo di match',
                   border: OutlineInputBorder(),
                 ),
-                enabled: false, // 🔒 disabilita modifica
+                enabled: false, 
               ),
 
               ///orario

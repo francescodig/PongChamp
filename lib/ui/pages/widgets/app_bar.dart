@@ -2,7 +2,7 @@ import 'package:PongChamp/domain/functions/utility.dart';
 import 'package:PongChamp/ui/pages/view/home_page.dart';
 import 'package:PongChamp/ui/pages/view/notifications_page.dart';
 import 'package:PongChamp/ui/pages/view/search_page.dart';
-import 'package:badges/badges.dart' as badges; // Import del pacchetto badges
+import 'package:badges/badges.dart' as badges; 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:PongChamp/data/services/auth_service.dart';

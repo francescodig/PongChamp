@@ -13,13 +13,13 @@ class InformazioniPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            IconButton(  //freccia per tornare indietro
+            IconButton(  
               icon: Icon(Icons.arrow_back),
               onPressed: () {
                 Navigator.pop(context); 
               },
             ),
-            SizedBox(height: 16), //spazio freccia-testo
+            SizedBox(height: 16), 
             Text(
               "Informazioni sull'App",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),

@@ -115,11 +115,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   final userId = _authService.currentUserId!;
                   final newEmail = _emailController.text;
 
-                  // Mostra l'URL dell'immagine del profilo (opzionale)
+           
                   print("Salvo con image URL: ${_profileImageController.text}");
 
                   try {
-                    // 1. Re-autenticazione per permettere la modifica dell'email
+                    //  Re-autenticazione per permettere la modifica dell'email
                     final user = FirebaseAuth.instance.currentUser!;
                     final cred = EmailAuthProvider.credential(
                       email: user.email!, // Usa l'email corrente dell'utente
@@ -132,12 +132,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                     await user.reauthenticateWithCredential(cred);
 
-                    // 2. Aggiornamento email in Firebase Authentication
+                    // Aggiornamento email in Firebase Authentication
                     await user.verifyBeforeUpdateEmail(newEmail);
                     
                  
 
-                    // 3. Aggiornamento dei dati su Firestore
+                    // Aggiornamento dei dati su Firestore
                     final success = await _viewModel.updateUserData(
                       userId,
                       _nameController.text,
@@ -148,7 +148,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       _profileImageController.text,
                     );
 
-                    // 4. Mostra un messaggio di successo o errore
+                    //  Mostra un messaggio di successo o errore
                     if (success) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Profile updated successfully!")),

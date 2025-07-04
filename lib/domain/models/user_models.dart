@@ -64,7 +64,7 @@ class AppUser {
       'Surname': surname,
       'phoneNumber': phoneNumber,
       'email': email,
-      'profileImage':  profileImage, // lo gestirai separatamente quando salvi l'immagine
+      'profileImage':  profileImage, 
       'birthday': birthDay,
       'sex': sex,
       'nickname': nickname,

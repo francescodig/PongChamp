@@ -7,12 +7,12 @@ import 'package:PongChamp/domain/models/marker_model.dart';
 import 'package:geolocator/geolocator.dart';
 
 class MapViewModel extends ChangeNotifier {
-  Set<Marker> _markers = {};  // conserva i marker filtrati
-  Set<Marker> _allMarkers = {}; // conserva tutti i marker originali
-  bool _isLoading = true; // stato di caricamento
-  String _searchQuery = ''; // query di ricerca
-  Position? _userPosition; // posizione dell'utente
-  CameraPosition? _cameraPosition; // posizione della camera
+  Set<Marker> _markers = {};  
+  Set<Marker> _allMarkers = {}; 
+  bool _isLoading = true; 
+  String _searchQuery = '';
+  Position? _userPosition; 
+  CameraPosition? _cameraPosition; 
 
   Set<Marker> get markers => _markers;
   bool get isLoading => _isLoading;

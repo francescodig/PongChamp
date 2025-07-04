@@ -13,13 +13,13 @@ class PrivacyPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            IconButton(  //freccia per tornare indietro
+            IconButton(  
               icon: Icon(Icons.arrow_back),
               onPressed: () {
                 Navigator.pop(context); 
               },
             ),
-            SizedBox(height: 16), //spazio freccia-testo
+            SizedBox(height: 16), 
             Text(
               "Ultimo aggiornamento: 25 Aprile 2025\n\n",
               style: TextStyle(fontSize: 16),

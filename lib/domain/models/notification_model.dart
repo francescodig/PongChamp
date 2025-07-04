@@ -20,7 +20,7 @@ class NotificationModel {
     required this.read,
   });
 
-  //Costruttore da Firestore
+
   factory NotificationModel.fromFirestore(DocumentSnapshot doc){
     final data = doc.data() as Map<String, dynamic>;
     return NotificationModel(
@@ -34,7 +34,7 @@ class NotificationModel {
     );
   }
 
-  //Scrittura su Firestore
+
   Map<String, dynamic> toFirestore() {
     return {
       'idNotifica': idNotifica,
@@ -47,7 +47,7 @@ class NotificationModel {
     };
   }
 
-  //Metodo per copiare una notifica cambiando certi attributi
+ 
   NotificationModel copyWith({
     String? idNotifica,
     String? userId,

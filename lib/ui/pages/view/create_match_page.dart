@@ -89,7 +89,7 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
                   },
                   child: Text('Crea Match'),
                 ),
-              ] //costrutto if per gestire match 1vs1
+              ] 
 
               else ...[
                 DropdownButtonFormField<String>(
@@ -103,7 +103,7 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
                           future: userViewModel.getUserById(player),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const CircularProgressIndicator(); // o un placeholder
+                              return const CircularProgressIndicator(); 
                             } else if (snapshot.hasError) {
                               return Text('Errore nel caricamento utente');
                             } else if (!snapshot.hasData || snapshot.data == null) {
@@ -154,7 +154,7 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
                   },
                   child: Text('Crea Match'),
                 ),
-              ] //costrutto else per gestire match Torneo
+              ] 
             ],
           ),
         ),

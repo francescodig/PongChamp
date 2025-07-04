@@ -53,7 +53,7 @@ class _MapPageState extends State<MapPage> {
       appBar: CustomAppBar(),
       body: Column(
         children: [
-          // Box di ricerca migliorato
+      
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             margin: const EdgeInsets.all(16),
@@ -148,7 +148,7 @@ class _MapPageState extends State<MapPage> {
                           GoogleMap(
                             initialCameraPosition: _initialPosition ??
                             CameraPosition(
-                                target: LatLng(0, 0), // default se la posizione non è disponibile
+                                target: LatLng(0, 0), 
                                 zoom: 2,
                               ),
                             markers: viewModel.markers,

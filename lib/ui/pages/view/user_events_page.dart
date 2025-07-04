@@ -86,7 +86,7 @@ class _UserEventsPage extends State<UserEventsPage> {
                     );
                   },
                   buttonText: "Inserisci Risultato", 
-                  buttonColor: Color.fromARGB(255, 245, 192, 41),);//}
+                  buttonColor: Color.fromARGB(255, 245, 192, 41),);
               }
             },);
         }
@@ -108,7 +108,7 @@ class _UserEventsPage extends State<UserEventsPage> {
     }
     try {
       final success = await viewModel.removeParticipant(event, userId);
-      setState(() {}); // 🔄 Forza il rebuild della UI
+      setState(() {}); 
       if (success) {
         CustomSnackBar.show(
           context,

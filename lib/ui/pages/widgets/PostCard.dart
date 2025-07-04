@@ -61,16 +61,16 @@ class _PostCardState extends State<PostCard> {
     _matchFuture = _matchViewModel.fetchMatchById(widget.post.idMatch);
     _eventFuture = _matchFuture.then((match) { //Quando match è disponibile, carica l'evento
       if (match != null) {
-        // Make sure PongMatch has an eventId property
+        
         return _eventViewModel.getEventById(match.eventId);
       }
       return Future.value(null); //Alla fine restituisce un future null, cioè che è già stato risolto 
     });
 
-    // Load creator profile image once
+   
     _loadCreatorProfileImage();
 
-    // Initialize player streams after getting match data
+    
     _initializePlayerStreams();
   }
 
@@ -179,7 +179,7 @@ class _PostCardState extends State<PostCard> {
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: Colors.black87,
-                            decoration: TextDecoration.underline, // opzionale, per indicare che è cliccabile
+                            decoration: TextDecoration.underline, 
                           ),
                         ),
                       ],

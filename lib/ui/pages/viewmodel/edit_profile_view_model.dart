@@ -8,7 +8,7 @@ class EditProfileViewModel extends ChangeNotifier {
   final AuthService _authService = AuthService();
 
     Future<Map<String, dynamic>> getDataFromUserDoc(String userId) async {
-    // Usa await e tipo corretto
+
     DocumentSnapshot<Map<String, dynamic>> doc =
         await _authService.fetchUserByIdAsDoc(userId);
 

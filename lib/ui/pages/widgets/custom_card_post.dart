@@ -86,7 +86,7 @@ class CustomCard extends StatelessWidget {
                       future: userViewModel.getUserById(event.creatorId),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const CircularProgressIndicator(); // o un placeholder
+                          return const CircularProgressIndicator();
                         } else if (snapshot.hasError) {
                           return Text('Errore nel caricamento utente');
                         } else if (!snapshot.hasData || snapshot.data == null) {
